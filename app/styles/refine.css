@@ -1,0 +1,194 @@
+/* ============================================================
+   Refine — client feedback 28.10.2026 (Telegram: Daryna (SMM), Nataliia, Dana).
+   Source: docs/1_Intake/1_Site_Assets/Telegram/Studio_Demo_2026_10_28/Messages.md · plan: Pilot_Run/Shape.md.
+   Loaded LAST. Semantic tokens only.
+   1. Photos: no tilt, no mat / frame / tape / grain, one 4:5 crop, equal card heights, even gaps
+      («хаотично, нахилені зображення, різна висота та нерівні проміжки… рамки застаріло»; «фото кривые»)
+   2. Type: the base face (Montserrat) for captions, quotes, prices, numbers — no script, no italic accent
+      in running text («шрифт базовий, не акцентний»; «аж очі болять»)
+   3. Phone hero + buttons: smaller lede, calmer rhythm, smaller buttons («текст під заголовком завеликий»,
+      «надто великий текст для мобілки та кнопки»)
+   4. Lightbox: the ✕ is clickable; the language pill hides while a photo is open
+   The heading faces (Playfair hero H1, Unbounded section heads) stay until Oksana's design (N-01).
+   ============================================================ */
+
+/* ---- 1 · photos -------------------------------------------- */
+.dec_polaroid,
+.dec_polaroid_l,
+.dec_polaroid_r,
+.dec_polaroid_sm {
+  --dec-tilt: 0deg;
+  rotate: none;
+  padding: 0;
+  background: none;
+  border: 0;
+  box-shadow: none;
+  display: grid;
+  gap: var(--space-3);
+  align-content: start;
+}
+.dec_polaroid::after,
+.dec_polaroid_tape::before { content: none; }
+.dec_polaroid[data-rv="in"], .dec_polaroid.is_in, .is_in > .dec_polaroid, .dec_polaroid.dec_settle { animation: none; }
+.dec_polaroid > img,
+.dec_polaroid > picture,
+.dec_polaroid > picture img,
+.dec_polaroid > a,
+.dec_polaroid .ix-flip__link {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.dec_polaroid > img,
+.dec_polaroid > picture img,
+.polaroid_grid .dec_polaroid img,
+.story_card .dec_polaroid img,
+.founder_media .dec_polaroid img { aspect-ratio: 4 / 5; object-fit: cover; width: 100%; height: auto; }
+.dec_polaroid figcaption {
+  margin: 0;
+  text-align: left;
+  font: 500 var(--fs-sm)/1.45 var(--font-primary);
+  font-size-adjust: none;
+  color: var(--color-fg-dim);
+  overflow-wrap: anywhere;          /* full caption, never cut («до / після» is the point); photos stay one size */
+}
+
+/* even grids: one gap, no staggered cards */
+.polaroid_grid,
+.portfolio_grid.ix-flip__grid { gap: var(--space-6) var(--space-4); padding: 0; align-items: start; }
+.polaroid_grid .dec_polaroid:nth-child(3n + 2) { margin-top: 0; }
+@media (min-width: 768px) {
+  .polaroid_grid,
+  .portfolio_grid.ix-flip__grid { gap: var(--space-7) var(--space-5); }
+}
+.portfolio_polaroid .ix-flip__link { border-radius: var(--radius-lg); }
+
+/* other tilted photos straightened (Dana: «фото кривые не нравится») */
+.sig_hero_inset,
+.academy_inset,
+.final_figure { rotate: none; }
+/* .sig_hero_script keeps the decorative script (owner 28.10) — pages.css */
+
+/* ---- 2 · type ---------------------------------------------- */
+/* .display em (the accent word) keeps the decorative script (owner 28.10) — components.css */
+.review_quote { font: 400 var(--fs-md)/1.6 var(--font-primary); font-style: normal; }
+.review_mark { font: 600 3rem/0.6 var(--font-primary); font-style: normal; }
+.founder_quote blockquote { font: 500 var(--fs-xl)/1.45 var(--font-primary); font-style: normal; }
+.final_guarantee { font: 600 var(--fs-md)/1.5 var(--font-primary); font-style: normal; }
+.price { font-family: var(--font-primary); font-style: normal; font-weight: 600; }
+.benefit_num { font: 600 clamp(2rem, 1.6rem + 1.6vw, 3rem)/1 var(--font-primary); font-style: normal; }
+
+/* ---- 3 · phone hero + buttons ------------------------------ */
+@media (max-width: 767px) {
+  .lede { font-size: var(--fs-md); line-height: 1.55; }
+  .page_hero_text, .page_hero_head, .sig_hero_text { gap: var(--space-3); }
+  .page_hero_text .display, .page_hero_head .display { line-height: 1.15; }
+  /* the heading leads, the sub-line follows: 32 px over 16 px (was 24 over 18) */
+  .sig_hero_title { font-size: clamp(1.875rem, 1.3rem + 2.6vw, 2.25rem); line-height: 1.12; }
+  .sig_hero_stack .sig_hero_title { font-size: clamp(2.5rem, 1.4rem + 4.6vw, 3rem); line-height: .95; }
+  .page_hero_text .btn + .btn, .sig_hero_text .btn + .btn { margin-top: 0; }
+  .btn { font-size: 0.9375rem; padding: var(--space-3) var(--space-5); min-height: 48px; }
+  .btn_sm { font-size: var(--fs-sm); min-height: 44px; }
+}
+
+/* ---- 4 · lightbox ------------------------------------------ */
+.ix-flip__stage { z-index: 1002; }  /* above the cookie bar (1000/1001) while a photo is open — it covered ← → on a first visit */
+.ix-flip__close { z-index: 3; }     /* the slide figure was painted over it — taps never reached the ✕ */
+.ix-flip__bar { position: relative; z-index: 2; }
+body:has(.ix-flip__stage.is-open) .lang_pill { display: none; }   /* it covered «→» on phones */
+
+/* ---- 5 · /about founder photos (D-33): the small second photo sits at the top corner, so it never
+   covers the founder's caption under the main photo ---- */
+.founder_second { top: var(--space-8); bottom: auto; width: 38%; border-width: 4px; }
+
+/* ---- 6 · challenger round (28.10) ---- */
+.row_note { font-style: normal; }                        /* «ціну називаємо на консультації» — no italic in running text */
+.founder_quote blockquote em { font-style: normal; color: var(--color-accent-text); }
+/* Montserrat is wider than Onest: «Налаштування» ran past its button at 360–390. The three buttons stay
+   equal (consent rule); on narrow phones their labels get a little smaller instead. */
+@media (max-width: 420px) { .cookie_banner .cookie_banner__button { font-size: 0.75rem; padding-inline: 4px; letter-spacing: -0.005em; } }
+
+/* ---- 7 · first screen fills the phone (owner 28.10: «перші екрани замалі») ----
+   Home was 68 % of a 390×844 screen, other pages 88 %. Now hero + header = the whole screen. While the
+   cookie bar is open (first visit) the hero stops above it, so both buttons stay clear (keeps D-19). */
+@media (max-width: 1023px) {
+  .sig_hero,
+  .hero_home.sig_hero { min-height: calc(100svh - 65px - var(--cookie-banner-h, 0px)); }
+  /* the buttons end above the floating language pill (44 px + 16 px from the bottom) — it covered «Обрати курс» */
+  .sig_hero .sig_hero_inner { padding-bottom: 76px; }
+}
+/* phones: the bottom bar (64 px) and its round badge (24 px above it) took the pill's place — the badge
+   covered the corner of «Обрати курс» on /about (blind review 07.11). The buttons now end 16 px above it. */
+@media (max-width: 767.98px) {
+  body:has(.bottom_bar) .sig_hero .sig_hero_inner { padding-bottom: calc(var(--bottom-bar-h) + var(--space-4)); }
+}
+
+/* ---- 8 · works gallery (/salon #portfolio) → Gallery27 editorial bento wall (owner 29.10) ----
+   One frame for every photo (straight, rounded, no mat); 4 : 5 tiles; `feature` tiles span 2 × 2 and set
+   no height of their own (the image is absolute), so rows stay even; the pink accent panel is woven into the
+   grid. Dense flow closes holes when a filter hides tiles. 22 tiles + 2 features + the panel fill 2 / 3 / 4
+   columns without a gap in the last row. */
+.portfolio_grid.ix-flip__grid, .works_bento.ix-flip__grid {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-flow: row dense;
+  gap: var(--space-3); padding: 0; margin: 0; list-style: none; align-items: stretch;
+}
+/* width: 100% — WebKit sized an aspect-ratio tile in auto rows from its (absolute-only) content: 10 × 12 (D-35) */
+.works_tile { position: relative; min-width: 0; width: 100%; aspect-ratio: 4 / 5; }
+.works_tile_feature { grid-column: span 2; grid-row: span 2; aspect-ratio: auto; min-height: 0; }
+/* inset, not height: 100% — WebKit resolved the % height inside an aspect-ratio tile to 0 → a 10 × 12 link (D-35) */
+.works_fig, .works_fig.hv-parallax-inner { position: absolute; inset: 0; margin: 0; }
+.works_link {
+  position: absolute; inset: 0; display: block; overflow: hidden;
+  border-radius: var(--radius-lg); background: var(--color-surface-2, var(--color-surface));
+}
+.works_link img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.works_cap {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 1; margin: 0;
+  padding: var(--space-8) var(--space-3) var(--space-3);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  background: linear-gradient(180deg, transparent, rgb(0 0 0 / .7));
+  color: var(--color-on-dark); font: 500 var(--fs-sm)/1.35 var(--font-primary);
+  overflow-wrap: anywhere; pointer-events: none;   /* the tap still opens the photo */
+}
+/* 2 columns: the feature fills the whole row, no neighbour sets the row height — it keeps its own 4 : 5 */
+@media (max-width: 767px) { .works_tile_feature { aspect-ratio: 4 / 5; } }
+.works_tile_feature .works_cap { font-size: var(--fs-md); padding: var(--space-10) var(--space-5) var(--space-5); }
+/* narrow phones: RU / PL captions («комбинированна/я», «mikrokapsułkowe») split mid-word in the two-column grid (phase 12, 07.11) */
+@media (max-width: 400px) { .works_cap { font-size: var(--fs-xs); } }
+@media (max-width: 359px) { .works_cap { padding-inline: var(--space-2); } }
+
+.works_accent {
+  grid-column: 1 / -1; display: flex; flex-direction: column; justify-content: space-between;
+  gap: var(--space-3); padding: var(--space-6); border-radius: var(--radius-lg);
+  background: var(--color-accent); color: var(--color-accent-fg);
+}
+.works_accent_kicker { font: 600 var(--fs-xs)/1.2 var(--font-primary); letter-spacing: .2em; text-transform: uppercase; opacity: .75; }
+.works_accent_stat { margin: 0; font: 700 var(--fs-3xl)/1 var(--font-display); letter-spacing: -.02em; }
+.works_accent_body { margin: 0; font: 500 var(--fs-md)/1.55 var(--font-primary); max-width: 34ch; }   /* 16 px: body text on the phone (D-35) */
+.works_accent_link {
+  width: fit-content; color: inherit; text-decoration: none; font: 600 var(--fs-sm)/1.3 var(--font-primary);
+  border-bottom: 1px solid currentColor; padding-bottom: 2px; min-height: 24px;
+}
+.works_accent_link:focus-visible { outline: 2px solid var(--color-accent-fg); outline-offset: 3px; }
+
+@media (min-width: 768px) {
+  .portfolio_grid.ix-flip__grid, .works_bento.ix-flip__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); }
+  .works_accent { padding: var(--space-7); }
+}
+@media (min-width: 1024px) {
+  .portfolio_grid.ix-flip__grid, .works_bento.ix-flip__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-5); }
+  .works_accent { grid-column: span 2; }
+  /* the second feature sits on the right, so the two big photos zig-zag */
+  .works_tile_feature ~ .works_tile_feature { grid-column: 3 / span 2; }
+}
+
+/* ---- 9 · a lone last photo in a 2-column phone grid spans the row (no hole in the last row) ---- */
+@media (max-width: 767px) {
+  .polaroid_grid > .dec_polaroid:last-child:nth-child(odd) { grid-column: 1 / -1; }
+  .polaroid_grid > .dec_polaroid:last-child:nth-child(odd) img { aspect-ratio: 16 / 10; }
+}
+
+/* ---- 10 · eight photos in a 3-column grid left a hole in the last row (D-39, reconstruction-intensive):
+   from 1024 px an 8-photo grid runs 4 × 2 ---- */
+@media (min-width: 1024px) {
+  .polaroid_grid:has(> .dec_polaroid:nth-child(8):last-child) { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}

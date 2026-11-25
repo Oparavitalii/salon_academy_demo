@@ -1,0 +1,146 @@
+/* Oksana's design recommendations 16.11.2026 (Правки.pdf, B-119) — Studio_About. */
+/* Loads after pages.css / fx_kit.css / skin_insta.css. Every rule is scoped to its section (`.catalog_sec`,
+   `.stories_list`, `.recognition_sec`, `.stats_sec`, `.about_cta`, `.masters_grid`, `.founder_sec`), so it
+   wins on specificity and touches no other block. Tokens only; colours come from each section's theme. */
+
+/* ---- M-12 — /courses catalog cards like the home ones: one photo (the two thumbs are gone from the markup)
+   and on hover the pink outline + glow (`hv-card-border`, library.css) and the photo zoom (`hv-zoom`). The
+   home card is a link and lifts 6 px (motion.css); the /courses card is an <article> with two buttons, so
+   it gets the same lift here. The equal-width stacked buttons (16.11) stay as they are. ---- */
+@media (prefers-reduced-motion: no-preference) {
+  .catalog_sec .catalog_card.hv-card-border {
+    transition:
+      translate var(--hv-base, 0.3s) var(--hv-ease, ease),
+      border-color var(--hv-base, 0.3s) var(--hv-ease, ease),
+      box-shadow var(--hv-base, 0.3s) var(--hv-ease, ease);
+  }
+  .catalog_sec .catalog_card.hv-card-border:hover {
+    translate: 0 -6px;
+  }
+}
+
+/* ---- M-13 — success-story cards (/courses and /): no stack shadow (fx_kit `.sx-stack__card`, a pattern
+   used nowhere else); the course cards' pink outline + glow on hover / focus instead. ---- */
+.stories_list .story_card.sx-stack__card {
+  box-shadow: none;
+}
+.stories_list .story_card.sx-stack__card:is(:hover, :focus-within) {
+  border-color: var(--hv-accent-2);
+  box-shadow: 0 8px 32px rgba(var(--hv-accent-2-rgb), 0.18);
+}
+
+/* ---- M-16 · M-28 — /about academy block: the text column beside three photos left a lot of empty space
+   and the tall first frame cropped the certificate. Now heading → text with the button → one row of four
+   equal 4:5 frames (every source is 4:5, so nothing is cropped). Phones: the row is a swipe slider to the
+   screen edges, every photo the same size (the «Життя студії» pattern on the same page). ---- */
+.recognition_sec .recognition_media {
+  display: flex;
+  gap: var(--space-3);
+  margin: 0 calc(var(--gutter) * -1);
+  padding: 0 var(--gutter) var(--space-3);
+  list-style: none;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--gutter);
+  scrollbar-width: thin;
+}
+.recognition_sec .recognition_media:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 4px;
+}
+.recognition_sec .recognition_img {
+  flex: none;
+  width: min(72vw, 300px);
+  margin: 0;
+  grid-row: auto;
+  aspect-ratio: 4 / 5;
+  scroll-snap-align: start;
+}
+@media (min-width: 768px) {
+  .recognition_sec .recognition_grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-7);
+    align-items: start;
+  }
+  .recognition_sec .recognition_text {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4) var(--space-7);
+  }
+  .recognition_sec .recognition_text > p {
+    margin: 0;
+  }
+  .recognition_sec .recognition_text > .body {
+    flex: 1 1 32ch;
+    max-width: 60ch;
+  }
+  .recognition_sec .recognition_media {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-4);
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+  }
+  .recognition_sec .recognition_img {
+    width: auto;
+  }
+}
+
+/* ---- M-17 — /about «Досягнення»: the photo beside the tiles runs the full height of the block (top of the
+   heading → bottom of the last tile row) instead of a centred square. The image is out of flow
+   (mobile_guard.css), so the row height comes from the tiles; the tiles themselves are untouched. `/`
+   (`.stats_grid_solo`, no photo) and phones (photo under the tiles, 4:3) stay as they were. ---- */
+@media (min-width: 768px) {
+  .stats_sec .stats_grid:not(.stats_grid_solo) {
+    align-items: stretch;
+  }
+  .stats_sec .stats_grid:not(.stats_grid_solo) .stats_figure {
+    aspect-ratio: auto;
+    min-height: 320px;
+    margin: 0;
+  }
+  .stats_sec .stats_grid:not(.stats_grid_solo) .stats_figure img {
+    object-position: 40% 50%;
+  }
+}
+
+/* ---- M-18 — /about final band: the salon hall (Studio_Life_07, lib/content/about.ts) instead of the
+   cropped hair. The frame is lighter than the old one (windows on the left), so the scrim under the
+   heading is a little denser at the top; the bottom (the buttons) keeps 92 %. ---- */
+.about_cta .about_cta_bg img {
+  object-position: 50% 40%;
+}
+.about_cta .page_hero_scrim {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--color-bg) 50%, transparent) 0%,
+    color-mix(in srgb, var(--color-bg) 72%, transparent) 45%,
+    color-mix(in srgb, var(--color-bg) 92%, transparent) 100%
+  );
+}
+
+/* ---- M-26 — masters on phones: the odd last card no longer sits centred alone; it takes the left column
+   like every other card, so the grid stays left-aligned whatever the number of masters. ---- */
+@media (max-width: 767.98px) {
+  .masters_grid > .master_card:last-child:nth-child(odd) {
+    grid-column: auto;
+    justify-self: stretch;
+    width: auto;
+  }
+}
+
+/* ---- M-27 — /about founder on phones: 88 px between the photo caption and the text (the photo block's
+   40 px bottom padding + the 48 px row gap) → 24 px. The space above the photo stays as it was (48 px). ---- */
+@media (max-width: 767.98px) {
+  .founder_sec .founder_grid {
+    row-gap: var(--space-6);
+  }
+  .founder_sec .founder_media {
+    margin-top: var(--space-6);
+    padding-bottom: 0;
+  }
+}

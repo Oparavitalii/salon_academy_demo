@@ -1,0 +1,34 @@
+# Example Fly.io config (production ran on Fly.io; the app name here is a placeholder).
+# Secrets (DATABASE_URL, AUTH_SECRET, …) are NOT here — `fly secrets set`.
+app = 'salon-academy-demo'
+primary_region = 'fra'  # waw is deprecated on Fly; fra = same city as Neon
+
+[build]
+
+# Runs once per deploy in a temporary machine (same image + secrets) BEFORE new machines start.
+# Applies pending Drizzle migrations; a failure aborts the deploy and the old release keeps
+# running. Release v6 shipped against an empty DB because migrations were manual-only.
+# Programmatic migrator, not drizzle-kit (a devDependency, absent from the image). Idempotent:
+# shares "drizzle"."__drizzle_migrations" with `npm run db:migrate`.
+[deploy]
+  release_command = "node scripts/db_migrate.mjs"
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  # Sleeps when idle, wakes on the first request (~1–2 s). Set min_machines_running = 1 at launch.
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 0
+
+  # Liveness only: /api/health never touches the DB (see app/api/health/route.ts).
+  [[http_service.checks]]
+    grace_period = "10s"
+    interval = "30s"
+    method = "GET"
+    timeout = "5s"
+    path = "/api/health"
+
+[[vm]]
+  size = 'shared-cpu-1x'
+  memory = '512mb'

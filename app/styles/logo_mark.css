@@ -1,0 +1,13 @@
+/* Header logo without the circle (owner 31.10.2026, T-01).
+   LogoMark renders both: .logo_disc (black disc, for dark headers) and .logo_mark (transparent mark).
+   Default = disc (dark headers: skin_classic, cabinet/admin; academy pages are light since 31.10); the light Instagram-skin
+   header swaps to the mark (06.11: a light-ink copy for the dark salon header). Scope mirrors app/styles/skin_insta.css. */
+.logo_mark { display: none; flex: none; height: 44px; width: auto; }
+@media (min-width: 768px) { .logo_mark { height: 52px; } }
+
+/* 06.11 (Daryna 03.11: salon dark, academy light). Still no circle (owner 31.10): dark-ink mark on a light
+   header (academy, admin), light-ink mark on the dark salon header. */
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) .logo_disc { display: none; }
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) [data-theme='light'] .logo_mark:not(.logo_mark_light) { display: block; }
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) [data-theme='dark'] .logo_mark_light { display: block; }
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) [data-theme='light'] .logo_mark_light { display: none; }

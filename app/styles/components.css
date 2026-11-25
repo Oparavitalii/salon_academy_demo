@@ -1,0 +1,215 @@
+/* ============================================================
+   Studio Demo — component layer (Phase 7 · Ui-Kit, dark re-run 19.10.2026 · B-60)
+   Part A re-run 22.10.2026 (Phase 11): 7.0 §10 semantic swaps applied — pink text → --color-accent-text,
+   focus / indicators → --color-focus (Token_Usage_Check exit 0), `.band` text → --color-fg*, `.btn_ondark`
+   → ink of its scope, `.display` / `.display em` / `.price` / `.btn` pill per Styleguide.html 22.10
+   (canonical layer, lines 119–140), logo circles without colour literals. Both themes: tokens only.
+   Lifted VERBATIM from docs/7_Ui-Kit/Styleguide.html <style> lines 137–389 → CANONICAL COMPONENT
+   LAYER (indentation only), plus the base rules of its chrome (box-sizing · html/body · img).
+   One deviation: the price poster's `.dec_box` / `.dec_box_legend` selectors are renamed
+   `.price_group` / `.price_group_title` — 8.0 §6 retires those decor classes from the DOM.
+   Reads brand tokens only. Loads AFTER tokens.css + interactions.css, BEFORE layout.css.
+   ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; }
+html { background: var(--color-bg); }
+body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-family: var(--font-primary); line-height: var(--lh-body); font-synthesis: none; }
+img, svg { display: block; max-width: 100%; }
+
+/* ===== CANONICAL COMPONENT LAYER =================================
+   Source of truth for element looks (Phase 7). Standard class names,
+   underscore modifiers. Lift these blocks into the real build (Phase 11).
+   Reads brand tokens only. Dark-led: the page is near-black everywhere. ===== */
+.btn { font: inherit; font-weight: 600; font-size: var(--fs-md); border: 1px solid transparent; cursor: pointer;
+       padding: var(--space-3) var(--space-6); border-radius: var(--radius-full); line-height: 1; display: inline-flex; align-items: center; justify-content: center; gap: var(--space-3);
+       background: var(--color-accent); color: var(--color-accent-fg); text-decoration: none;
+       transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out); }
+.btn:hover { background: var(--color-accent-hover); }                                   /* .btn alone = primary: pink fill, dark label */
+.btn:focus-visible, .nav_link:focus-visible, .logo-circle:focus-visible, .tab:focus-visible, .chip_toggle:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; }
+.btn_outline   { background: transparent; color: var(--color-fg); border-color: var(--color-border-strong); }
+.btn_outline:hover { background: var(--color-fg); color: var(--color-bg); border-color: var(--color-fg); }
+.btn_ghost     { background: transparent; color: var(--color-fg-muted); padding-inline: var(--space-3); }
+.btn_ghost:hover { background: transparent; color: var(--color-accent-text); }
+.btn_ondark    { background: transparent; color: var(--color-fg); border-color: var(--color-fg); }   /* 7.0 §10: border = on-dark ink; read from the scope so a band on a light page stays legible */
+.btn_ondark:hover { background: var(--color-fg); color: var(--color-bg); border-color: var(--color-fg); }
+.btn_outline.hv-btn-invert, .btn_ondark.hv-btn-invert { border-color: var(--color-border-strong); }   /* the library invert draws a full-ink frame; the measured boundary is border-strong */
+.btn_outline.hv-btn-invert:hover, .btn_ondark.hv-btn-invert:hover { border-color: var(--color-fg); }
+.btn_sm { padding: var(--space-3) var(--space-4); font-size: var(--fs-sm); }
+.btn_block { width: 100%; justify-content: center; }
+.btn:disabled { background: var(--color-surface-2); color: var(--color-fg-muted); border-color: transparent; cursor: not-allowed; box-shadow: none; transform: none; }
+
+.field { display: flex; flex-direction: column; gap: var(--space-2); max-width: 320px; }
+.field label { font-size: var(--fs-sm); font-weight: 600; color: var(--color-fg); }
+.field input, .field select, .field textarea {
+  font: inherit; padding: var(--space-3) var(--space-3); border-radius: var(--radius-md); line-height: 1.3;
+  border: 1px solid var(--color-border-strong); background: var(--color-surface); color: var(--color-fg); }
+.field input::placeholder { color: var(--color-fg-muted); opacity: 1; }
+.field input:focus-visible, .field select:focus-visible, .field textarea:focus-visible {
+  outline: 2px solid var(--color-focus); outline-offset: 2px; border-color: var(--color-focus); }
+.field select { appearance: none; -webkit-appearance: none; padding-right: var(--space-8);
+  background-image: linear-gradient(45deg, transparent 50%, var(--color-fg-muted) 50%), linear-gradient(135deg, var(--color-fg-muted) 50%, transparent 50%);
+  background-position: calc(100% - 19px) 55%, calc(100% - 14px) 55%; background-size: 5px 5px, 5px 5px; background-repeat: no-repeat; }
+.field_hint { font-size: var(--fs-xs); color: var(--color-fg-muted); margin: 0; }
+.check { display: flex; gap: var(--space-3); align-items: flex-start; font-size: var(--fs-sm); color: var(--color-fg-dim); }
+.check input { width: 20px; height: 20px; margin: 1px 0 0; flex: none; accent-color: var(--color-accent); }
+
+.card { background: var(--color-surface); border: 1px solid var(--color-border);
+        border-radius: var(--radius-xl); padding: var(--space-6); box-shadow: none; min-width: 0; }   /* Styleguide 22.10: radius 28 */
+.card h3 { font-family: var(--font-primary); font-weight: 600; font-size: var(--fs-xl); line-height: 1.2; letter-spacing: 0; margin: 0 0 var(--space-2); }
+.card p { color: var(--color-fg-dim); margin: 0; font-size: var(--fs-md); }   /* body copy ≥ 16 px (4.2 NFR-07) */
+.card_media { padding: 0; overflow: hidden; }
+.card_media .card_body { padding: var(--space-4) var(--space-5) var(--space-5); }
+
+.nav { display: flex; gap: var(--space-5); align-items: center; padding: var(--space-3) var(--space-5);
+       border-bottom: 1px solid var(--color-border); background: color-mix(in srgb, var(--color-bg) 88%, transparent); backdrop-filter: blur(10px); }
+.nav_link { color: var(--color-fg-dim); text-decoration: none; font-weight: 600; font-size: var(--fs-sm); }
+.nav_link.is_active { color: var(--color-accent-text); }
+.nav_lang { display: inline-flex; gap: 2px; margin-left: var(--space-1); }
+.nav_lang a { font-size: var(--fs-xs); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--color-fg-muted); text-decoration: none; padding: var(--space-1) var(--space-2); border-radius: var(--radius-sm); }
+.nav_lang a.is_active { color: var(--color-fg); background: var(--color-surface); }
+
+.eyebrow { font-family: var(--font-primary); font-weight: 600; text-transform: uppercase; letter-spacing: var(--font-ls-eyebrow);
+           font-size: var(--fs-xs); color: var(--color-accent-text); margin: 0 0 var(--space-3); }
+.chip { display: inline-flex; align-items: center; gap: var(--space-2); font-size: var(--fs-xs); font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+        border: 1px solid var(--color-border-strong); border-radius: var(--radius-full); padding: var(--space-2) var(--space-3); color: var(--color-fg-dim); background: transparent; font-family: inherit; }
+.chip_toggle { cursor: pointer; transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out); }
+.chip_toggle:hover { border-color: var(--color-focus); color: var(--color-accent-text); }
+.chip_toggle[aria-pressed="true"] { background: var(--color-accent); border-color: var(--color-focus); color: var(--color-accent-fg); }
+/* «Скоро» marker (a course whose lessons are not out yet, owner 27.10) — the filled accent chip */
+.chip_pre { background: var(--color-accent); border-color: var(--color-accent); color: var(--color-accent-fg); }
+
+/* display type — H1–H3 and prices only; card titles stay in the body face */
+/* Layout_Profile 23.10: heads follow Oksana's wireframe — the text face in regular weight, caps, large; the wide
+   display face (Unbounded) is kept for short text only: the home wordmark, stat numerals, the brand line. */
+.display { font-family: var(--font-primary); font-weight: 400; text-transform: uppercase; line-height: var(--lh-display); letter-spacing: var(--font-ls-display); margin: 0; overflow-wrap: anywhere; hyphens: manual; text-wrap: balance; }   /* T-12: no automatic hyphen mid-word («ПРЕМІАЛЬ-НОЇ»); balanced lines. Phone: a word longer than the line (RU «ПРОФЕССИОНАЛЬНОЕ») may break so the page never scrolls sideways */
+@media (min-width: 768px) { .display { overflow-wrap: break-word; } }
+.display em { font-family: var(--font-script); font-style: normal; font-weight: 400; font-size-adjust: 0.5; line-height: 1; text-transform: none; letter-spacing: 0; color: var(--color-accent-text); }   /* the one script word (7.0 §2; Great Vibes 27.10) — font-size-adjust lifts its small x-height without a new size on the type scale (Layout H1 / H2) */
+.display_hero { font-family: var(--font-secondary); font-size: var(--fs-hero); font-weight: var(--font-wt-hero); color: var(--color-accent-text); }
+.display_hero em { color: var(--color-fg); }
+.display_xl { font-size: var(--fs-3xl); }
+.display_lg { font-size: var(--fs-3xl); }
+/* h3-level heads: wireframe card titles — bold, sentence case, never caps */
+.display_md { font-size: var(--fs-xl); font-weight: 600; text-transform: none; letter-spacing: 0; line-height: 1.2; }
+.price { font-family: var(--font-accent); font-style: italic; font-weight: 600; font-size: var(--fs-lg);
+         font-variant-numeric: var(--font-numeric-display); white-space: nowrap; }
+
+/* SECTION STEPS — a dark-led site separates sections by surface steps, never by cream.
+   deep (.band) < page (.sec_page) < surface (.sec_surface). Two neighbours of the same step get a hairline. */
+.sec_page { background: var(--color-bg); }
+.sec_surface { background: var(--color-surface); }
+.sec_page + .sec_page, .sec_surface + .sec_surface { border-top: 1px solid var(--color-border); }
+
+/* the deep band — hero · Program · CTA · footer. Band geometry (Band_Geometry.md): full bleed; bg on its own layer; content capped. */
+.band { position: relative; isolation: isolate; overflow: hidden; width: 100%;
+        min-height: clamp(400px, 50vh, 580px); display: flex; align-items: center;
+        background-color: var(--color-bg-dark); color: var(--color-fg); }
+.band__inner { position: relative; z-index: 2; width: 100%; max-width: var(--content-max); margin-inline: auto; padding: var(--space-9) var(--gutter); }
+.band p, .band .lede { color: var(--color-fg-dim); max-width: 56ch; }
+.band .meta { color: var(--color-fg-muted); font-size: var(--fs-sm); }
+.band_footer { min-height: 0; align-items: flex-start; border-top: 1px solid var(--color-border); }
+
+/* logo circles (header, footer, cabinet) — the real logo files (2_Brif/References/Logo/) */
+.logo-circle { --size: 120px; width: var(--size); height: var(--size); border-radius: var(--radius-full); display: inline-flex; align-items: center; justify-content: center;
+               overflow: hidden; text-decoration: none; cursor: pointer; border: 1px solid transparent; flex: none; }   /* flex: none — never squeezed into an oval by a flex row (footer, T-12) */
+.logo-circle img { width: 100%; height: 100%; object-fit: cover; }
+.logo-circle_black { background: transparent; border-color: var(--color-on-dark-line); }   /* the file is the black disc; ring 4.93 on ink (7.0 §3) */
+.logo-circle_white { background: transparent; border-color: var(--color-border-strong); }   /* academy logo, ring 4.28 on paper (7.0 §3) */
+.logo-circle_white img { transform: scale(1.14); }               /* the file carries its own thin circle — crop past it */
+.logo-circle_lg { --size: 72px; }   /* footer logo (7.0 §3) */
+.logo-circle_sm { --size: 40px; }
+
+/* ServiceCatalog — tabs as a poster index */
+.tabs { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-7); border-bottom: 1px solid var(--color-border); margin-bottom: var(--space-7); }
+.tab { font: 600 var(--fs-sm)/1 var(--font-primary); letter-spacing: .14em; text-transform: uppercase; color: var(--color-fg-muted);
+       background: none; border: 0; padding: var(--space-3) 0; margin-bottom: -1px; border-bottom: 2px solid transparent; cursor: pointer;
+       transition: color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out); }
+.tab:hover { color: var(--color-fg); }
+.tab[aria-selected="true"] { color: var(--color-accent-text); border-bottom-color: var(--color-focus); }
+
+/* TOUCH FLOOR — NFR-01 / D-02: every interactive element has a ≥ 40 px hit area at ≤ 768 px.
+   Controls grow (min-height); text links inside running copy grow their hit box with padding and give it back
+   with a negative margin, so the line height and the look do not change. Measured: Touch_Targets_390.txt. */
+@media (max-width: 768px) {
+  .btn, .btn_sm, .chip_toggle, .tab { min-height: 40px; }
+  .nav_link, .nav_lang a { display: inline-flex; align-items: center; justify-content: center; min-height: 40px; min-width: 40px; }
+  .check { min-height: 40px; align-items: center; }
+  .check input { margin-top: 0; }
+  .row > a:not(.logo-circle):not(.btn), .row > button:not(.btn) { display: inline-flex; align-items: center; min-height: 40px; }
+  .note a, .meta a {
+    display: inline-block; padding-block: var(--space-3); margin-block: -11px; }
+  h2 .src { display: inline-flex; align-items: center; min-height: 40px; margin-block: -11px; }
+}
+
+/* course card title — the cabinet's purchased grid (app/[locale]/cabinet/page.tsx) */
+.course-card_title { font-family: var(--font-primary); font-weight: 600; font-size: var(--fs-xl); line-height: 1.2; letter-spacing: 0; margin: 0; }
+
+/* ===== CANONICAL LAYER 22.10 — part B lift (Styleguide.html <style> lines 119–252) =====================
+   The blocks part A had not lifted yet, verbatim in values, tokens only, both themes:
+   card_media inner photo · card_pink («1/» tile) · cards · stats (container-sized numerals) · review +
+   stars + avatar + arrows + dots · faq (<details>, «+» → «×») · row_price · callout · band_deep ·
+   theme-edge. The 15.10 / 19.10 look of the same names (light avatar pill, quote card, old faq rows,
+   bordered stats grid) is deleted in layout.css / components.css, so each name has one look. */
+.card_media { padding: 0; overflow: hidden; display: flex; flex-direction: column; }
+.card_media .card_img { display: block; aspect-ratio: 4 / 3; border-radius: calc(var(--radius-xl) - 8px); margin: var(--space-2) var(--space-2) 0; overflow: hidden; }
+.card_media .card_img img { width: 100%; height: 100%; object-fit: cover; }
+.card_media .card_body { padding: var(--space-4) var(--space-5) var(--space-5); display: grid; gap: var(--space-2); align-content: start; }
+.card_pink { background: var(--color-accent); border-color: transparent; color: var(--color-accent-fg); }
+.card_pink p, .card_pink h3 { color: var(--color-accent-fg); }
+.card_num { font: var(--font-wt-display) var(--fs-2xl)/1 var(--font-secondary); margin: 0 0 var(--space-4); color: var(--color-accent-text); }
+.card_pink .card_num { color: var(--color-accent-fg); }
+.sec_surface .card, .card .card { background: var(--color-bg); }
+.sec_surface .card_pink { background: var(--color-accent); }
+.cards { display: grid; gap: var(--space-3); grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); }
+
+.stats_wrap { container-type: inline-size; }
+.stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@container (min-width: 860px) { .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); } }   /* 4 tiles (Dana 16.11: + «100000+»): 2 × 2, four across only where each card still holds «100000+» near full size — `/` from ~940 px; `/about` (photo beside) stays 2 × 2 */
+.stat { border-left: 1px solid var(--color-border-strong); border-top: 1px solid var(--color-border-strong); padding: var(--space-4) var(--space-3) var(--space-3); min-width: 0; }
+.stat_num { font: var(--font-wt-hero) var(--fs-3xl)/1 var(--font-secondary); font-variant-numeric: var(--font-numeric-display); color: var(--color-fg); margin: 0 0 var(--space-3); }   /* wireframe §4: big thin numerals; the accent stays on actions (budget ≤ 3 per screen) */
+.stat_label.label { font-size: var(--fs-sm); font-weight: 400; letter-spacing: 0; text-transform: none; color: var(--color-fg-muted); margin: 0; }   /* wireframe §4: small lower-case caption under the numeral */
+
+.review { position: relative; display: grid; gap: var(--space-3); align-content: start; }
+.review_mark { font: italic 600 4rem/0.6 var(--font-accent); color: var(--color-accent-text); margin: var(--space-2) 0 0; }
+.stars { color: var(--color-accent-text); letter-spacing: .12em; font-size: var(--fs-lg); margin: 0; }
+.review_quote { font: italic 500 var(--fs-lg)/1.55 var(--font-accent); color: var(--color-fg); margin: 0; }
+.review_who { display: flex; gap: var(--space-3); align-items: center; }
+.avatar { width: 48px; height: 48px; border-radius: 50%; overflow: hidden; flex: none; }
+.review_name { font-weight: 600; margin: 0; display: block; }
+.review_src { font-size: var(--fs-sm); color: var(--color-fg-muted); margin: 0; display: block; }
+.dots { display: flex; gap: var(--space-2); align-items: center; }
+.dots i { width: 8px; height: 8px; border-radius: 50%; background: var(--color-border-strong); }
+.dots i.is_active { background: var(--color-accent-text); width: 24px; border-radius: 4px; }
+.arrow { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--color-border-strong); background: transparent; color: var(--color-fg); font: 600 1.125rem/1 var(--font-primary); cursor: pointer; }
+.arrow:hover { border-color: var(--color-focus); color: var(--color-accent-text); }
+.arrow:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; }
+
+.faq { border-top: 1px solid var(--color-border-strong); }
+.faq summary { list-style: none; cursor: pointer; display: flex; gap: var(--space-4); justify-content: space-between; align-items: center; min-height: 56px; padding: var(--space-3) 0; font-weight: 600; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: "+"; flex: none; font: 300 1.75rem/1 var(--font-secondary); color: var(--color-accent-text); transition: transform var(--dur-fast) var(--ease-out); }
+.faq[open] summary::after { transform: rotate(45deg); }
+.faq p { color: var(--color-fg-dim); margin: 0 0 var(--space-4); max-width: 64ch; }
+.faq summary:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; }
+
+.row_price { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--space-2) var(--space-4); align-items: center; padding: var(--space-4) 0; border-top: 1px solid var(--color-border); }
+.row_price .btn { grid-column: 1 / -1; justify-self: start; }
+@media (min-width: 640px) { .row_price { grid-template-columns: minmax(0, 1fr) auto auto; } .row_price .btn { grid-column: auto; } }
+.row_name { font-weight: 600; margin: 0; }
+.row_meta { font-size: var(--fs-sm); color: var(--color-fg-muted); margin: 2px 0 0; }
+
+.callout { background: var(--color-surface); border-radius: var(--radius-lg); padding: var(--space-4) var(--space-5); }
+.callout b { display: block; color: var(--color-accent-text); margin-bottom: var(--space-2); }
+.band_deep { background: var(--color-accent-deep); color: var(--color-on-dark); border-radius: var(--radius-lg); padding: var(--space-5); }
+.band_deep p { color: var(--color-on-dark-dim); margin: 0; }
+.band_deep .eyebrow, .band_deep em { color: var(--color-accent-on-dark); }
+.theme-edge { margin-top: calc(var(--radius-edge) * -1); position: relative; z-index: 1; }
+
+/* ReadMore — full review / story text clamped to N lines + «Читати повністю» (owner 28.10) */
+.read_more { display: grid; gap: var(--space-2); justify-items: start; }
+.read_more_text { display: grid; gap: .6em; }
+.read_more_text p { margin: 0; }
+.read_more_text[data-clamp='true'][data-open='false'] { max-height: calc(var(--rm-lines, 5) * 1.6em); overflow: hidden; }
+.read_more_text[data-overflow='true'][data-open='false'] { -webkit-mask-image: linear-gradient(180deg, #000 60%, transparent); mask-image: linear-gradient(180deg, #000 60%, transparent); }
+.read_more_btn { background: none; border: 0; padding: var(--space-1) 0; font: 600 var(--fs-sm)/1.2 var(--font-primary); color: var(--color-accent-text); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; min-height: 44px; }
+.review:not(.is_in_view) .read_more_btn { visibility: hidden; }   /* off-screen slides: no hidden focus stop (Release floor F6) */
+.read_more_btn:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; }

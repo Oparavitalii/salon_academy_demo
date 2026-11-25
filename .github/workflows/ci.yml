@@ -1,0 +1,117 @@
+name: CI
+
+# Every push to main and every pull request. No secrets anywhere: the unit / integration tests run
+# against an in-process Postgres (PGlite) built from the real migrations, the build falls back to
+# static content without DATABASE_URL, and the end-to-end job runs the public demo (DEMO_MODE=1:
+# embedded Postgres with fictional data, simulated checkout posting to the real webhook route).
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NEXT_TELEMETRY_DISABLED: '1'
+
+jobs:
+  typecheck:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run typecheck
+
+  lint:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run lint
+
+  unit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm test
+
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run build
+
+  e2e:
+    runs-on: ubuntu-24.04
+    needs: [typecheck]
+    timeout-minutes: 30
+    env:
+      E2E_BASE_URL: http://localhost:3100
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+
+      - name: Cache Playwright browsers
+        id: pw-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
+
+      - name: Install Playwright browsers (chromium only)
+        if: steps.pw-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
+
+      - name: Install Playwright OS deps (cache hit path)
+        if: steps.pw-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
+
+      - name: Build the public demo
+        run: npm run demo:build
+
+      - name: Start the demo server (background)
+        run: |
+          nohup npm run demo:start -- -p 3100 > /tmp/server.log 2>&1 &
+          for i in $(seq 1 60); do curl -sf http://localhost:3100/uk > /dev/null && exit 0; sleep 2; done
+          cat /tmp/server.log; exit 1
+
+      # Chromium projects; the `iphone` (WebKit) project runs the phone specs locally.
+      - name: Playwright
+        run: |
+          npx playwright test --project=setup --project=anonymous \
+            --project=anonymous-phone --project=student --project=admin
+
+      - name: Upload Playwright report and server log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-report
+          path: |
+            playwright-report
+            /tmp/server.log
+          retention-days: 7

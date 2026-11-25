@@ -1,0 +1,134 @@
+/* Phone bottom bar (T-08) — components/BottomBar/BottomBar.tsx.
+   Salon half black with pink, academy half light (06.11 — Daryna 03.11: salon dark, academy light,
+   no purple), two equal halves (16.11 — Daryna: the DEMO badge between them was a second logo,
+   «візуальне перевантаження»; the notch went with it). Fixed colours on purpose: the theme
+   tokens flip dark/light per route, the bar must read «salon | academy» on every page.
+   Phones only; from 768 px it is gone. */
+
+.bottom_bar { display: none; }
+
+@media (max-width: 767.98px) {
+  :root {
+    --bottom-bar-h: calc(64px + env(safe-area-inset-bottom, 0px));
+    --bb-salon-bg: #161718;   /* deep grey (Daryna 21.11: the black «Салон» half «менш насиченим»), was #030303 */
+    --bb-salon-ink: #fbfbfb;
+    --bb-salon-on: #f898d0;
+    --bb-academy-bg: #fbfbfb;
+    --bb-academy-ink: #030303;
+    --bb-academy-on: #b8126e;
+    --bb-accent: #f898d0;
+  }
+
+  /* Content never hides under the bar (only when the bar is mounted). */
+  body:has(.bottom_bar) { padding-bottom: max(var(--bottom-bar-h), var(--cookie-banner-h, 0px)); }
+
+  .bottom_bar {
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: 990; /* under the lang pill (999) and the cookie layer (1000) */
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: stretch;
+    height: var(--bottom-bar-h);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    font-family: var(--font-primary);
+    filter: drop-shadow(0 -1px 0 #f898d0) drop-shadow(0 -4px 14px rgb(0 0 0 / 0.28));
+  }
+
+  /* One colour for the whole bar (owner 23.11: «одного кольору — якщо курси світлий, інше темний»): light on
+     the course pages, deep grey everywhere else; was a hard 50/50 split. Rounded top corners. */
+  .bottom_bar_bg {
+    position: absolute;
+    inset: 0;
+    border-radius: 22px 22px 0 0;
+    background: var(--bb-salon-bg);
+  }
+  .bottom_bar--academy .bottom_bar_bg { background: var(--bb-academy-bg); }
+  .bottom_bar--salon .bottom_bar_tab { color: var(--bb-salon-ink); }
+  .bottom_bar--academy .bottom_bar_tab { color: var(--bb-academy-ink); }
+  /* a hairline between the two tabs, now that the colours no longer split them */
+  .bottom_bar_tab--academy::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 14px;
+    bottom: 14px;
+    width: 1px;
+    background: currentColor;
+    opacity: 0.18;
+  }
+
+  .bottom_bar_tab {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    min-height: 44px;
+    padding: 8px 6px 6px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .bottom_bar_tab--salon { color: var(--bb-salon-ink); border-top-left-radius: 22px; }
+  .bottom_bar_tab--academy { color: var(--bb-academy-ink); border-top-right-radius: 22px; }
+
+  .bottom_bar_icon {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* Current section: a short accent bar above the icon. */
+  .bottom_bar_tab[aria-current='page']::before {
+    content: '';
+    position: absolute;
+    top: 5px;
+    left: 50%;
+    width: 22px;
+    height: 3px;
+    border-radius: 3px;
+    background: var(--bb-salon-on);
+    transform: translateX(-50%);
+  }
+  .bottom_bar--academy .bottom_bar_tab[aria-current='page']::before { background: var(--bb-academy-on); }
+  .bottom_bar--salon .bottom_bar_tab[aria-current='page'] { color: var(--bb-salon-on); }
+  .bottom_bar--academy .bottom_bar_tab[aria-current='page'] { color: var(--bb-academy-on); }
+
+  .bottom_bar_tab:focus-visible {
+    outline: 2px solid var(--bb-accent);
+    outline-offset: -4px;
+  }
+  .bottom_bar--academy .bottom_bar_tab:focus-visible { outline-color: var(--bb-academy-on); }
+
+  /* Hidden while the menu / gallery is open, and while the cookie banner is up
+     (the banner covers the same strip; the bar returns after consent). Fixed → no layout jump. */
+  .bottom_bar.is_hidden,
+  body:has(.cookie_banner) .bottom_bar {
+    transform: translateY(calc(100% + 8px));
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  /* The floating language pill rides above the bar while the bar is shown. */
+  body:has(.bottom_bar:not(.is_hidden)):not(:has(.cookie_banner)) .lang_pill {
+    bottom: calc(var(--bottom-bar-h) + 14px);
+  }
+}
+
+@media (max-width: 767.98px) and (prefers-reduced-motion: no-preference) {
+  .bottom_bar { transition: transform 0.28s ease, visibility 0s linear 0s; }
+  .bottom_bar.is_hidden,
+  body:has(.cookie_banner) .bottom_bar { transition: transform 0.28s ease, visibility 0s linear 0.28s; }
+  .bottom_bar_tab .bottom_bar_icon { transition: transform 0.15s ease; }
+  .bottom_bar_tab:active .bottom_bar_icon { transform: scale(0.88); }
+}
+
+/* An open gallery viewer covers the whole screen — the bar must not show through it. */
+body:has(.lb.is-open, .ix-flip__stage.is-open) .bottom_bar { display: none; }

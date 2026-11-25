@@ -1,0 +1,192 @@
+/* ============================================================
+   Studio Demo — interactions layer (Phase 7 · Ui-Kit · step 5b)
+   ------------------------------------------------------------
+   How sections answer the pointer and the scroll. Not decor (Phase 8),
+   not one element's hover (.hv-* in the library subset).
+   Boldness: MODERATE (re-run 22.10.2026, moodboard 01) → budget ≤ 3 per site,
+   at most one on load. Used: 3 of 3, none on load. Map: 7.0_Ui-Kit.md → 5b.
+   Both themes: every rule reads --ix-* / semantic tokens, which Tokens.css re-declares per scope.
+     1 .ix-edge       / AcademyTeaser (light) — rounded top opens as the light section enters   (CSS only, SPEC)
+     2 .ix-dim        Program rows (light course page) — siblings step back                    (CSS only, LIVE)
+     3 .ix-fill       /about FounderStory quote (dark) — words light up with the scroll        (JS, LIVE)
+   RESERVE (kept below, not counted): .ix-flip (Portfolio grid → slideshow) · .ix-mask (needs
+   same-angle before/after pairs, Q-14) · .ix-coverflow (needs ≥ 4 stories; Testimonials is one card).
+   RETIRED 19.10: .ix-gallery (SalonTeaser expanding cards) — owner: «шаблонність».
+
+   LOAD ORDER: library subset → Tokens.css → THIS file → Decorations.css.
+   Reads the --ix-* hooks wired in Tokens.css; no hex below.
+
+   Ledger:
+     Snapshot 19.10.2026 of C:\Users\opara\Desktop\Knowledge\Skills\Web_Interactions\library.css
+       Verbatim:  .ix-dim (structure) · .ix-fill word split · state classes is-on / html.ix-js
+       Retuned:   .ix-dim siblings — library .3 + scale .97 → var(--ix-dim-rest) .8, no scale
+                  (22.10 light course page: muted × .8 on paper = 4.85, fg × .8 = 11.92; library .3 fails)
+                  .ix-fill rest — library .16 → var(--ix-fill-rest) .5, unlit <em> = ink
+                  (22.10 dark /about: ink × .5 on ink page = 5.15, large text)
+     Authored here (NOT in the catalog — candidates for Web_Interactions), from
+     3_Analize/References/Unique_Research/Galleries/Report.md:
+       .ix-flip      ← №1 Grid→Slideshow (tympanus GridToSlider, MIT) + №3 Flip-filter (GSAP Flip demo);
+                       re-written as ~3 KB vanilla FLIP on the Web Animations API — no GSAP (its licence is not MIT)
+       .ix-mask      ← №2 Double Image Clip (tympanus DoubleImageHoverEffects, MIT) — idea only, CSS clip-path
+       .ix-coverflow ← №5 Cover Flow CSS (scroll-driven-animations.style, Bramus, MIT) — keyframes re-written
+       .ix-edge      ← framer.com/marketplace/components/radius-on-scroll (3_Analize.md → Moodboard) + wireframe §7 rounded top; CSS view() timeline (22.10)
+     Not pasted: gallery (retired) · flip3d · drift · spy · magnet · hotspots · rotator · countdown · .ix-sr.
+   JS off: nothing is hidden — every rule that changes a rest state is scoped to html.ix-js
+   or to a feature query; the base state is the full, static content.
+   ============================================================ */
+
+/* ---- 1 · .ix-flip — /salon Portfolio · /courses/[slug] CourseGallery ------------------------
+   Base (JS off): a plain grid of links to the full photo; the filter bar is not shown (it needs JS).
+   JS: chips filter the grid with a FLIP shuffle; a tile opens a full slide that flies out of the
+   grid (FLIP), Esc / ← → / swipe, focus returns to the tile. Reduced motion: no flight, crossfade. */
+.ix-flip__filters { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: 0 0 var(--space-5); }
+html:not(.ix-js) .ix-flip__filters { display: none; }
+.ix-flip__grid {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; gap: var(--space-3); grid-template-columns: repeat(auto-fill, minmax(min(220px, 44vw), 1fr));
+}
+.ix-flip__item[hidden] { display: none; }
+.ix-flip__link {
+  display: block; position: relative; overflow: hidden; border-radius: var(--ix-radius);
+  aspect-ratio: 4 / 5; background: var(--color-surface-2); outline-offset: 3px;
+}
+.ix-flip__link:focus-visible { outline: 2px solid var(--ix-accent); }
+.ix-flip__link img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.ix-flip__item.is-flying .ix-flip__link img { visibility: hidden; }   /* the clone flies; the tile keeps its slot */
+.ix-flip__live { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.ix-flip__stage {
+  position: fixed; inset: 0; z-index: 90;
+  display: grid; grid-template-rows: minmax(0, 1fr) auto; place-items: center;
+  padding: clamp(var(--space-4), 4vw, var(--space-9));
+  background: var(--ix-stage); color: var(--ix-ink);
+  opacity: 0; transition: opacity calc(var(--ix-dur) * .6) var(--ix-ease);
+}
+.ix-flip__stage[hidden] { display: none; }
+.ix-flip__stage.is-open { opacity: 1; }
+.ix-flip__slide { position: relative; margin: 0; display: grid; place-items: center; width: 100%; height: 100%; min-height: 0; }
+.ix-flip__slide img { display: block; width: auto; height: auto; max-width: min(100%, 960px); max-height: calc(100dvh - 150px); object-fit: contain; border-radius: var(--ix-radius); will-change: transform; }
+.ix-flip__bar { display: flex; align-items: center; gap: var(--space-4); width: min(100%, 720px); padding-top: var(--space-4); }
+.ix-flip__cap { flex: 1; margin: 0; font: 400 var(--fs-sm)/1.4 var(--ix-font); color: var(--ix-ink); }
+.ix-flip__count { font: 600 var(--fs-xs)/1 var(--ix-font); letter-spacing: .14em; color: var(--color-fg-muted); font-variant-numeric: tabular-nums; }
+.ix-flip__btn {
+  flex: none; width: 44px; height: 44px; display: inline-grid; place-items: center;
+  border: 1px solid var(--color-border-strong); border-radius: var(--radius-full);
+  background: transparent; color: var(--ix-ink); font: 600 1.1rem/1 var(--ix-font); cursor: pointer;
+  transition: border-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+.ix-flip__btn:hover, .ix-flip__btn:focus-visible { border-color: var(--ix-accent); color: var(--ix-accent); }
+.ix-flip__btn:focus-visible { outline: 2px solid var(--ix-accent); outline-offset: 3px; }
+.ix-flip__close { position: absolute; top: clamp(12px, 3vw, 28px); right: clamp(12px, 3vw, 28px); }
+
+/* ---- 2 · .ix-mask — Portfolio before/after (a tile with a pair) — CSS only ------------------
+   Base (JS off, reduced motion, touch without scroll timelines): the two frames side by side.
+   Desktop hover / keyboard focus: one frame, "after" wipes in on the brand diagonal (118°).
+   Phone with view timelines: the wipe follows the tile through the viewport — the page scroll
+   is never taken over. Labels sit on a ink-80 % plate (on-dark 11.78). Frames must share one angle. */
+.ix-mask { position: relative; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-1);
+  border-radius: var(--ix-radius); overflow: hidden; background: var(--color-surface-2); outline-offset: 3px; }
+.ix-mask:focus-visible { outline: 2px solid var(--ix-accent); }
+.ix-mask__img { display: block; width: 100%; height: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
+.ix-mask__tag {
+  position: absolute; top: 10px; z-index: 2; padding: var(--space-1) var(--space-2); border-radius: var(--radius-full);
+  background: rgb(var(--ix-paper-rgb) / .8); color: var(--ix-ink);
+  font: 600 var(--fs-xs)/1 var(--ix-font); letter-spacing: .14em; text-transform: uppercase;
+}
+.ix-mask__tag_before { left: 10px; }
+.ix-mask__tag_after { right: 10px; }
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .ix-mask { grid-template-columns: 1fr; gap: 0; }
+  .ix-mask__img { grid-area: 1 / 1; }
+  .ix-mask__img_after {
+    clip-path: polygon(0 0, 0 0, -30% 100%, 0 100%);
+    transition: clip-path var(--ix-dur) var(--ix-ease);
+  }
+  .ix-mask:is(:hover, :focus-within) .ix-mask__img_after { clip-path: polygon(0 0, 130% 0, 100% 100%, 0 100%); }
+  .ix-mask__tag_after { left: 10px; right: auto; opacity: 0; transition: opacity calc(var(--ix-dur) * .5) var(--ix-ease); }
+  .ix-mask:is(:hover, :focus-within) .ix-mask__tag_after { opacity: 1; }
+  .ix-mask:is(:hover, :focus-within) .ix-mask__tag_before { opacity: 0; }
+  .ix-mask__tag_before { transition: opacity calc(var(--ix-dur) * .5) var(--ix-ease); }
+}
+@supports (animation-timeline: view()) {
+  @media (hover: none) and (prefers-reduced-motion: no-preference) {
+    .ix-mask { grid-template-columns: 1fr; gap: 0; }
+    .ix-mask__img { grid-area: 1 / 1; }
+    .ix-mask__img_after {
+      animation: ix-mask-wipe linear both;
+      animation-timeline: view(); animation-range: entry 70% cover 55%;
+    }
+    .ix-mask__tag_before { left: 10px; }
+    .ix-mask__tag_after { right: 10px; }
+  }
+}
+@keyframes ix-mask-wipe {
+  from { clip-path: polygon(0 0, 0 0, -30% 100%, 0 100%); }
+  to   { clip-path: polygon(0 0, 130% 0, 100% 100%, 0 100%); }
+}
+
+/* ---- 3 · .ix-coverflow — Testimonials track (/ · /salon) · SuccessStories (≥ 4 stories) ------
+   Base (Firefox today, reduced motion, JS off): a flat scroll-snap strip — swipe, trackpad,
+   keyboard (the track is focusable). With scroll timelines: each card turns as it crosses the
+   track, the centred one is flat and full size. No opacity drop — every card's text stays at its
+   measured contrast; no JS; the scroll is the user's own. */
+.ix-coverflow {
+  display: flex; gap: clamp(var(--space-2), 2vw, var(--space-5)); overflow-x: auto; overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory; scrollbar-width: none;
+  padding: var(--space-3) max(var(--gutter), calc(50% - 180px)); outline-offset: 4px;
+}
+.ix-coverflow::-webkit-scrollbar { display: none; }
+.ix-coverflow:focus-visible { outline: 2px solid var(--ix-accent); }
+.ix-coverflow__item { flex: 0 0 min(80%, 360px); scroll-snap-align: center; }
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .ix-coverflow__item {
+      transform-origin: center; animation: ix-cover linear both;
+      animation-timeline: view(inline); animation-range: cover 0% cover 100%;
+    }
+  }
+}
+@keyframes ix-cover {
+  0%   { transform: perspective(60em) rotateY(var(--ix-cover-tilt)) scale(.86); }
+  38%, 62% { transform: perspective(60em) rotateY(0) scale(1); }
+  100% { transform: perspective(60em) rotateY(calc(var(--ix-cover-tilt) * -1)) scale(.86); }
+}
+
+/* ---- 4 · .ix-dim — /courses/[slug] · Program: 16 rows on the light page (CSS only) ---- */
+.ix-dim__item { transition: opacity .4s ease; }
+@media (hover: hover) {
+  .ix-dim:has(.ix-dim__item:hover) .ix-dim__item:not(:hover) { opacity: var(--ix-dim-rest); }   /* RETUNED .3 + scale → .8 */
+}
+.ix-dim:has(.ix-dim__item:focus-visible) .ix-dim__item:not(:focus-within) { opacity: var(--ix-dim-rest); }
+
+/* ---- 5 · .ix-fill — /about · FounderStory quote: words light up with the scroll ---- */
+.ix-fill em { font-style: italic; color: var(--ix-accent); }
+html.ix-js .ix-fill__w { opacity: var(--ix-fill-rest); transition: opacity .3s linear; }           /* RETUNED .16 → .5 */
+html.ix-js .ix-fill em .ix-fill__w:not(.is-on) { color: var(--ix-ink); }                           /* RETUNED: unlit accent word = ink */
+html.ix-js .ix-fill__w.is-on { opacity: 1; }
+
+/* ---- 6 · .ix-edge — / AcademyTeaser · SuccessStories: the theme switch dark → light (CSS only) ----
+   Base (JS off, reduced motion, Firefox today): a static rounded top (wireframe §7, §8).
+   With view timelines: the light section enters 4 % narrower and opens to full width as its
+   top crosses the lower half of the viewport. Only clip-path; text inside is never covered
+   (4 % of 390 px = 16 px = the gutter). The page scroll is the user's own. */
+.ix-edge { border-radius: var(--radius-edge) var(--radius-edge) 0 0; }
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .ix-edge { animation: ix-edge linear both; animation-timeline: view(); animation-range: entry 0% entry 70%; }
+  }
+}
+@keyframes ix-edge {
+  from { clip-path: inset(0 4% 0 4% round var(--radius-edge) var(--radius-edge) 0 0); }
+  to   { clip-path: inset(0 0 0 0 round var(--radius-edge) var(--radius-edge) 0 0); }
+}
+
+/* ---- Reduced motion — last on purpose: nothing moves, everything is visible in its final state ---- */
+@media (prefers-reduced-motion: reduce) {
+  .ix-flip__stage, .ix-mask__img, .ix-mask__tag, .ix-dim__item, html.ix-js .ix-fill__w { transition: none; }
+  .ix-coverflow__item, .ix-mask__img_after { animation: none; transform: none; }
+  .ix-edge { animation: none; clip-path: none; }
+  html.ix-js .ix-fill__w { opacity: 1; }
+  html.ix-js .ix-fill em .ix-fill__w:not(.is-on) { color: var(--ix-accent); }
+}

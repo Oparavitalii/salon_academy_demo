@@ -1,0 +1,64 @@
+/* Reviews slider — touch fix + counter (T-03, 31.10.2026). Loaded after pages.css / components.css.
+   R-03: the track scrolls only sideways, one card per swipe, never traps the vertical page scroll.
+   R-04: «1 / 12» counter + thin progress line between the arrows, in place of 12 dots. */
+
+.review_slider { min-width: 0; max-width: 100%; }
+
+.review_track {
+  max-width: 100%;
+  overflow-x: auto;                 /* sideways scroll only… */
+  overflow-y: hidden;               /* …the strip itself never scrolls vertically */
+  overscroll-behavior-x: contain;   /* a swipe past the last card does not trigger browser back / page sideways */
+  overscroll-behavior-y: auto;      /* vertical swipes chain straight to the page */
+  scroll-snap-type: x mandatory;    /* always rests on a card edge */
+  touch-action: pan-x pan-y;        /* browser keeps both pans native; no pinch-zoom capture on the strip */
+  -webkit-overflow-scrolling: touch;
+}
+
+.review_track > .review {
+  flex: 0 0 100%;
+  min-width: 0;
+  max-width: 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;         /* a fast flick moves exactly one card */
+  height: auto;
+  max-height: none;
+  overflow: visible;                /* no inner scroll box inside a card — ReadMore folds long text */
+  overflow-wrap: anywhere;          /* long words / links never widen the card past the viewport */
+}
+
+/* Counter between the arrows: one row at any width. */
+.review_nav { flex-wrap: nowrap; }
+.review_nav .arrow { flex: 0 0 auto; }
+.review_counter {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: grid;
+  justify-items: center;
+  gap: var(--space-2);
+}
+.review_count {
+  margin: 0;
+  font: 600 var(--fs-sm)/1.2 var(--font-primary);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .04em;
+  color: var(--color-fg);
+  white-space: nowrap;
+}
+.review_progress {
+  display: block;
+  width: min(100%, 160px);
+  height: 2px;
+  border-radius: 2px;
+  background: var(--color-border);
+  overflow: hidden;
+}
+.review_progress_bar {
+  display: block;
+  height: 100%;
+  background: var(--color-accent-text);
+  transition: width var(--dur-fast, .2s) var(--ease-out, ease-out);
+}
+@media (prefers-reduced-motion: reduce) {
+  .review_progress_bar { transition: none; }
+}

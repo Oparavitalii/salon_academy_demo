@@ -1,0 +1,117 @@
+/* Oksana's design recommendations 16.11.2026 (Правки.pdf, B-119) — Studio_Salon. */
+/* Loads after pages.css / map.css / components.css. Every rule is scoped to its section
+   (`.services_sec`, `.faq_sec`, `.location_sec`, `.philosophy_sec`, `.booking_sec_framed`), so it wins on
+   specificity and touches no other block. Tokens only; colours come from each section's theme. */
+
+/* ---- M-08 · M-23 — /salon «Послуги Studio Demo»: the sub-line and the main text competed side by
+   side. Now one column at every width: heading → sub-line → the main text in a framed box, the two price
+   notes («Ціна — за довжиною…», «+20 % до суми…») with it — beside it from 768 px, under it on phones. ---- */
+.services_sec .services_head {
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-6);
+  align-items: start;
+}
+.services_sec .services_intro {
+  gap: var(--space-4);
+  padding: var(--space-6) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  background: var(--color-surface);
+}
+.services_sec .services_notes {
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+@media (min-width: 768px) {
+  .services_sec .services_head {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-7);
+    align-items: start;
+  }
+  .services_sec .services_intro {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    gap: var(--space-7);
+    align-items: center;
+    padding: var(--space-7);
+  }
+  .services_sec .services_notes {
+    padding: 0 0 0 var(--space-7);
+    border-top: 0;
+    border-left: 1px solid var(--color-border);
+  }
+}
+
+/* ---- M-24 — /salon price list on phones: «Записатися» sat 8 px under the meta line and 16 px over the next
+   row's rule. 20 px above and 24 px below now. ---- */
+@media (max-width: 639px) {
+  .services_sec .row_price {
+    padding-block: var(--space-5) var(--space-6);
+  }
+  .services_sec .row_price .btn {
+    margin-top: var(--space-3);
+  }
+}
+
+/* ---- M-10 · M-14 · M-25 — FAQ (/salon, /courses, course pages). Faq.tsx puts the aside after the list:
+   phones read «Залишились питання?» once they went through the questions (M-25); desktop puts it back in
+   the left column, its button level with the list's last rule (M-10, M-14). Its old top rule went: under
+   the list it doubled the list's own bottom rule. ---- */
+.faq_sec .faq_aside {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+@media (min-width: 1200px) {
+  .faq_sec .faq_list {
+    grid-column: 2;
+    grid-row: 2;
+  }
+  .faq_sec .faq_head {
+    grid-column: 1;
+    grid-row: 2;
+    align-self: end;
+    position: static;
+  }
+}
+
+/* ---- M-11 — /salon «Завітайте до нашого простору краси у Варшаві»: the map fills its column, so its card
+   ends on the line of the storefront photo (the one-line caption stays under the photo — the map stops a
+   caption short of the row: gap 8 px + 14 px × 1.6). The frame takes whatever the bar leaves (≥ 300 px), with
+   or without the privacy notice. ---- */
+@media (min-width: 1200px) {
+  .location_sec .location_grid:not(.location_grid_solo) > .map_embed {
+    align-self: stretch;
+    margin-bottom: calc(var(--space-2) + var(--fs-sm) * 1.6);
+  }
+  .location_sec .location_grid:not(.location_grid_solo) .map_embed_frame {
+    flex: 1 1 0;
+    height: auto;
+    min-height: 300px;
+  }
+  .location_sec .location_door figcaption {
+    line-height: 1.6;
+  }
+}
+
+/* ---- M-15 — /about: the «Записатися в салон» pill sat 40 px over the «Як записатися» panel; ≥ 100 px now
+   (desktop, where the pill is the last thing above the panel; phones have the photos between them). ---- */
+@media (min-width: 1200px) {
+  .philosophy_sec .booking_panel {
+    margin-top: calc(var(--space-12) + var(--space-4));
+  }
+}
+
+/* ---- M-19 — /contacts «Як записатися» in the bordered panel /about uses (BookingChannels `framed`); the
+   section's own padding is the space above it. ---- */
+.booking_sec_framed .booking_panel {
+  margin-top: 0;
+}
+
+/* R-07 (Daryna 16.11 09:33 on this button: «виглядає як пляма, можливо, краще білим спробувати?») — check run
+   «Chat_1611_Verify», challenger round 1: a phone has no hover, so the white of the hover state never showed there.
+   The button of «Результати до і після» is white at rest too (an id selector, so it wins over the .btn skins). */
+#portfolio .sec_head_row .btn {
+  background-color: rgb(251, 251, 251);
+  border-color: rgb(251, 251, 251);
+  color: #262322;
+}

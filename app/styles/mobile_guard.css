@@ -1,0 +1,30 @@
+/* ============================================================
+   Mobile guard — hotfix 23.10.2026 (owner's iPhone screenshot, 01:12)
+   iPhone Safari drew the home page ~1540 px wide: the first salon card grew to the photo's own width
+   (a photo with width/height 100 % inside a fixed-ratio frame still adds its intrinsic width to the
+   grid in that Safari), so the whole page was zoomed out and the card filled the screen.
+   Three guards — each one alone prevents it:
+   1. the page is never wider than the screen (clip, not hidden: the sticky header keeps working);
+   2. items of the image-card grids may shrink to their track (no min-content growth);
+   3. a photo inside a fixed-ratio frame fills it absolutely and adds nothing to the layout width.
+   ============================================================ */
+html, body { overflow-x: clip; }
+
+:where(.salon_cards, .course_teasers, .catalog_list, .benefits, .ba_pair, .card_media, .catalog_media) > * { min-width: 0; }
+
+.card_media .card_img, .catalog_img { position: relative; }
+.card_media .card_img img, .catalog_img img { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+/* Round 2 (23.10, Cross_Matrix C4b): every other in-flow photo that fills a fixed-ratio frame. The two
+   frames that are themselves absolutely positioned (.page_hero_inset, .founder_second) are already out
+   of flow and keep their own positioning. */
+:where(.stats_figure, .page_hero_main, .platform_figure, .master_photo, .philosophy_img, .recognition_img) { position: relative; }
+:where(.stats_figure, .page_hero_main, .platform_figure, .master_photo, .philosophy_img, .recognition_img, .ix-flip__link) > img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+}
+:where(.ix-flip__grid, .master_card, .philosophy_media, .recognition_media) > * { min-width: 0; }
+
+/* A text link is a 44 px touch target on every touch screen, landscape phones included (was max-width 767 only). */
+@media (pointer: coarse) {
+  a.hv-link, .login a.note { display: inline-block; padding-block: 11px; margin-block: -11px; }
+}

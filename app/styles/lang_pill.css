@@ -1,0 +1,83 @@
+/* Floating language pill — bottom-right on every page (owner 27.10, pattern of the Befrox pill).
+   Semantic tokens only, no colour literal and no theme selector: like the cookie banner it sits in
+   <body> outside <main> and takes the page theme from the root (tokens.css html:has(main[...]) scopes),
+   so it is dark on /salon, /about, /contacts and light on /courses, /cabinet, /privacy.
+   z-index 999 — one step UNDER the cookie layer (1000 / 1001): the consent gate is never covered.
+   44 px targets (mobile_guard.css rule for touch); the menu opens upwards, right-aligned, and is
+   capped to the viewport so it never causes horizontal scroll. */
+.lang_pill {
+  position: fixed;
+  right: calc(16px + env(safe-area-inset-right, 0px));
+  /* While cookie layer 1 is open the pill rides above it (Cookie_Banner.tsx writes its height to
+     --cookie-banner-h): a visitor who cannot read the banner's language can still switch first. */
+  bottom: calc(16px + var(--cookie-banner-h, 0px) + env(safe-area-inset-bottom, 0px));
+  z-index: 999;
+  font-family: var(--font-primary);
+  max-width: calc(100vw - 32px);
+}
+.lang_pill details { position: relative; }
+.lang_pill_toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 999px;
+  background: var(--color-bg);
+  color: var(--color-fg);
+  box-shadow: var(--shadow-lg);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  list-style: none;
+  cursor: pointer;
+  user-select: none;
+}
+.lang_pill_toggle::-webkit-details-marker { display: none; }
+.lang_pill_toggle:hover { border-color: var(--color-accent-text, var(--color-fg)); }
+.lang_pill_toggle:focus-visible {
+  outline: 2px solid var(--color-accent-text, var(--color-fg));
+  outline-offset: 3px;
+}
+.lang_pill_menu {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 8px);
+  display: grid;
+  gap: 2px;
+  min-width: 180px;
+  max-width: calc(100vw - 32px);
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 16px;
+  background: var(--color-bg);
+  box-shadow: var(--shadow-lg);
+}
+.lang_pill_menu a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: 10px;
+  color: var(--color-fg);
+  font-size: var(--fs-sm, 0.875rem);
+  text-decoration: none;
+}
+.lang_pill_menu a:hover { background: var(--color-surface); }
+.lang_pill_menu a:focus-visible {
+  outline: 2px solid var(--color-accent-text, var(--color-fg));
+  outline-offset: -2px;
+}
+.lang_pill_menu a.is_active { background: var(--color-surface); font-weight: 600; }
+.lang_pill_code {
+  min-width: 2ch;
+  color: var(--color-fg-muted);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+@media print { .lang_pill { display: none; } }

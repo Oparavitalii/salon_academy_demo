@@ -1,0 +1,17 @@
+# Never send secrets or local state to the Fly builder.
+.env*
+!.env*.example
+.git
+node_modules
+.next
+*.tsbuildinfo
+*.stackdump
+
+# Not part of the app.
+docs
+.github
+e2e
+tests
+
+# Offline GeoIP database: downloaded inside the image (Dockerfile «geo» stage), never sent.
+data/geo

@@ -1,0 +1,425 @@
+/* ============================================================
+   Studio Demo — «Instagram» skin (owner 31.10.2026)
+   ------------------------------------------------------------
+   Why: the client's team (Daryna, SMM; Maryna 30.10 «какой-то он не привлекательный») does not
+   recognise its brand in the dark build. Their own Instagram slides are the reference:
+     · salon  — thin serif caps, Montserrat text, hairlines (posts DZkj_weDH4F, 14.06.2026);
+     · academy — bold Montserrat caps, pink highlight boxes (posts Da155SyArcQ, 16.07.2026).
+   Colours since 06.11.2026 (Daryna 03.11): the salon dark with the pink accent, the academy the same
+   style but light; no purple anywhere (§1). The 31.10 plum palette is in git history.
+   Two faces only: Cormorant Garamond (heads) + Montserrat (text, UI, academy heads).
+   No decor: no ghost numerals, watermarks, strands, tape, torn edge, grain, polaroids.
+
+   Mechanism: this file loads LAST and only adds rules under `S` =
+     :root:not(.skin_classic):not(:has(.app_main:not(.app_admin)))
+   so the cabinet (main.app_main) keeps its look — the admin (main.app_main.app_admin) is in the skin since 1.11, and `?skin=classic` (head script in
+   app/[locale]/layout.tsx → html.skin_classic) brings back the owner's dark design untouched.
+   The dark design itself is kept in git: tag design_classic_2026_10_31, branch design_classic.
+
+   Contrast: §1.
+   ============================================================ */
+
+/* ---------- 1 · COLOURS (Daryna 03.11.2026, built 06.11) ----------
+   «Ми хотіли, щоб Demo beauty був темним з рожевим акцентом а academy в такому ж стилі тільки світлий
+   з акцентом» + «Фіолетовий колір ми взагалі не використовуємо ніде». The plum / mauve palette of
+   31.10 is gone. Dark = the salon scope (the default: `/`, `/salon`, `/about`, `/contacts`, the
+   footer); light = `[data-theme='light']` — the academy (`/courses*`, AcademyTeaser, SuccessStories)
+   and the admin. One pink #f898d0 in both; buttons black + pink (owner 06.11).
+   Contrast (WCAG, measured 06.11, Evidence/Contrast.txt): pink on #030303 10.21 · ink #fbfbfb 19.93 ·
+   muted #a69ea3 7.90 · ink #030303 on #fbfbfb 19.93 · muted #5e5a5c 6.56 · pink text #b8126e 6.06 ·
+   black on pink 10.21. */
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))),
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) [data-theme='dark'] {
+  color-scheme: dark;
+  --color-accent:        #f898d0;
+  --color-accent-hover:  #fcb8de;
+  --color-fg:            #fbfbfb;
+  --color-fg-muted:      #a8a19b;
+  --color-bg:            #161718;   /* deep grey, not black (Daryna 21.11 «Ось цей чорний всюди, зробити менш насиченим» — a step darker than her #1F2122 so the blocks still separate; was warm black #0a0908 since 07.11) */
+  --color-surface:       #1e1f20;
+  --color-border:        #33312f;
+  --color-accent-deep:     #030303;
+  --color-accent-deep-rgb: 3, 3, 3;
+  --color-accent-text:   #f898d0;
+  --color-accent-fg:     #030303;
+  --color-focus:         #f898d0;
+  --color-accent-rgb:    248, 152, 208;
+  --color-fg-rgb:        251, 251, 251;
+  --color-bg-rgb:        22, 23, 24;
+  --color-danger:  #ff9b91;
+  --color-success: #6fcf97;
+  --color-warning: #f3c26b;
+  --color-info:    #8ab8f0;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.55);
+  --shadow-lg: 0 28px 70px rgba(0, 0, 0, 0.7);
+  --hv-shadow:     0, 0, 0;
+  --ix-ink-rgb:    251 251 251;
+  --ix-paper-rgb:  22 23 24;
+  --ix-accent-rgb: 248 152 208;
+  --bg-accent:     248 152 208;
+  --bg-accent-2:   22 23 24;
+  --bg-cool:       166 158 163;
+  --bg-violet:     22 23 24;
+  --bg-muted:      43 38 41;
+  /* buttons (read by §5): deep grey + pink, no outline; white on hover/tap (Daryna 16.11: «замість чистого чорного … глибокий темно сірий», the pink fill «виглядає як пляма … білим»; was black + pink outline, owner 06.11) */
+  --btn-bg: #262322;
+  --btn-fg: #f898d0;
+  --btn-border: #262322;
+  --btn-bg-hover: #fbfbfb;
+  --btn-fg-hover: #0a0908;
+  --btn-glow: 0 8px 24px rgba(0, 0, 0, 0.55);   /* a pink halo over black reads mauve (Daryna 16.11 — the white hover had a mauve ring) */
+}
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))):has(main[data-theme='light']),
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) [data-theme='light'] {
+  color-scheme: light;
+  --color-accent:        #f898d0;
+  --color-accent-hover:  #fcb8de;
+  --color-fg:            #030303;
+  --color-fg-muted:      #5f5a56;
+  --color-bg:            #fbf9f6;   /* warm white (owner 07.11) */
+  --color-surface:       #fef3fb;
+  --color-border:        #ead9e3;
+  --color-accent-deep:     #030303;
+  --color-accent-deep-rgb: 3, 3, 3;
+  --color-accent-text:   #b8126e;
+  --color-accent-fg:     #030303;
+  --color-focus:         #b8126e;
+  --color-accent-rgb:    248, 152, 208;
+  --color-fg-rgb:        3, 3, 3;
+  --color-bg-rgb:        251, 249, 246;
+  --color-danger:  #b42318;
+  --color-success: #1e7a46;
+  --color-warning: #8a5300;
+  --color-info:    #1d5fa8;
+  --shadow-sm: 0 1px 2px rgba(3, 3, 3, 0.08);
+  --shadow-md: 0 10px 28px rgba(3, 3, 3, 0.10);
+  --shadow-lg: 0 28px 70px rgba(3, 3, 3, 0.14);
+  --hv-shadow:     3, 3, 3;
+  --ix-ink-rgb:    3 3 3;
+  --ix-paper-rgb:  251 251 251;
+  --ix-accent-rgb: 248 152 208;
+  --bg-accent:     248 152 208;
+  --bg-accent-2:   22 23 24;
+  --bg-cool:       94 90 92;
+  --bg-violet:     22 23 24;
+  --bg-muted:      234 217 227;
+  --btn-bg: #262322;
+  --btn-fg: #f898d0;
+  --btn-border: #262322;
+  --btn-bg-hover: #f898d0;
+  --btn-fg-hover: #030303;
+  --btn-glow: 0 8px 24px rgba(var(--hv-accent-2-rgb), 0.45), 0 0 0 6px rgba(var(--hv-accent-2-rgb), 0.18);
+}
+
+/* two faces: Cormorant heads, Montserrat text (the script and accent roles fold into Cormorant italic) */
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) {
+  --font-secondary: var(--font-cormorant), Georgia, 'Times New Roman', serif;
+  --font-accent:    var(--font-cormorant), Georgia, 'Times New Roman', serif;
+  --font-script:    var(--font-cormorant), Georgia, 'Times New Roman', serif;
+  --font-wt-hero: 300;
+  --font-wt-display: 400;
+}
+
+/* ---------- 2 · DARK HEROES — a salon hero stays dark on any page (was the plum slide gradient) ---------- */
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) .sig_hero[data-theme],
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) footer[data-theme] {
+  color-scheme: dark;
+  --color-accent:        #f898d0;
+  --color-accent-hover:  #fcb8de;
+  --color-fg:            #fbfbfb;
+  --color-fg-muted:      #a8a19b;
+  --color-bg:            #161718;   /* deep grey, not black (Daryna 21.11 «Ось цей чорний всюди, зробити менш насиченим» — a step darker than her #1F2122 so the blocks still separate; was warm black #0a0908 since 07.11) */
+  --color-surface:       #1e1f20;
+  --color-border:        #33312f;
+  --color-accent-deep:     #030303;
+  --color-accent-deep-rgb: 3, 3, 3;
+  --color-accent-text:   #f898d0;
+  --color-accent-fg:     #030303;
+  --color-focus:         #f898d0;
+  --color-accent-rgb:    248, 152, 208;
+  --color-fg-rgb:        251, 251, 251;
+  --color-bg-rgb:        22, 23, 24;
+  --color-danger:  #ff9b91;
+  --color-success: #6fcf97;
+  --color-warning: #f3c26b;
+  --color-info:    #8ab8f0;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.55);
+  --shadow-lg: 0 28px 70px rgba(0, 0, 0, 0.7);
+  --hv-shadow:     0, 0, 0;
+  --ix-ink-rgb:    251 251 251;
+  --ix-paper-rgb:  22 23 24;
+  --ix-accent-rgb: 248 152 208;
+  --bg-accent:     248 152 208;
+  --bg-accent-2:   22 23 24;
+  --bg-cool:       166 158 163;
+  --bg-violet:     22 23 24;
+  --bg-muted:      43 38 41;
+  /* buttons (read by §5): black + pink (owner 06.11 «Чорний + рожевий») */
+  --btn-bg: #262322;
+  --btn-fg: #f898d0;
+  --btn-border: #262322;
+  --btn-bg-hover: #fbfbfb;
+  --btn-fg-hover: #0a0908;
+  --btn-glow: 0 8px 24px rgba(0, 0, 0, 0.55);   /* a pink halo over black reads mauve (Daryna 16.11 — the white hover had a mauve ring) */
+}
+
+/* ---------- 3 · ACADEMY — type. Light colours come from §1 (`data-theme='light'`); the academy keeps
+   Montserrat bold caps heads and the pink highlight box on `.display em` (§4). ---------- */
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))):has(main[data-area='academy']),
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) [data-area='academy'][data-theme],
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) [data-area='academy'] [data-theme] {
+  /* academy heads are Montserrat bold caps, as on the academy slides */
+  --font-secondary: var(--font-montserrat), system-ui, sans-serif;
+  --font-accent:    var(--font-montserrat), system-ui, sans-serif;
+  --font-wt-display: 700;
+}
+
+/* ---------- 4 · TYPE ---------- */
+/* section heads: thin serif caps (salon) */
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) .display:not(.display_md) {
+  font-family: var(--font-secondary);
+  font-weight: 400;
+  letter-spacing: 0.015em;
+  line-height: 1.04;
+}
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) .display_xl,
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) .display_lg {
+  font-size: calc(var(--fs-3xl) * 1.12);
+}
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) .display em {
+  font-family: var(--font-secondary);
+  font-style: italic;
+  font-weight: 400;
+  font-size-adjust: none;
+  text-transform: none;
+  letter-spacing: 0;
+}
+/* academy heads: Montserrat bold caps; the accent word becomes a pink highlight box */
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) [data-area='academy'] .display:not(.display_md) {
+  font-family: var(--font-primary);
+  font-weight: 700;
+  letter-spacing: -0.005em;
+  line-height: 1.08;
+}
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) [data-area='academy'] .display_xl,
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) [data-area='academy'] .display_lg {
+  font-size: var(--fs-3xl);
+}
+/* a course title holds one long bold-caps word («МІКРОКАПСУЛЬНЕ», 14 letters): cap the size so it never breaks mid-word */
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) [data-area='academy'] .course_hero_text .display_xl {
+  font-size: min(var(--fs-3xl), 2.75rem, 7.2vw);
+}
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) [data-area='academy'] .display em {
+  font-family: var(--font-primary);
+  font-style: normal;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--color-accent-fg);
+  background: var(--color-accent);
+  padding: 0 0.18em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+/* eyebrows: small tracked caps over a hairline, as on the slides */
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) .eyebrow {
+  font-weight: 500;
+  letter-spacing: 0.18em;
+}
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) .sig_hero .eyebrow {
+  color: var(--color-fg);
+}
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) .sig_hero .eyebrow::after {
+  content: '';
+  display: block;
+  width: min(260px, 70%);
+  height: 1px;
+  margin-top: var(--space-3);
+  background: currentColor;
+  opacity: 0.55;
+}
+
+/* ---------- 5 · BUTTONS — uppercase tracked labels; fill from the scope's --btn-* ---------- */
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) .btn {
+  font-size: 0.75rem;   /* 12 — on the type scale (D-37) */
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  min-height: 48px;
+}
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) .btn:not(.btn_outline):not(.btn_ghost):not(.btn_ondark):not(:disabled) {
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  border: 1px solid var(--btn-border, transparent);
+}
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) .btn:not(.btn_outline):not(.btn_ghost):not(.btn_ondark):not(:disabled):hover {
+  background: var(--btn-bg-hover);
+  color: var(--btn-fg-hover, var(--btn-fg));
+  border-color: var(--btn-bg-hover);
+}
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) .hv-btn-glow:is(:hover, :focus-visible) {
+  box-shadow: var(--btn-glow, 0 8px 24px rgba(var(--hv-accent-2-rgb), 0.45), 0 0 0 6px rgba(var(--hv-accent-2-rgb), 0.18));
+}
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) .btn_outline,
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) .btn_ondark {
+  border-color: var(--color-fg);
+}
+
+/* ---------- 6 · FIRST SCREEN ---------- */
+/* salon heroes: plain black (no plum — Daryna 03.11; a translucent pink glow on black reads mauve) */
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) .sig_hero {
+  --sig-plum: #161718;
+  --sig-ink: #161718;
+  background: #161718;
+}
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) .sig_hero_title {
+  font-family: var(--font-secondary);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  line-height: 1.02;
+  color: var(--color-fg);
+}
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) .sig_hero_stack .sig_hero_title {
+  font-weight: 300;
+  color: var(--color-fg);
+  letter-spacing: 0.03em;
+}
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) .sig_hero_sub {
+  color: var(--color-fg);
+  opacity: 0.92;
+}
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) .sig_hero_script {
+  font-family: var(--font-secondary);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.5rem);
+  color: #fbfbfb;
+  rotate: 0deg;
+  max-width: 12ch;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.5);
+}
+/* academy hero: the salon plum gradient (§6 above); only the title face differs */
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) [data-area='academy'] .sig_hero_title {
+  font-family: var(--font-primary);
+  font-weight: 700;
+  letter-spacing: -0.005em;
+  line-height: 1.06;
+}
+
+/* home on a phone: Daryna's first screen (ticker → Studio | Academy → video → tiles) replaces the photo hero */
+@media (max-width: 767px) {
+  :root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) main:has(> .hv) > .hero_home {
+    display: none;
+  }
+}
+/* the dark design keeps its own home hero; the review page /variant_video keeps the video in both skins */
+:root.skin_classic main:not(.variant_video) > .hv {
+  display: none;
+}
+
+/* ---------- 7 · NO DECOR ---------- */
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) :is(
+  .sig_hero_mark,
+  .sig_hero_inset,
+  .sig_hero_polaroid,
+  .dec_ghost_num,
+  .dec_live_canvas,
+  .dec_strands_rest,
+  .dec_tape,
+  .dec_torn,
+  .dec_scribble
+) {
+  display: none !important;
+}
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) .dec_grain::after {
+  content: none;
+}
+/* the footer loses its torn edge, so it gets a plain hairline */
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) .band_footer {
+  border-top: 1px solid var(--color-border);
+}
+
+/* ---------- 8 · PHOTOS — less crop (R-07, owner 31.10 «багато фото зазумлені») ----------
+   The photos are 4:5 portraits served as they are (next.config images.unoptimized). The 16:10 catalog
+   frame showed only half of each photo's height, which reads as a zoom; 4:3 (desktop) / 1:1 (phone)
+   shows 60% / 80% of it. The upscale on a 3× phone is the source width (640–720 px), not the crop. */
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) .catalog_media {
+  aspect-ratio: 4 / 3;
+}
+@media (max-width: 767px) {
+  :root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) .catalog_media {
+    aspect-ratio: 1 / 1;
+  }
+}
+
+/* The header brand keeps the serif on academy pages too (only the academy content goes Montserrat bold). */
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))):has(main[data-area='academy']) header[data-theme] {
+  --font-secondary: var(--font-cormorant), Georgia, 'Times New Roman', serif;
+  --font-wt-display: 400;
+}
+
+/* Admin in the skin (owner 1.11): a phone table card's label may wrap to two lines with the skin's
+   letter-spacing — give its cell room so the next row never slides under it. */
+@media (max-width: 767px) {
+  .app_admin .data_stack td[data-label] { min-height: 3.2em; }
+  .app_admin .data_stack td[data-label]::before { line-height: 1.25; letter-spacing: .06em; }
+}
+
+/* The deep band of the course pages (FinalCta .band_deep) is black since 06.11 (was plum): white ink,
+   pink accents and the black + pink button, even inside the light academy scope. */
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) .band_deep.band_deep[data-theme] {
+  --color-fg: #fbfbfb;
+  --color-fg-muted: #a69ea3;
+  --color-accent-text: #f898d0;
+  --color-focus: #f898d0;
+  --color-border: #2b2629;
+  --color-fg-rgb: 251, 251, 251;
+  --btn-bg: #262322;
+  --btn-fg: #f898d0;
+  --btn-border: #262322;
+  --btn-bg-hover: #fbfbfb;
+  --btn-fg-hover: #0a0908;
+  --btn-glow: 0 8px 24px rgba(0, 0, 0, 0.55);   /* a pink halo over black reads mauve (Daryna 16.11 — the white hover had a mauve ring) */
+  background: #161718;   /* deep grey since 23.11 (Daryna 21.11), was #030303 */
+  color: var(--color-fg);
+}
+
+/* D-30 (01.11.2026): a course title is 34–52 letters; in bold caps it took 3–4 lines at 1440 (Layout H4).
+   The title reads in sentence case, the format label above it stays caps. */
+:root:not(.skin_classic) .course_hero_text .display_xl { text-transform: none; }
+:root:not(.skin_classic) .course_hero_text .course_hero_kind { text-transform: uppercase; }
+
+/* 06.11 (Daryna 03.11 «фіолетовий … ніде»): a translucent pink over black is seen as mauve, so the
+   pink stays solid — the stat cards' spark is a solid pink line, the filter counter a solid chip. */
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) .ui-card__spark {
+  height: 28px;
+  background: var(--color-accent);
+  clip-path: polygon(0 80%, 15% 62%, 30% 70%, 45% 40%, 60% 50%, 75% 22%, 90% 30%, 100% 8%, 100% 16%, 90% 38%, 75% 30%, 60% 58%, 45% 48%, 30% 78%, 15% 70%, 0 88%);
+}
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) .filter_count {
+  background: #030303;
+  color: #f898d0;
+}
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) .bm-panel { background: var(--bm-bg); }   /* no translucent pink glow in the burger (mauve on black) */
+
+/* The student cabinet stays outside the skin (classic tokens), but «фіолетовий … ніде» covers it too:
+   its plum-grey muted text and wine pink text become the skin's neutral grey and deep pink. */
+:root:has(.app_main:not(.app_admin)) [data-theme='light'] {
+  --color-fg-muted: #5e5a5c;
+  --color-accent-text: #b8126e;
+  --color-focus: #b8126e;
+  --shadow-sm: 0 1px 2px rgba(3, 3, 3, 0.08);
+  --shadow-md: 0 8px 24px rgba(3, 3, 3, 0.10);
+  --shadow-lg: 0 28px 70px rgba(3, 3, 3, 0.14);
+}
+/* the home academy block is dark since 06.11 — its benefits hairline solid pink (70 % pink over black reads mauve) */
+:root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) .benefits { border-top-color: #f898d0; }
+/* under 360 px the RU head «ПРОФЕССИОНАЛЬНОЕ» was 10 px wider than the line and split mid-word
+   (phase 12, 07.11) — the section heads step down to 22 px there */
+@media (max-width: 359px) {
+  :root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) :is(.display_xl, .display_lg),
+  :root:not(.skin_classic):not(:has(.app_main:not(.app_admin))) [data-area='academy'] :is(.display_xl, .display_lg) { font-size: 22px; }
+}

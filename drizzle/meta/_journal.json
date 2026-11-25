@@ -1,0 +1,55 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1792425311450,
+      "tag": "0000_init_app",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1792428877089,
+      "tag": "0001_auth_throttle",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792430633002,
+      "tag": "0002_payments_livemode_claims",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1793196902178,
+      "tag": "0003_course_price_eur",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1793367781063,
+      "tag": "0004_certificates",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1793381270943,
+      "tag": "0005_certificates_course",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1794852327604,
+      "tag": "0006_mentoring_course_perm_400",
+      "breakpoints": true
+    }
+  ]
+}

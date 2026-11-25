@@ -1,0 +1,352 @@
+/* BUILD COPY (Phase 11 part A · 22.10.2026) of docs/8_Effects/Decorations.css — verbatim except
+   section «8 · RETIRING» deleted, as 8.0 §6 orders once the markup is gone (dec_underline, dec_neon,
+   dec_frame, dec_sign, dec_ghost, dec_strands_hero removed from the components).
+   Fix round 22.10 (owner, B-95): .dec_live / .dec_live_canvas / .dec_strands_rest are back (block
+   «.dec_live» in section 6, two alpha tokens in section 1, three reduced-motion lines) — ported from
+   this file at commit 46b77ef; docs/8_Effects/Decorations.css does not carry them yet (8.0 §3 note). */
+/* ============================================================
+   Studio Demo — decor details · «Колаж на двох папірцях»
+   (Phase 8 · Effects · re-run 22.10.2026 · contract R-11 · moodboard 01)
+   ------------------------------------------------------------
+   LOAD ORDER (Demo.html and the build):
+     1) library subset (Phase 7: hovers, backgrounds)
+     2) ../7_Ui-Kit/Tokens.css        (every --fx-* hook, both themes)
+     3) ../7_Ui-Kit/Interactions.css
+     4) THIS file                      (reads --fx-* only, adds no colour literal, no font)
+     5) Decorations.js  (defer)        (draw-once lines + tape pause off screen; optional)
+   Decisions, sources, section map, motion map: ./8.0_Effects.md.
+   Phase 11 copies this file verbatim → app/styles/decorations.css.
+
+   THEMES: one class works in the dark and the light scope. Every colour token built here
+   is declared on the derived selector of 4.2 (the one ":root," + attribute block below), so a
+   light section inside a dark main recomputes it. Non-colour tokens sit on a plain :root.
+
+   Markers: LIVE = class in a build component (file:line, grep 22.10) · SPEC = not in the
+   build yet (8.0 §6) · RETIRING = in the build, gone from this vocabulary (delete after the
+   markup goes, 8.0 §6 removals).
+
+   Ledger — code origin (the IDEA's source is in 8.0 §0):
+     Verbatim:  .fx-host — Ui_Effects_Library host.
+     Retuned:   .dec_polaroid — Web_Decor_Details .dd-polaroid: mat = surface, thin accent frame
+                (The Rebel), tilt on the rotate property (composes with the reveal transform),
+                a pink tape piece. .dec_grain — .dd-grain: the noise is an alpha MASK over an ink
+                fill, so one class is light speckle on dark and dark speckle on paper.
+                .dec_tape — Ui_Effects_Library .fx-marquee on a tilted pink band.
+                .dec_ghost_num — .dd-ghost-num: Unbounded 700, accent-text 11 %.
+                .dec_strands — Demo 19.10 strands, tip = accent-text.
+                .dec_rows — kept from 19.10.
+     Own:       .dec_torn (torn paper edge, mask) · .dec_scribble (hand swash).
+   Snapshot of the libraries 22.10.2026 — a library change does not reach this file.
+   Stacking: a layer sits at z-index -1 inside an isolated host (paints over the host's own
+   background, under every child, no child needs lifting); real content stays in flow.
+   ============================================================ */
+
+/* ---- 1 · tokens ------------------------------------------------
+   Colour (derived) — recomputed in every scope. */
+:root,
+[data-theme] {
+  --dec-line:        var(--fx-line);
+  --dec-mat:         var(--fx-surface);                                           /* polaroid mat: dark surface / pale pink */
+  --dec-frame:       color-mix(in srgb, var(--fx-accent-text) 38%, transparent);  /* thin frame: pink on dark, magenta on light */
+  --dec-shade:       color-mix(in srgb, var(--fx-accent-deep) 24%, transparent);  /* polaroid shadow: magenta, invisible on ink */
+  --dec-tape-piece:  color-mix(in srgb, var(--fx-accent) 78%, transparent);       /* the scotch on a polaroid */
+  --dec-band:        color-mix(in srgb, var(--fx-surface) 60%, var(--fx-paper));  /* = Tokens band step, for the footer edge */
+  --dec-torn-fill:   var(--fx-paper);
+  --dec-torn-rim:    color-mix(in srgb, var(--fx-ink) 78%, var(--fx-paper));      /* paper fibre: light rim on dark paper */
+  --dec-grain-ink:   var(--fx-ink);
+  --dec-ghost:       color-mix(in srgb, var(--fx-accent-text) 11%, transparent);
+  --dec-strand:      var(--fx-strand);
+  --dec-strand-tip:  var(--fx-accent-text);
+  --dec-scribble:    var(--fx-accent-text);
+  --dec-tape-bg:     var(--fx-accent);
+  --dec-tape-fg:     var(--fx-accent-deep);                                       /* magenta on pink 5.55, both themes */
+}
+
+/* Non-colour — :root only (4.2 exempt list). */
+:root {
+  --dec-tilt-l:      -3deg;
+  --dec-tilt-r:      2.5deg;
+  --dec-settle-from: 2.6;          /* the polaroid lands from 2.6 × its tilt */
+  --dec-settle-dur:  0.9s;
+  --dec-torn-h:      clamp(18px, 3.2vw, 44px);
+  --dec-torn-rim-w:  3px;
+  --dec-tape-tilt:   -2deg;
+  --dec-tape-dur:    34s;
+  --dec-grain-alpha: 0.08;
+  --dec-grain-paper-alpha: 0.05;
+  --dec-draw-dur:    1.4s;
+  --dec-strand-w:    1.5px;
+  --dec-rest-alpha:  .7;           /* static hero strands — photo band only, never under copy */
+  --dec-live-alpha:  .9;           /* cursor strands canvas (holes keep it off the copy) */
+  /* masks — alpha only (4.3: mask images are not colour). The path fill is the mask, never seen. */
+  --dec-torn-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 40' preserveAspectRatio='none'><path fill='black' d='M0 40L0 20L10 22.1L20 24.8L30 23.2L40 25.7L50 25.7L60 26.5L70 24.5L80 29.2L90 25L100 26.7L110 25.1L120 25.8L130 25.1L140 26.6L150 23.5L160 23.3L170 22.9L180 22.7L190 23.9L200 25.2L210 23.8L220 23.1L230 26.1L240 22.9L250 26L260 22.4L270 23.2L280 24.3L290 25.2L300 24L310 25.6L320 26.9L330 26.7L340 28L350 26.9L360 26.5L370 27.3L380 27.8L390 30.4L400 31L410 32.5L420 27.2L430 26.6L440 28.7L450 30L460 29.4L470 29L480 24.9L490 26.2L500 23.8L510 24.3L520 22.3L530 21.5L540 24L550 26L560 21.1L570 17.2L580 17.3L590 18.5L600 16.3L610 15.4L620 14.1L630 16.9L640 14L650 17.4L660 16L670 12.6L680 16.6L690 17.1L700 14.5L710 16.1L720 14.6L730 14.8L740 15.8L750 16.3L760 15.1L770 15.7L780 15.3L790 18.8L800 18.3L810 15L820 14.7L830 16.7L840 18.6L850 14.6L860 14.3L870 15.8L880 15.4L890 14.3L900 12.3L910 14.4L920 14.9L930 12.1L940 16.4L950 14.2L960 14.3L970 17.9L980 12.2L990 12.2L1000 9.3L1010 11.7L1020 13.7L1030 9.7L1040 12.7L1050 11.9L1060 12.1L1070 14.4L1080 12.6L1090 15.7L1100 13.1L1110 15.7L1120 14.9L1130 15.3L1140 18.7L1150 18.7L1160 17.5L1170 17.1L1180 20.7L1190 20.5L1200 20L1200 40Z'/></svg>");
+  --dec-grain-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' seed='4' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2.2 -.7'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* ---- 2 · hosts ---------------------------------------------------
+   .fx-host — LIVE: app/[locale]/error.tsx:13, not-found.tsx:17 (Ui_Effects_Library, verbatim).
+   .dec_host — SPEC: the same host for new layers; children stay in flow (layers are z -1). */
+.fx-host, .dec_host { position: relative; isolation: isolate; overflow: hidden; }
+
+/* Pointer rule: every LAYER switches itself off; a HOST never does. Never by class prefix. */
+
+/* ============================================================
+   3 · A · ПАПІР — polaroid · torn edge · grain
+   ============================================================ */
+
+/* ---- .dec_polaroid (SPEC) ------------------------------------------
+   source: ref — 3_Analize/References/Decor/therebel_Tilted_Photos.jpg (tilted photos, thin pink
+   frame) + cherie_Polaroid_Cluster.jpg (polaroids round a heading).
+   Markup: <figure class="dec_polaroid dec_polaroid_l"><img …><figcaption>…</figcaption></figure>.
+   It is CONTENT (a real photo, AutoReveal animates it), not a layer. _l / _r = tilt side,
+   _tape = scotch piece on top, _sm = smaller mat for clusters. */
+.dec_polaroid {
+  position: relative; isolation: isolate; display: block; margin: 0;
+  padding: clamp(var(--space-2), 1.2vw, var(--space-3)) clamp(var(--space-2), 1.2vw, var(--space-3)) clamp(var(--space-7), 3.4vw, var(--space-9));
+  background: var(--dec-mat); border: 1px solid var(--dec-frame);
+  box-shadow: 0 22px 40px -22px var(--dec-shade);
+  rotate: var(--dec-tilt, var(--dec-tilt-l));
+}
+.dec_polaroid_l { --dec-tilt: var(--dec-tilt-l); }
+.dec_polaroid_r { --dec-tilt: var(--dec-tilt-r); }
+.dec_polaroid > img, .dec_polaroid > picture, .dec_polaroid > video { display: block; width: 100%; height: auto; }
+.dec_polaroid figcaption {
+  margin-top: clamp(var(--space-2), 1vw, var(--space-3)); text-align: center;
+  font-family: var(--font-script); font-style: normal; font-size: var(--fs-lg); font-size-adjust: 0.5; line-height: 1.3;
+  color: var(--fx-muted);
+}
+.dec_polaroid_sm { padding: var(--space-2) var(--space-2) var(--space-6); }
+/* grain on the mat only: under the photo (z -1), over the mat colour */
+.dec_polaroid::after {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background-color: var(--dec-grain-ink); opacity: var(--dec-grain-paper-alpha);
+  -webkit-mask-image: var(--dec-grain-mask); mask-image: var(--dec-grain-mask);
+}
+.dec_polaroid_tape::before {
+  content: ""; position: absolute; z-index: 1; pointer-events: none;
+  top: -12px; left: 50%; width: clamp(56px, 36%, 110px); height: 24px;
+  translate: -50% 0; rotate: -4deg; background: var(--dec-tape-piece);
+}
+
+/* ---- .dec_torn (SPEC) — NEW, not in the library ---------------------
+   source: ref — 3_Analize/References/Decor/onlinedanceroom_Torn_Paper.jpg (dark paper torn over
+   a pink block, white fibre rim; moodboard 01 tile «Online Dance Room by Emil»).
+   Its own element between two sections, carrying the theme of the section BELOW (the owner):
+     <div class="dec_torn dec_torn_band" aria-hidden="true"> + the owner's theme attribute.
+   Height 0; the paper edge is drawn UPWARD into the section above (over its bottom padding).
+   Fill = the owner's background (_band = the footer band step); rim = paper fibre.
+   Mask, not colour: the edge shape lives in --dec-torn-mask. Repeats every 1200 px. */
+.dec_torn {
+  display: block; position: relative; z-index: 1; height: 0; margin: 0;
+  pointer-events: none; background: none;
+}
+.dec_torn::before, .dec_torn::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: var(--dec-torn-h);
+  -webkit-mask-image: var(--dec-torn-mask); mask-image: var(--dec-torn-mask);
+  -webkit-mask-size: max(1200px, 100%) 100%; mask-size: max(1200px, 100%) 100%;
+  -webkit-mask-repeat: repeat-x; mask-repeat: repeat-x;
+}
+.dec_torn::before { background-color: var(--dec-torn-rim); translate: 0 calc(var(--dec-torn-rim-w) * -1); }  /* fibre, 3 px higher */
+.dec_torn::after  { background-color: var(--dec-torn-fill); }
+.dec_torn_band { --dec-torn-fill: var(--dec-band); }
+.dec_torn_flip::before, .dec_torn_flip::after { scale: -1 1; }       /* second edge on a page: mirrored */
+
+/* ---- .dec_grain (+ _paper) (SPEC) ----------------------------------
+   source: library — Web_Decor_Details .dd-grain (+ --paper); feel from the paper of
+   onlinedanceroom_Torn_Paper.jpg. Only on decor hosts: the footer band with the torn edge and
+   the polaroid mats. Section-wide grain fields stay Phase 7 (.bg-grain on dark heroes). */
+.dec_grain { position: relative; isolation: isolate; }
+.dec_grain::after {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background-color: var(--dec-grain-ink); opacity: var(--dec-grain-alpha);
+  -webkit-mask-image: var(--dec-grain-mask); mask-image: var(--dec-grain-mask);
+}
+.dec_grain_paper::after { opacity: var(--dec-grain-paper-alpha); }
+
+/* ============================================================
+   4 · B · СТРІЧКА — the pink tape with running words
+   ============================================================ */
+
+/* ---- .dec_tape (SPEC) ------------------------------------------------
+   source: ref — 3_Analize/References/Decor/therebel_Tilted_Photos.jpg (hot-pink strip under the
+   photo grid) + newcollection_Ticker_Over_Serif.jpg (pink ticker across, tilted) +
+   cherie_Ticker_Strip.jpg. Code: Ui_Effects_Library .fx-marquee.
+   Its own strip between two sections; the words repeat copy that is already on the page, so the
+   whole strip is aria-hidden. Markup:
+     <div class="dec_tape" aria-hidden="true"><div class="dec_tape_band"><div class="dec_tape_track">
+       <span>…</span>×N  (the same N spans twice, for a seamless loop)
+     </div></div></div>
+   Hover pauses it (WCAG 2.2.2); Decorations.js pauses it off screen; reduced motion stops it. */
+.dec_tape {
+  display: block; position: relative; overflow: clip; overflow-clip-margin: 0;
+  padding-block: clamp(var(--space-3), 1.6vw, var(--space-4)); background: transparent;
+}
+.dec_tape_band {
+  margin-inline: -3%; rotate: var(--dec-tape-tilt);
+  background: var(--dec-tape-bg); color: var(--dec-tape-fg);
+  padding-block: clamp(var(--space-2), 1.2vw, var(--space-3)); overflow: hidden;
+}
+.dec_tape_track {
+  display: flex; width: max-content; gap: 0;
+  animation: dec-tape var(--dec-tape-dur) linear infinite;
+}
+.dec_tape_track > span {
+  display: inline-flex; align-items: center; white-space: nowrap;
+  font-family: var(--font-secondary); font-weight: var(--font-wt-display); text-transform: uppercase;
+  font-size: var(--fs-lg); letter-spacing: .04em; line-height: 1;
+}
+.dec_tape_track > span::after { content: "✦"; margin-inline: 1.1em; font-size: .8em; }
+.dec_tape:hover .dec_tape_track, .dec_tape[data-dec="off"] .dec_tape_track { animation-play-state: paused; }
+@keyframes dec-tape { to { transform: translateX(-50%); } }
+
+/* ============================================================
+   5 · C · ЦИФРА — ghost numeral · numbered rows
+   ============================================================ */
+
+/* ---- .dec_ghost_num (SPEC) ------------------------------------------
+   source: ref — 3_Analize/References/Decor/creativeagency_Stat_Tiles.jpg (big bold numbers) +
+   simply_Confetti_Squares.jpg («велика цифра» beside the photo). One per page = the page's
+   one large typographic gesture. A layer: <span class="dec_ghost_num" aria-hidden="true">20+</span>
+   as a direct child of a .dec_host / .fx-host. Never under body copy: it sits right, behind tiles
+   whose numerals are large text (pink 10.21 / magenta 10.84 on the page; the ghost adds ≤ 11 %). */
+.dec_ghost_num {
+  position: absolute; z-index: -1; top: -.06em; right: -.04em; pointer-events: none; user-select: none;
+  font-family: var(--font-secondary); font-weight: var(--font-wt-display); font-style: normal;
+  font-variant-numeric: var(--font-numeric-display);
+  font-size: clamp(7rem, 26vw, 21rem); line-height: .8; letter-spacing: -.04em; white-space: nowrap;
+  color: var(--dec-ghost);
+}
+.dec_ghost_num_left { right: auto; left: -.04em; }
+.dec_ghost_num_bottom { top: auto; bottom: -.12em; }
+
+/* ---- .dec_rows (LIVE: components/Program/Program.tsx:32, :39, :47) -----------
+   source: ref — 3_Analize/References/Moodboard/Client_01_PersonalCoach_Crop.jpg (numbered rows,
+   thin lines; moodboard 01). Row layout, accordion and .ix-dim stay with Phase 7 / 11. */
+.dec_rows { list-style: none; margin: 0; padding: 0; border-bottom: 1px solid var(--dec-line); }
+.dec_rows > * { border-top: 1px solid var(--dec-line); }
+.dec_rows_num {
+  font-family: var(--font-secondary); font-weight: var(--font-wt-display); font-variant-numeric: var(--font-numeric-display);
+  font-size: var(--fs-3xl); line-height: 1; letter-spacing: -.02em; color: var(--fx-accent-text);
+}
+.dec_rows_sub { list-style: none; margin: 0; padding: 0; counter-reset: dec-sub; }
+.dec_rows_sub > li {
+  counter-increment: dec-sub; display: grid; grid-template-columns: 2.4em minmax(0, 1fr); gap: .8em;
+  padding: .7em 0; border-top: 1px solid var(--dec-line);
+}
+.dec_rows_sub > li:first-child { border-top: 0; }
+.dec_rows_sub > li::before {
+  content: counter(dec-sub, decimal-leading-zero);
+  content: counter(dec-sub, decimal-leading-zero) / "";
+  font-family: var(--font-mono); font-size: var(--fs-sm); line-height: 1.6;
+  color: var(--fx-muted); pointer-events: none;
+}
+
+/* ============================================================
+   6 · D · ЛІНІЯ — hair strands · hand scribble
+   ============================================================ */
+
+/* ---- .dec_strands + .dec_divider (UNUSED since 16.11.2026 — client: hair decoration removed; the
+   markup stays in components/Decorations/Strands.tsx for a quick revert, no page renders it) ------
+   source: client — 2_Brif/References/Logo/Logo_Black_Hair.jpg (the logo's line-drawn hair).
+   Inline <svg class="dec_strands" viewBox="0 0 1200 200" preserveAspectRatio="none"> with 5
+   <path pathLength="1"> and one <linearGradient> (stops .dec_tip / .dec_body). Light strands
+   on dark, dark strands on paper — the same token. */
+.dec_strands { display: block; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.dec_strands path {
+  fill: none; stroke-width: var(--dec-strand-w); stroke-linecap: round; vector-effect: non-scaling-stroke;
+  stroke-dasharray: 1; stroke-dashoffset: 0;               /* drawn by default: JS off / RM */
+}
+.dec_strands .dec_tip  { stop-color: var(--dec-strand-tip); }
+.dec_strands .dec_body { stop-color: var(--dec-strand); }
+.dec_divider {
+  display: block; position: relative; isolation: isolate; overflow: hidden;
+  height: clamp(72px, 10vw, 140px); padding-block: clamp(var(--space-3), 2vw, var(--space-5));
+  background: var(--fx-paper); pointer-events: none;
+}
+
+/* ---- .dec_live + .dec_strands_rest (UNUSED since 16.11.2026 — client: hair decoration removed;
+   HeroHome.tsx no longer sets .dec_live nor passes the static strands) — fix round 22.10 ----
+   Owner 22.10 (Decisions «Анімація пасма», B-95) reverses 8.0 §3 «cursor strands retired». Ported
+   from this file at commit 46b77ef (.dec_live, .dec_live_canvas, .dec_strands_rest), retuned:
+   the host is the home hero; the static strands sit in the empty photo band ABOVE the heading
+   (top, ≤ the hero's top padding), never under copy; the canvas and the static strands are layer 0,
+   the text layer is lifted to 1. Without JS, on touch, under 1024 px or with reduced motion the static
+   strands stay; after the first mouse move the canvas (decEffects.ts) takes over. */
+.dec_live > .wrap { position: relative; z-index: 1; }
+.dec_strands_rest {
+  position: absolute; left: 0; top: 8px; width: 100%; height: clamp(72px, 12vh, 110px); z-index: 0;
+  opacity: var(--dec-rest-alpha);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, var(--fx-ink) 35%);
+          mask-image: linear-gradient(90deg, transparent 0%, var(--fx-ink) 35%);
+  transition: opacity var(--dec-draw-dur) var(--fx-ease);
+}
+.dec_live_canvas {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;
+  opacity: var(--dec-live-alpha);
+}
+.dec_live.is_live .dec_strands_rest { opacity: 0; }   /* JS took over after the first mouse move */
+
+/* ---- .dec_scribble (SPEC) -------------------------------------------
+   source: ref — 3_Analize/References/Decor/onlinedanceroom_Scribble.jpg (pink hand swash over a
+   heading). One word of a heading: <span class="dec_scribble">слово<svg class="dec_scribble_svg"
+   viewBox="0 0 300 60" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+   <path pathLength="1" d="…"/></svg></span> (path in Demo.html). The swash runs UNDER the word
+   (z -1 inside the span) — the word stays fully readable. */
+.dec_scribble { position: relative; isolation: isolate; display: inline-block; white-space: nowrap; }
+.dec_scribble_svg {
+  position: absolute; z-index: -1; left: -6%; width: 112%; bottom: -.28em; height: .62em;
+  overflow: visible; pointer-events: none;
+}
+.dec_scribble_svg path {
+  fill: none; stroke: var(--dec-scribble); stroke-width: 3px; stroke-linecap: round; stroke-linejoin: round;
+  vector-effect: non-scaling-stroke; stroke-dasharray: 1; stroke-dashoffset: 0;
+}
+
+/* ============================================================
+   7 · MOTION (8.0 «Motion map»)
+   Signature — «поляроїд лягає»: the polaroid lands from 2.6 × its tilt to its tilt while the
+   reveal (Phase 7 / AutoReveal) lifts it. Rotate property only, so it never fights the
+   reveal transform. Triggers: AutoReveal [data-rv="in"], .reveal.is_in, or .dec_settle (in the
+   hero load sequence). No trigger (JS off) → the polaroid simply rests at its tilt.
+   ============================================================ */
+.dec_polaroid[data-rv="in"], .dec_polaroid.is_in, .is_in > .dec_polaroid, .dec_polaroid.dec_settle {
+  animation: dec-settle var(--dec-settle-dur) var(--fx-ease) both;
+  animation-delay: var(--dec-settle-delay, 0ms);
+}
+@keyframes dec-settle {
+  from { rotate: calc(var(--dec-tilt, var(--dec-tilt-l)) * var(--dec-settle-from)); }
+  to   { rotate: var(--dec-tilt, var(--dec-tilt-l)); }
+}
+
+/* Draw once — strands in a divider and the scribble. Decorations.js marks each line once:
+   on screen at init → "done" (drawn, no motion — never moves above the fold); below → "wait"
+   (hidden, instant) → "done" on first entry. Unmarked (JS off / RM) → drawn. */
+.dec_divider[data-dec="wait"] .dec_strands path,
+.dec_scribble[data-dec="wait"] .dec_scribble_svg path { stroke-dashoffset: 1; }
+.dec_divider[data-dec="done"] .dec_strands path { transition: stroke-dashoffset var(--dec-draw-dur) var(--fx-ease); }
+.dec_divider[data-dec="done"] .dec_strands path:nth-of-type(2) { transition-delay: 120ms; }
+.dec_divider[data-dec="done"] .dec_strands path:nth-of-type(3) { transition-delay: 240ms; }
+.dec_divider[data-dec="done"] .dec_strands path:nth-of-type(4) { transition-delay: 360ms; }
+.dec_divider[data-dec="done"] .dec_strands path:nth-of-type(5) { transition-delay: 480ms; }
+.dec_scribble[data-dec="done"] .dec_scribble_svg path { transition: stroke-dashoffset .9s var(--fx-ease) .2s; }
+
+/* ============================================================
+   9 · PHONE
+   ============================================================ */
+@media (max-width: 768px) {
+  .dec_rows_num { font-size: var(--fs-2xl); }
+  .dec_ghost_num { font-size: clamp(6rem, 38vw, 10rem); }
+  .dec_tape_track > span { font-size: var(--fs-md); }
+  :root { --dec-tilt-l: -2deg; --dec-tilt-r: 2deg; }
+}
+
+/* ---- reduced motion — LAST ------------------------------------
+   No settle, no marquee, no draw: everything rests in its final state. */
+@media (prefers-reduced-motion: reduce) {
+  .dec_polaroid, .dec_polaroid[data-rv="in"], .dec_polaroid.is_in, .is_in > .dec_polaroid, .dec_polaroid.dec_settle { animation: none !important; }
+  .dec_tape_track { animation: none !important; transform: none !important; }
+  .dec_strands path, .dec_scribble_svg path { transition: none !important; stroke-dashoffset: 0 !important; }
+  .dec_strands_rest { transition: none; }
+  .dec_live.is_live .dec_strands_rest { opacity: var(--dec-rest-alpha); }
+  .dec_live_canvas { display: none; }
+}

@@ -1,0 +1,214 @@
+/* ============================================================
+   Admin on phones (owner 28.10.2026: "a good mobile version of the admin panel").
+   1. header: logo + the site burger (AdminBurger, burger.css — owner 08.11) < 1200 px; inline nav from 1200 px
+   2. tables (.data_stack) become one card per row < 900 px, so nothing scrolls sideways
+   3. edit forms (prices, lessons): visible field labels; inputs 16 px so iOS does not zoom on focus
+   4. service groups: jump chips; room under the last card for the floating language pill
+   Semantic tokens only. Loaded right after app.css.
+   ============================================================ */
+
+/* ---- 1. header --------------------------------------------- */
+.header_admin .header_inner { flex-wrap: nowrap; }
+.header_admin .header_brand { min-width: 0; }
+.header_admin .header_brand_text { min-width: 0; }
+.header_admin .header_brand_text b { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.admin_menu { position: relative; flex: 0 0 auto; }
+.admin_menu_btn {
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  min-height: 44px; padding: 0 var(--space-4) 0 var(--space-3);
+  border: 1px solid var(--color-border-strong); border-radius: var(--radius-full);
+  background: var(--color-bg); color: var(--color-fg);
+  font-size: var(--fs-sm); font-weight: 600; white-space: nowrap;
+  list-style: none; cursor: pointer; user-select: none;
+}
+.admin_menu_btn::-webkit-details-marker { display: none; }
+.admin_menu[open] .admin_menu_btn { border-color: var(--color-focus); color: var(--color-accent-text); }
+.admin_menu_icon { display: inline-grid; gap: 4px; width: 18px; }
+.admin_menu_icon > span {
+  display: block; height: 2px; border-radius: 2px; background: currentColor;
+  transition: transform var(--dur-fast) var(--ease-out), opacity var(--dur-fast) var(--ease-out);
+}
+.admin_menu[open] .admin_menu_icon > span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.admin_menu[open] .admin_menu_icon > span:nth-child(2) { opacity: 0; }
+.admin_menu[open] .admin_menu_icon > span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+.admin_menu_panel {
+  position: absolute; right: 0; top: calc(100% + var(--space-2)); z-index: 50;
+  width: min(320px, calc(100vw - 32px));
+  display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2);
+  padding: var(--space-3);
+  border: 1px solid var(--color-border-strong); border-radius: var(--radius-lg);
+  background: var(--color-bg); box-shadow: var(--shadow-lg);
+}
+.admin_menu_link {
+  display: flex; align-items: center; width: 100%; min-height: 48px; padding: 0 var(--space-3);
+  border: 1px solid var(--color-border); border-radius: var(--radius-md);
+  background: var(--color-surface); color: var(--color-fg);
+  font: inherit; font-size: var(--fs-sm); font-weight: 600; text-decoration: none; text-align: left;
+  cursor: pointer;
+}
+.admin_menu_link:hover { border-color: var(--color-border-strong); color: var(--color-accent-text); }
+.admin_menu_link.is_active { border-color: var(--color-focus); background: var(--color-accent-tint); color: var(--color-accent-text); }
+.admin_menu_logout { grid-column: 1 / -1; margin: 0; }
+.admin_menu_logout .admin_menu_link { justify-content: center; background: var(--color-bg); color: var(--color-fg-dim); }
+.header_admin .admin_nav { display: none; }
+@media (min-width: 1200px) {
+  .admin_menu { display: none; }
+  .header_admin .admin_nav { display: flex; }
+}
+/* phones: the short name «Адмінка» instead of the long brand line that would be cut */
+.header_admin .header_brand_text .brand_short { display: none; }
+@media (max-width: 559px) {
+  .header_admin .header_brand_text .brand_long { display: none; }
+  .header_admin .header_brand_text .brand_short { display: block; }
+}
+
+/* ---- 2. tables -> cards ------------------------------------ */
+@media (max-width: 899px) {
+  .table_wrap:has(> .data_stack) { overflow: visible; border: 0; border-radius: 0; background: none; }
+  .data_table.data_stack { min-width: 0; display: block; }
+  .data_stack thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .data_stack tbody { display: grid; gap: var(--space-3); }
+  .data_stack tr { display: block; padding: var(--space-3) var(--space-4); border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-bg); }
+  .data_stack tbody tr:hover td { background: none; }
+  .data_stack td { display: block; position: relative; padding: var(--space-1) 0; border: 0; min-width: 0; overflow-wrap: anywhere; }
+  /* label left, value right */
+  .data_stack td[data-label] { padding-left: 7.5rem; min-height: 28px; }
+  .data_stack td[data-label]::before {
+    content: attr(data-label); position: absolute; left: 0; top: var(--space-1); width: 7rem;
+    font-size: var(--fs-xs); font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--color-fg-muted); line-height: 1.6; overflow-wrap: break-word;
+  }
+  /* label above, full-width value (cells that hold a form) */
+  .data_stack td.cell_block[data-label] { padding-left: 0; padding-top: var(--space-2); }
+  .data_stack td.cell_block[data-label]::before { position: static; display: block; width: auto; margin-bottom: var(--space-1); }
+  .data_stack td.cell_title {
+    padding: 0 0 var(--space-2); margin-bottom: var(--space-1);
+    border-bottom: 1px solid var(--color-border); font-size: var(--fs-md); font-weight: 600;
+  }
+  .data_stack td.cell_title .note { display: block; font-weight: 400; font-size: var(--fs-sm); }
+  .data_stack td.cell_title .tag { margin-left: var(--space-1); }
+  .data_stack td.table_empty { padding: var(--space-6) 0; }
+  /* inside a card: rows split by a line instead of a card inside a card */
+  .card .data_stack tbody { gap: 0; }
+  .card .data_stack tr { padding: var(--space-4) 0; border: 0; border-bottom: 1px solid var(--color-border); border-radius: 0; background: none; }
+  .card .data_stack tr:first-child { padding-top: 0; }
+  .card .data_stack tr:last-child { border-bottom: 0; padding-bottom: 0; }
+  .card .data_stack td.cell_title { border-bottom: 0; margin-bottom: 0; }
+  .data_stack .tag { white-space: normal; }
+
+  /* /admin/logins: a compact feed card — when + status / who / device / place */
+  .data_stack_feed tr { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px var(--space-3); align-items: center; }
+  .data_stack_feed td { padding: 0; }
+  .data_stack_feed .cell_when { grid-column: 1; }
+  .data_stack_feed .cell_state { grid-column: 2; grid-row: 1; }
+  .data_stack_feed .cell_who { grid-column: 1 / -1; font-size: var(--fs-sm); }
+  .data_stack_feed .cell_device,
+  .data_stack_feed .cell_from { font-size: var(--fs-sm); }
+  .data_stack_feed .cell_from { text-align: right; }
+  .data_stack_feed .cell_who br { display: none; }
+  .data_stack_feed .cell_who .note,
+  .data_stack_feed .cell_who .tag { margin-left: var(--space-2); }
+  .data_stack_feed .cell_device,
+  .data_stack_feed .cell_from { color: var(--color-fg-dim); }
+}
+
+/* ---- 3. edit forms ----------------------------------------- */
+.mini_field { display: grid; gap: 2px; min-width: 0; }
+.mini_label { font-size: var(--fs-xs); font-weight: 600; letter-spacing: .04em; color: var(--color-fg-muted); }
+.edit_form { align-items: end; }
+.edit_form_lesson .mini_field:first-of-type { flex: 1 1 220px; }
+.edit_form_lesson input[name='minutes'] { width: 80px; }
+.edit_form_service .mini_field { flex: 1 1 110px; }
+@media (min-width: 900px) {
+  /* desktop keeps the column header as the hint; the inputs keep their aria-label */
+  .edit_form .mini_label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+}
+@media (max-width: 899px) {
+  .edit_form { display: grid; gap: var(--space-2) var(--space-3); }
+  .edit_form_service { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .edit_form_service .mini_field:first-of-type { grid-column: 1 / -1; } /* the long «180 / 200 / 230 / 250 zł» line */
+  .edit_form_service > .btn { grid-column: 1 / -1; }
+  .edit_form_lesson { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .edit_form_lesson .mini_field:first-of-type { grid-column: 1 / -1; }
+  .edit_form .mini_field input,
+  .edit_form_lesson input[name='minutes'] { width: 100%; }
+  .edit_form > .btn { width: 100%; justify-content: center; }
+  .edit_form_lesson > .btn { grid-column: 1 / -1; }
+  .data_stack td.cell_block .inline_form:not(.edit_form) { display: grid; grid-template-columns: minmax(0, 1fr) auto; }
+  .data_stack td.cell_block .inline_form:not(.edit_form) .input_narrow { width: 100%; }
+}
+/* iOS Safari zooms the page when a focused field is under 16 px */
+@media (max-width: 1199px), (pointer: coarse) {
+  :where(.app_main, .header_app) :is(input:not([type='checkbox']):not([type='radio']), select, textarea) { font-size: 16px; }
+}
+
+/* ---- 4. jump chips, touch targets, floating pill ----------- */
+.jump_chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.jump_chip {
+  display: inline-flex; align-items: center; min-height: 40px; padding: 0 var(--space-4);
+  border: 1px solid var(--color-border-strong); border-radius: var(--radius-full);
+  background: var(--color-bg); color: var(--color-fg);
+  font-size: var(--fs-sm); font-weight: 600; text-decoration: none;
+}
+.jump_chip:hover { border-color: var(--color-focus); color: var(--color-accent-text); }
+.jump_target { scroll-margin-top: 88px; }
+@media (pointer: coarse) {
+  .app_main .student_grid a,
+  .app_main .app_section > p > a,
+  .app_main .data_stack td a { display: inline-block; padding-block: 10px; margin-block: -10px; }
+}
+/* the language pill floats bottom-right: leave room for it under the last card */
+.header_admin ~ .app_main { padding-bottom: calc(clamp(var(--space-9), 7vw, var(--space-12)) + 64px); }
+
+/* ---- 5. sections regroup (owner 31.10.2026) ---------------- */
+/* account menu (Профіль · Вийти) next to the inline nav; on < 1200 px both live in the menu panel */
+.header_admin .admin_account { display: none; flex: 0 0 auto; }
+.header_admin .admin_account > summary { display: inline-flex; align-items: center; }
+.header_admin .admin_account .choose_menu { min-width: 200px; }
+.header_admin .admin_account .choose_item_btn { width: 100%; background: none; border: 0; text-align: left; font: inherit; font-weight: 600; font-size: var(--fs-sm); cursor: pointer; }
+@media (min-width: 1200px) {
+  .header_admin .admin_account { display: block; }
+}
+.admin_menu_sep { grid-column: 1 / -1; height: 1px; background: var(--color-border); margin-block: var(--space-1); }
+/* tabs under the page title: Учениці | Журнал входів, Оплати | Сертифікати */
+.admin_tabs { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-4); }
+.admin_tab {
+  display: inline-flex; align-items: center; min-height: 40px; padding: 0 var(--space-4);
+  border: 1px solid var(--color-border-strong); border-radius: var(--radius-full);
+  color: var(--color-fg); font-size: var(--fs-sm); font-weight: 600; text-decoration: none;
+}
+.admin_tab:hover { color: var(--color-accent-text); }
+.admin_tab.is_active { border-color: var(--color-focus); background: var(--color-accent-tint); color: var(--color-accent-text); }
+/* a destructive action is quiet, red and confirmed — never the loudest button in the card */
+.btn_danger_quiet { background: transparent; color: var(--color-danger); border: 1px solid currentColor; }
+.btn_danger_quiet:hover { background: var(--color-accent-tint); color: var(--color-danger); }
+/* «Сьогодні» */
+.todo_list { list-style: none; padding: 0; margin: var(--space-3) 0 0; display: grid; gap: var(--space-2); }
+.todo_list li { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--space-2) var(--space-4); padding: var(--space-3) var(--space-4); border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-bg); }
+.pager { display: flex; justify-content: space-between; gap: var(--space-3); margin-top: var(--space-4); }
+/* service groups fold; one save button per group */
+.svc_group > summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); }
+.svc_group > summary::-webkit-details-marker { display: none; }
+.svc_group > summary h2 { margin: 0; }
+.svc_group[open] > summary .choose_caret { rotate: 225deg; translate: 0 2px; }
+.svc_save { display: flex; justify-content: flex-end; margin-top: var(--space-4); }
+.add_student > summary { list-style: none; cursor: pointer; width: max-content; }
+.add_student > summary::-webkit-details-marker { display: none; }
+.add_student[open] > summary { margin-bottom: var(--space-3); }
+@media (min-width: 1200px) {
+  .header_admin .admin_nav { margin-left: auto; }
+}
+/* closed «+ Додати ученицю» is just the button, not an empty card */
+.add_student:not([open]) { background: none; border: 0; padding: 0; box-shadow: none; }
+
+/* ---- 6. student cabinet sections (owner 02.11.2026) -------- */
+/* «Допомога»: questions fold open one by one */
+.help_faq { display: grid; gap: var(--space-2); margin-top: var(--space-3); }
+.help_q { border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-bg); }
+.help_q > summary {
+  list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+  gap: var(--space-3); min-height: 44px; padding: var(--space-3) var(--space-4); font-weight: 600;
+}
+.help_q > summary::-webkit-details-marker { display: none; }
+.help_q[open] > summary .choose_caret { rotate: 225deg; translate: 0 2px; }
+.help_q > p { margin: 0; padding: 0 var(--space-4) var(--space-4); color: var(--color-fg-dim); }

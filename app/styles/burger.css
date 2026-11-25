@@ -1,0 +1,389 @@
+/* ============================================================
+   Burger + full-screen mobile menu (owner 31.10.2026: «бургер меню має бути сучасним як в скілах kls»,
+   variant «На весь екран»). Port of kl Skills/Web_Effects/Web_Burger_Menu → variant A `.bm-panel--full`.
+   Behaviour: components/Header/MobileMenu.tsx. Colours only via the site tokens of the header's
+   own [data-theme] scope, so it follows both skins (insta light / academy charcoal / ?skin=classic).
+   Breakpoint = layout.css: < 1200 px burger, ≥ 1200 px the desktop nav (unchanged).
+   ============================================================ */
+
+.bm-header {
+  --bm-bg: var(--color-bg);
+  --bm-ink: var(--color-fg);
+  --bm-accent: var(--color-accent-text);          /* readable accent: plum-pink on light, pink on charcoal */
+  --bm-glow: var(--color-accent);
+  --bm-muted: var(--color-fg-muted);
+  --bm-line: var(--color-border);
+  --bm-hover: color-mix(in srgb, var(--color-fg) 8%, transparent);
+  --bm-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --bm-ease-io: cubic-bezier(0.65, 0, 0.35, 1);
+  --bm-icon-w: 28px;
+  --bm-icon-short: 17px;
+  --bm-link-size: clamp(1.75rem, 7vw, 2.25rem);
+  --bm-stagger: 55ms;
+}
+
+/* ---------- page scroll lock (class on <html> while open) ---------- */
+html.bm-lock,
+html.bm-lock body {
+  overflow: hidden;
+}
+
+/* ---------- toggle: bare two-line icon in a 48 px round hit area ---------- */
+.bm-toggle {
+  position: relative;
+  z-index: 3;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  margin-right: -6px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--bm-ink);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 180ms ease-out;
+}
+
+.bm-toggle:hover {
+  background-color: var(--bm-hover);
+}
+
+.bm-toggle:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.bm-icon {
+  position: relative;
+  display: block;
+  width: var(--bm-icon-w);
+  height: 12px;
+}
+
+.bm-icon__line {
+  position: absolute;
+  right: 0;
+  height: 2px;
+  border-radius: 2px;
+  background-color: currentColor;
+  transition:
+    top 220ms var(--bm-ease-io),
+    width 220ms var(--bm-ease-io),
+    transform 280ms var(--bm-ease-io),
+    background-color 220ms ease-out;
+}
+
+.bm-icon__line:nth-child(1) {
+  top: 0;
+  width: var(--bm-icon-w);
+}
+
+/* the short accent line grows on hover */
+.bm-icon__line:nth-child(2) {
+  top: 10px;
+  width: var(--bm-icon-short);
+  background-color: var(--bm-accent);
+}
+
+.bm-toggle:hover .bm-icon__line:nth-child(2) {
+  width: var(--bm-icon-w);
+}
+
+/* open: both lines meet in the middle and turn into a cross */
+.bm-toggle[aria-expanded='true'] .bm-icon__line {
+  top: 5px;
+  width: var(--bm-icon-w);
+  background-color: currentColor;
+}
+
+.bm-toggle[aria-expanded='true'] .bm-icon__line:nth-child(1) {
+  transform: rotate(45deg);
+}
+
+.bm-toggle[aria-expanded='true'] .bm-icon__line:nth-child(2) {
+  transform: rotate(-45deg);
+}
+
+/* the logo stays above the panel while open (trap from the skill) */
+.bm-header.is-menuOpen .header_brand {
+  position: relative;
+  z-index: 3;
+}
+
+/* ---------- panel: full screen, fades in; the toggle stays on top as the cross ---------- */
+.bm-panel {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 104px var(--gutter, 24px) calc(32px + env(safe-area-inset-bottom, 0px));
+  color: var(--bm-ink);
+  font-family: var(--font-primary);
+  background:
+    radial-gradient(120% 55% at 100% 100%, color-mix(in srgb, var(--bm-glow) 18%, transparent), transparent 70%),
+    var(--bm-bg);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 280ms ease-out,
+    visibility 0s linear 400ms;
+}
+
+.bm-panel.is-open {
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity 280ms ease-out,
+    visibility 0s;
+}
+
+/* ---------- links ---------- */
+.bm-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--bm-line);
+}
+
+/* items come in one after another: --i is set inline per item */
+.bm-item,
+.bm-contacts {
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity 200ms ease-out,
+    transform 200ms ease-out;
+}
+
+.bm-panel.is-open .bm-item,
+.bm-panel.is-open .bm-contacts {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 420ms ease-out,
+    transform 520ms var(--bm-ease);
+  transition-delay: calc(100ms + var(--i, 0) * var(--bm-stagger));
+}
+
+.bm-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 56px;
+  padding: 16px 2px 16px 0;
+  font-family: var(--font-secondary);
+  font-weight: var(--font-wt-display, 400);
+  font-size: var(--bm-link-size);
+  line-height: 1.15;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--bm-ink);
+  border-bottom: 1px solid var(--bm-line);
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    color 180ms ease-out,
+    padding-left 260ms var(--bm-ease);
+}
+
+/* cabinet: a quieter row in the text face */
+.bm-link--small {
+  font-family: var(--font-primary);
+  font-weight: 600;
+  font-size: var(--fs-sm, 0.875rem);
+  letter-spacing: 0.12em;
+}
+
+/* small chevron on the right — removed (owner 23.11: «прибрати … стрілочки») */
+.bm-link::after {
+  display: none;
+  content: '';
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border-top: 1.5px solid currentColor;
+  border-right: 1.5px solid currentColor;
+  opacity: 0.4;
+  transform: rotate(45deg);
+  transition:
+    transform 260ms var(--bm-ease),
+    opacity 180ms ease-out;
+}
+
+/* current page: short accent marker on the left instead of a filled block */
+.bm-link::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 2px;
+  height: 24px;
+  border-radius: 2px;
+  background: var(--bm-accent);
+  transform: translateY(-50%) scaleY(0);
+  transition: transform 260ms var(--bm-ease);
+}
+
+.bm-link:hover,
+.bm-link:focus-visible,
+.bm-link[aria-current='page'] {
+  color: var(--bm-accent);
+}
+
+.bm-link:hover::after,
+.bm-link:focus-visible::after {
+  opacity: 1;
+  transform: translateX(4px) rotate(45deg);
+}
+
+.bm-link[aria-current='page'] {
+  padding-left: 18px;
+}
+
+.bm-link[aria-current='page']::before {
+  transform: translateY(-50%) scaleY(1);
+}
+
+.bm-link:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: -2px;
+}
+
+/* the panel takes focus on open (useBurgerPanel) — no frame round the whole menu */
+.bm-panel:focus { outline: none; }
+
+/* ---------- «Обрати»: the two CTAs (site .btn keeps the skin's button roles) ---------- */
+.bm-choose {
+  display: grid;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.bm-choose__label {
+  margin: 0;
+  font-size: var(--fs-xs, 0.75rem);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--bm-muted);
+}
+
+.bm-choose .btn {
+  min-height: 52px;
+}
+
+/* ---------- contacts at the bottom: one tap away ---------- */
+.bm-contacts {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: auto 0 0;
+  padding: 32px 0 0;
+  list-style: none;
+  font-size: var(--fs-sm, 0.875rem);
+  color: var(--bm-muted);
+}
+
+.bm-contacts a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: inherit;
+  text-decoration: none;
+  transition: color 180ms ease-out;
+}
+
+.bm-contacts a:hover {
+  color: var(--bm-ink);
+}
+
+.bm-contacts a:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+/* ---------- desktop: no burger, no panel (desktop nav from layout.css) ---------- */
+@media (min-width: 1200px) {
+  .bm-toggle,
+  .bm-panel {
+    display: none;
+  }
+}
+
+/* ---------- touch: no hover circle stuck after a tap ---------- */
+@media (hover: none) {
+  .bm-toggle:hover {
+    background-color: transparent;
+  }
+
+  .bm-toggle:hover .bm-icon__line:nth-child(2) {
+    width: var(--bm-icon-short);
+  }
+
+  .bm-toggle[aria-expanded='true']:hover .bm-icon__line:nth-child(2) {
+    width: var(--bm-icon-w);
+  }
+}
+
+/* ---------- reduced motion: keep last ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .bm-toggle,
+  .bm-icon__line,
+  .bm-panel,
+  .bm-panel.is-open,
+  .bm-item,
+  .bm-contacts,
+  .bm-panel.is-open .bm-item,
+  .bm-panel.is-open .bm-contacts,
+  .bm-link,
+  .bm-link::before,
+  .bm-link::after {
+    transition: none;
+  }
+
+  .bm-item,
+  .bm-contacts {
+    transform: none;
+  }
+}
+
+/* Languages in the panel (owner 1.11, D-38): on phones and tablets the floating pill is gone — it
+   covered the corner of the content; the pill stays from 1200 px, where the burger is hidden. */
+.bm-langs { margin-top: var(--space-5); }
+.lang_row { display: flex; gap: var(--space-2); }
+.lang_row a { display: inline-grid; place-items: center; min-width: 48px; min-height: 44px; padding: 0 var(--space-3);
+  border: 1px solid var(--color-border-strong); border-radius: var(--radius-full); color: var(--color-fg);
+  font: 600 var(--fs-sm)/1 var(--font-primary); letter-spacing: .1em; text-decoration: none; }
+.lang_row a.is_active { background: var(--color-fg); border-color: var(--color-fg); color: var(--color-bg); }
+.lang_row a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; }
+@media (max-width: 1199px) { :root:has(.bm-toggle) .lang_pill { display: none !important; } }   /* only where a burger carries the languages (site; admin since 08.11); the cabinet and checkout keep the pill */
+
+/* ---------- open: the header is pinned to the screen (owner 01.11.2026: «то відкривається то не можна закрити») ----------
+   `overflow: hidden` on <html>/<body> (bm-lock) stops `position: sticky` in WebKit: after scrolling, the header
+   (and the × inside it) jumped back to the top of the document, off screen — the menu could not be closed. */
+.bm-header.is-menuOpen {
+  position: fixed;
+  inset: 0 0 auto 0;
+}
+
+/* ---------- admin (AdminBurger, owner 08.11.2026): «Вийти» is a server-action form ----------
+   The button wears .bm-link .bm-link--small like Профіль above it; only the button defaults go. */
+.bm-logout_form { margin: 0; }
+.bm-logout_form .bm-link {
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid var(--bm-line);
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}

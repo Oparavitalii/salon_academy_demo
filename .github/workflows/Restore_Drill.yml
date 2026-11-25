@@ -1,0 +1,214 @@
+# Restore drill: proves the backups written by Db_Backup.yml are restorable —
+# the only property of a backup that matters, and the one nobody checks.
+#
+#   R2 object (latest or given) -> decrypt -> gunzip -> throwaway Neon branch
+#     (branched from production, then EMPTIED) -> psql restore -> compare
+#     per-table row counts against the dump -> ALWAYS delete the branch.
+#
+# The branch is emptied rather than left as a copy so the drill also proves
+# the dump can rebuild the schema from nothing.
+#
+# The decrypted dump is production personal data and never leaves the runner:
+# no upload-artifact step, no cache, nothing printed but table names and row
+# counts. Do NOT add an upload step for it. The runner is destroyed after the
+# job; the plaintext is shredded anyway.
+#
+# Manual only, on purpose: it copies real personal data into a real (if
+# short-lived) database — a decision someone makes, not a 3am cron.
+#
+# Verified locally 20.10.2026 against a throwaway branch with pg_dump/psql 18.4:
+# 14 tables / 84 rows restored and matched; a deleted row was caught.
+# Setup: scripts/Backup/Readme.md.
+name: Restore Drill
+
+# PUBLIC DEMO: reference implementation only — it needs the backup bucket and the Neon API secrets of
+# a real deployment, none of which exist in this repository.
+on:
+  workflow_dispatch:
+    inputs:
+      object_key:
+        description: 'R2 object key to restore (e.g. backups/demo_beauty_studio_2026-10-21T02-00-07Z.sql.gz.enc), or "latest"'
+        required: false
+        default: latest
+      parent_branch:
+        description: 'Neon branch the throwaway drill branch is created from (it is emptied before the restore)'
+        required: false
+        default: main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: restore-drill
+  cancel-in-progress: false
+
+jobs:
+  drill:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      BACKUP_ENCRYPTION_KEY: ${{ secrets.BACKUP_ENCRYPTION_KEY }}
+      R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+      R2_BUCKET: ${{ secrets.R2_BUCKET }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_KEY }}
+      # Literal, not a secret — an unset secret would arrive as "" (see Db_Backup.yml).
+      AWS_DEFAULT_REGION: auto
+      AWS_EC2_METADATA_DISABLED: 'true'
+      AWS_REQUEST_CHECKSUM_CALCULATION: WHEN_REQUIRED
+      AWS_RESPONSE_CHECKSUM_VALIDATION: WHEN_REQUIRED
+      # neonctl reads NEON_API_KEY from the environment.
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      # Not sensitive, so a repo VARIABLE is preferred; a secret also works.
+      NEON_PROJECT_ID: ${{ vars.NEON_PROJECT_ID || secrets.NEON_PROJECT_ID }}
+      NEON_DATABASE: neondb
+      NEON_ROLE: neondb_owner
+      # Deterministic name, so the cleanup step can find the branch even if
+      # the create step died half-way. Always starts with drill- (guarded).
+      DRILL_BRANCH: drill-${{ github.run_id }}-${{ github.run_attempt }}
+      NEONCTL: npx --yes neonctl@8.7.2
+      OBJECT_KEY_INPUT: ${{ inputs.object_key }}
+      PARENT_BRANCH: ${{ inputs.parent_branch }}
+    steps:
+      # A manual drill with missing secrets should fail loudly, not skip.
+      - name: Check configuration
+        id: cfg
+        shell: bash
+        run: |
+          set -euo pipefail
+          missing=()
+          for n in BACKUP_ENCRYPTION_KEY R2_ENDPOINT R2_BUCKET AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY NEON_API_KEY NEON_PROJECT_ID; do
+            [ -n "${!n}" ] || missing+=("$n")
+          done
+          if [ "${#missing[@]}" -gt 0 ]; then
+            echo "::error::not configured — empty: ${missing[*]} (AWS_* = secrets R2_ACCESS_KEY / R2_SECRET_KEY). See scripts/Backup/Readme.md."
+            exit 1
+          fi
+          [[ "$DRILL_BRANCH" == drill-* ]] || { echo "::error::refusing branch name $DRILL_BRANCH"; exit 1; }
+          echo "ok=true" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22'
+
+      - name: Install postgresql-client-18 (PGDG)
+        # Same trap as Db_Backup.yml: the package alone is not enough —
+        # /usr/bin/psql stays the image's older version until $GITHUB_PATH
+        # prepends the PGDG 18 bin dir.
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq postgresql-common
+          sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
+          sudo apt-get install -y -qq postgresql-client-18
+          echo "/usr/lib/postgresql/18/bin" >> "$GITHUB_PATH"
+
+      - name: Confirm psql is version 18
+        run: psql --version && psql --version | grep -q ' 18\.'
+
+      - name: Download and decrypt the backup
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          key="$OBJECT_KEY_INPUT"
+          if [ -z "$key" ] || [ "$key" = latest ]; then
+            aws s3api list-objects-v2 --endpoint-url "$R2_ENDPOINT" --bucket "$R2_BUCKET" \
+              --prefix backups/ --output json > "$RUNNER_TEMP/list.json"
+            key=$(jq -r '.Contents // [] | sort_by(.LastModified[0:19] + "Z" | fromdateiso8601) | last | .Key // empty' "$RUNNER_TEMP/list.json")
+            [ -n "$key" ] || { echo "::error::no objects under backups/ in the bucket"; exit 1; }
+          fi
+          echo "restoring $key"
+          echo "### Restore drill — \`$key\`" >> "$GITHUB_STEP_SUMMARY"
+          aws s3api get-object --endpoint-url "$R2_ENDPOINT" --bucket "$R2_BUCKET" \
+            --key "$key" "$RUNNER_TEMP/drill.sql.gz.enc" > /dev/null
+          node scripts/Backup/Backup_Crypto.mjs decrypt "$RUNNER_TEMP/drill.sql.gz.enc" "$RUNNER_TEMP/drill.sql.gz"
+          gunzip -c "$RUNNER_TEMP/drill.sql.gz" > "$RUNNER_TEMP/drill.sql"
+          rm -f "$RUNNER_TEMP/drill.sql.gz" "$RUNNER_TEMP/drill.sql.gz.enc"
+          tail -n 20 "$RUNNER_TEMP/drill.sql" | grep -q 'PostgreSQL database dump complete' \
+            || { echo "::error::dump is truncated (no 'dump complete' trailer)"; exit 1; }
+
+      - name: Create throwaway Neon branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          $NEONCTL branches create --project-id "$NEON_PROJECT_ID" --name "$DRILL_BRANCH" \
+            --parent "$PARENT_BRANCH" --output json > /dev/null
+          url=$($NEONCTL connection-string "$DRILL_BRANCH" --project-id "$NEON_PROJECT_ID" \
+            --database-name "$NEON_DATABASE" --role-name "$NEON_ROLE")
+          [ -n "$url" ] || { echo "::error::empty connection string"; exit 1; }
+          echo "::add-mask::$url"
+          echo "DRILL_DB_URL=$url" >> "$GITHUB_ENV"
+          echo "created $DRILL_BRANCH from $PARENT_BRANCH"
+
+      - name: Empty the branch
+        # Drops EVERY non-system schema (public, drizzle, anything added later)
+        # so the dump has to rebuild everything. Only ever runs against
+        # DRILL_DB_URL, which comes from the drill-* branch above.
+        shell: bash
+        run: |
+          set -euo pipefail
+          psql -X -q -v ON_ERROR_STOP=1 -d "$DRILL_DB_URL" <<'SQL'
+          DO $$
+          DECLARE s text;
+          BEGIN
+            FOR s IN SELECT nspname FROM pg_namespace
+                     WHERE nspname !~ '^pg_' AND nspname <> 'information_schema'
+            LOOP
+              EXECUTE format('DROP SCHEMA %I CASCADE', s);
+            END LOOP;
+          END $$;
+          CREATE SCHEMA public;
+          SQL
+
+      # ON_ERROR_STOP=1 is the whole point: without it psql prints errors,
+      # carries on and exits 0 — a green drill over a half-failed restore.
+      # stdout (set_config/setval results) is discarded; errors stay on stderr.
+      - name: Apply the dump
+        run: psql -X -q -v ON_ERROR_STOP=1 -d "$DRILL_DB_URL" -f "$RUNNER_TEMP/drill.sql" > /dev/null
+
+      - name: Compare row counts against the dump
+        shell: bash
+        run: |
+          set -euo pipefail
+          RESTORE_TARGET_URL="$DRILL_DB_URL" node scripts/Backup/Verify_Restore.mjs "$RUNNER_TEMP/drill.sql" \
+            | tee -a "$GITHUB_STEP_SUMMARY"
+
+      # always(): the branch is a full copy of clients' personal data and is
+      # deleted whether the drill passed, failed or was cancelled. Guarded on
+      # the config check only (not on the create step), because a create that
+      # died half-way can still have left a branch behind; a missing branch is
+      # simply reported. Do not weaken this to success().
+      - name: Delete Neon branch
+        if: always() && steps.cfg.outputs.ok == 'true'
+        shell: bash
+        run: |
+          set -uo pipefail
+          [[ "$DRILL_BRANCH" == drill-* ]] || { echo "::error::refusing to delete $DRILL_BRANCH"; exit 1; }
+          if $NEONCTL branches delete "$DRILL_BRANCH" --project-id "$NEON_PROJECT_ID" --output json > /dev/null; then
+            echo "deleted $DRILL_BRANCH"
+          elif get_out=$($NEONCTL branches get "$DRILL_BRANCH" --project-id "$NEON_PROJECT_ID" --output json 2>&1); then
+            echo "::error::branch $DRILL_BRANCH still exists and could not be deleted — delete it by hand in the Neon console (it holds a copy of production data)"
+            exit 1
+          elif grep -qiE 'not found|404' <<< "$get_out"; then
+            echo "no branch $DRILL_BRANCH to delete"
+          else
+            # Neon did not answer clearly (API, rate limit, auth): the branch may still hold production data.
+            echo "::error::could not confirm that $DRILL_BRANCH is gone — check the Neon console and delete it by hand if it exists"
+            exit 1
+          fi
+
+      - name: Shred the decrypted dump
+        if: always()
+        run: |
+          for f in "$RUNNER_TEMP/drill.sql" "$RUNNER_TEMP/drill.sql.gz" "$RUNNER_TEMP/drill.sql.gz.enc"; do
+            [ -e "$f" ] && { shred -u "$f" 2>/dev/null || rm -f "$f"; }
+          done
+          true

@@ -1,0 +1,141 @@
+/* HeroVideo — the first screen of `/`, `/salon` and `/courses` on every screen size (owner 31.10).
+   Video with the script line → four tiles 2×2 (ticker and Studio | Academy tabs removed 06.11 —
+   Daryna 03.11: one navigation, the phone bottom bar). Phones (< 768 px): Daryna's stacked layout,
+   full-width video. From 768 px: a centred stage — the 576×1024 video in a 9:16 frame on the left (never stretched full width),
+   the tiles 2×2 on the right filling the same height. Root class `.hv_screen` (skin_insta hides `.hv`). */
+
+.hv_screen { display: block; background: var(--color-bg); color: var(--color-fg); }
+
+.hv_stage { position: relative; height: min(64svh, 136vw); overflow: hidden; background: #161718; } /* deep grey while the video loads (Daryna 21.11: no black), was #111 */
+.hv_video { display: block; width: 100%; height: 100%; object-fit: cover; }
+.hv_stage::after { content: ''; position: absolute; inset: auto 0 0; height: 40%; background: linear-gradient(to top, rgba(3, 3, 3, .65), transparent); pointer-events: none; }
+/* The academy's script line + one sub line (16.11 — Daryna: the head was «занадто великий відносно кнопки»,
+   tighter line spacing; was 36/1.1). */
+.hv_copy { position: absolute; left: 16px; right: 16px; bottom: 14px; z-index: 1; color: #fbfbfb; text-shadow: 0 2px 14px rgba(0, 0, 0, .5); }
+.hv_script { margin: 0; font: 400 28px/1 var(--font-script); font-size-adjust: 0.5; }
+.hv_sub { margin: 8px 0 0; max-width: 36ch; font: 500 13px/1.4 var(--font-primary); }
+
+.hv_tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 0; padding: 6px; list-style: none; }
+.hv_tiles > li { min-width: 0; min-height: 0; }
+/* Tiles are square (were 4:3): the salon photos are 4:5 portraits, and in a 4:3 tile the caption sat on
+   the mouth and chin even once the whole head was in the frame (owner 08.11.2026 «краще щоб голову
+   повністю видно було»; blind review + challenger measured it). Square on every first screen, so `/`,
+   `/salon` and `/courses` keep one layout (owner 31.10). */
+.hv_tile { position: relative; display: block; aspect-ratio: 1 / 1; overflow: hidden; border-radius: 10px; color: #fbfbfb; text-decoration: none; }
+.hv_tile_img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+/* Salon tiles (`/`, `/salon`): per photo, the frame starts just above the hair — the whole head shows
+   above the caption. The values belong to the files in lib/services/directions.ts (head top: Farb_15
+   2 %, Narosh_08 15 % of the height; a square shows 80 % of a 4:5 photo, so the position is head top ÷ 0.2)
+   — a new photo needs its own number. Zoom from the top. 16.11 (Dana: the photographer's frames): «Стрижки»
+   is Cut_Work_02 (BT9A4181), «Догляд» Care_Wash_01 (BT9A4587) — both cropped to fit the old 25 % / 85 %. */
+.hv_tile[data-sheet] .hv_tile_img { transform-origin: 50% 0%; }
+.hv_tile[data-sheet='colour'] .hv_tile_img { object-position: 50% 0%; }   /* Farb_Daryna_01 (22.11): hair top in the frame */
+.hv_tile[data-sheet='cut'] .hv_tile_img { object-position: 50% 25%; }
+.hv_tile[data-sheet='extensions'] .hv_tile_img { object-position: 50% 50%; }   /* Narosh_Daryna_01 (22.11): the capsule row mid-frame */
+.hv_tile[data-sheet='care'] .hv_tile_img { object-position: 50% 0%; }   /* Dohliad_Daryna_01 (22.11): the face in the upper third */
+.hv_tile::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(3, 3, 3, .72), rgba(3, 3, 3, .05) 65%); }
+.hv_tile_text { position: absolute; left: 10px; right: 10px; bottom: 9px; z-index: 1; display: grid; gap: 3px; }
+.hv_tile_title { font: 600 16px/1.2 var(--font-primary); }   /* on the type scale (D-37) */
+.hv_tile_sub { font: 400 12px/1.3 var(--font-primary); opacity: .9; }
+@media (max-width: 359px) { .hv_tile_title { font-size: var(--fs-sm); } }   /* 320: «Реконструкция» split mid-word (phase 12, 07.11) */
+.hv_tile:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+
+/* ---------- desktop / tablet ---------- */
+@media (min-width: 768px) {
+  .hv_screen { --hv-h: clamp(440px, calc(100svh - 160px), 780px);   /* header + padding ≈ 160 px: the whole first screen fits the window */ --hv-gap: clamp(12px, 1.4vw, 16px); }
+
+  .hv_body {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--hv-gap);
+    max-width: var(--content-max);
+    margin: 0 auto;
+    padding: clamp(20px, 2.6vw, 36px) clamp(16px, 3vw, 24px);
+  }
+
+  /* 9:16 frame at the video's own proportion: 760 px tall → 428 px wide, below its 576 px source */
+  .hv_stage { width: calc(var(--hv-h) * 9 / 16); height: var(--hv-h); border-radius: 20px; box-shadow: var(--shadow-lg, 0 28px 70px rgba(0, 0, 0, .18)); }
+  .hv_stage::after { height: 34%; }
+  .hv_copy { left: 24px; right: 24px; bottom: 22px; }
+  .hv_script { font-size: clamp(28px, 2.6vw, 36px); }
+  .hv_sub { font-size: 14px; }
+
+  .hv_tiles { grid-template-rows: 1fr 1fr; gap: var(--hv-gap); height: var(--hv-h); padding: 0; }
+  .hv_tile { aspect-ratio: auto; height: 100%; border-radius: 16px; box-shadow: var(--shadow-md, none); }
+  .hv_tile_img { transition: transform .8s cubic-bezier(.22, .61, .36, 1); }
+  .hv_tile:is(:hover, :focus-visible) .hv_tile_img { transform: scale(1.04); }
+  .hv_tile::after { background: linear-gradient(to top, rgba(3, 3, 3, .74), rgba(3, 3, 3, .04) 58%); }
+  .hv_tile_text { left: 20px; right: 20px; bottom: 18px; gap: 6px; }
+  .hv_tile_title { font: 400 24px/1.08 var(--font-secondary); letter-spacing: .01em; }   /* 24 = --fs-xl at 1440 (D-37: ≤ 8 sizes) */
+  .hv_tile_sub { font: 500 12px/1.35 var(--font-primary); letter-spacing: .14em; text-transform: uppercase; opacity: .92; }
+
+  /* academy: Montserrat caps heads (skin_insta §3 sets --font-secondary to Montserrat there) */
+  [data-hv-area='academy'] .hv_tile_title { font-weight: 600; font-size: 18px; letter-spacing: .04em; text-transform: uppercase; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hv_tile_img { transition: none; }
+  .hv_tile:is(:hover, :focus-visible) .hv_tile_img { transform: none; }
+}
+
+/* The page's main action on the video (salon: book, academy: choose a course — owner 1.11). */
+.hv_cta { position: absolute !important; left: 16px; bottom: 16px; z-index: 2; min-height: 48px; }   /* !important: the shimmer rule in fx_kit.css sets .btn position: relative */
+.hv_stage:has(.hv_cta) .hv_copy { bottom: 76px; }
+@media (min-width: 768px) {
+  .hv_cta { left: 24px; bottom: 24px; }
+  .hv_stage:has(.hv_cta) .hv_copy { bottom: 88px; }
+}
+/* A course switched off in the admin leaves three tiles: the last one takes the full row. */
+.hv_tiles[data-count='3'] > li:last-child { grid-column: 1 / -1; }
+.hv_tiles[data-count='1'] > li, .hv_tiles[data-count='2'] > li { grid-column: 1 / -1; }
+/* a tile alone across the row is a 2:1 band, not a full-width square (tiles are 1:1 since 08.11) */
+@media (max-width: 767.98px) {
+  .hv_tiles[data-count='3'] > li:last-child .hv_tile, .hv_tiles:is([data-count='1'], [data-count='2']) .hv_tile { aspect-ratio: 2 / 1; }
+}
+@media (min-width: 1024px) {
+  .hv_tiles:is([data-count='1'], [data-count='2']) .hv_tile { aspect-ratio: 2 / 1; }
+}
+
+/* ---------- desktop video wall (owner 1.11: «десктопну версію теж з відео») ----------
+   Three columns of the page's clip from three moments; tiles in one row of four below.
+   Column ≈ (1200 − 2 gaps) / 3 ≈ 390–470 px, under the clip's 576 px: never upscaled. */
+.hv_wall { position: absolute; inset: 0; }
+.hv_video_extra { display: none; }
+@media (min-width: 1024px) {
+  /* 384 = header + paddings + most of the row of square tiles (≈ 278 px at 1440; was 340 with 4:3
+     tiles). At 1440×900 both hold: each video column ≥ 15 % of the screen (Release floor F5 counts one
+     element: 380 × 516 px) and the tile captions end above the fold — the top padding is 24 px here
+     (was 36), only the tiles' bottom padding falls under the fold (08.11). */
+  .hv_screen { --hv-wall-h: clamp(400px, calc(100svh - 384px), 640px); }
+  .hv_body { display: block; padding-top: clamp(16px, 1.7vw, 24px); }
+  .hv_stage { width: 100%; height: var(--hv-wall-h); }
+  .hv_wall { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: minmax(0, 1fr); gap: 6px; background: var(--color-bg); }
+  .hv_wall .hv_video, .hv_wall .hv_video_extra { min-height: 0; }
+  .hv_wall .hv_video, .hv_wall .hv_video_extra { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .hv_stage::after { height: 46%; background: linear-gradient(to top, rgba(3, 3, 3, .72), transparent); }
+  .hv_copy { left: 32px; bottom: 26px; right: auto; max-width: 60%; }
+  .hv_script { font-size: var(--fs-2xl); }   /* 36 at 1440: on the type scale (D-37); was 52 (Daryna 16.11) */
+  .hv_stage:has(.hv_cta) .hv_copy { bottom: 26px; }
+  .hv_cta { left: auto !important; right: 32px; bottom: 30px; }
+  .hv_tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: none; height: auto; margin-top: var(--hv-gap); }
+  .hv_tile { aspect-ratio: 1 / 1; height: auto; }
+  .hv_tiles[data-count='3'] > li:last-child { grid-column: auto; }
+}
+
+/* A salon tile opens the price sheet (Daryna 03.11): a small «+» says it opens, not leaves.
+   Only the last line (the sub) shares its row with the «+»; the title keeps the tile's full width
+   (phase 12, 07.11: «Нарощуванн/я», «Фарбуванн/я» split mid-word at 320–360). */
+.hv_tile[data-sheet] .hv_tile_sub { padding-right: 30px; }
+.hv_tile[data-sheet]::before { content: '+'; position: absolute; right: 9px; bottom: 9px; z-index: 2; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--color-accent); color: #030303; font: 500 18px/1 var(--font-primary); }
+@media (min-width: 768px) { .hv_tile[data-sheet]::before { right: 16px; bottom: 16px; width: 32px; height: 32px; font-size: 22px; } .hv_tile[data-sheet] .hv_tile_sub { padding-right: 38px; } }
+/* 768–1023: the four tiles stand 2 × 2 beside the video, ~140 px wide — the 24 px title and the
+   spaced-out sub were cut, the sub ran under the «+» (phase 12, 07.11). Smaller title, tighter sub,
+   the «+» in the top corner so the text has the whole width. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .hv_tile_text { left: 10px; right: 10px; bottom: 12px; }
+  .hv_tile_title { font-size: var(--fs-lg); }
+  [data-hv-area='academy'] .hv_tile_title { font-size: 13px; letter-spacing: 0; }   /* «РЕКОНСТРУКЦІЯ» in caps fits 121 px */
+  .hv_tile_sub { letter-spacing: .04em; }
+  .hv_tile[data-sheet]::before { top: 12px; right: 12px; bottom: auto; width: 28px; height: 28px; font-size: 20px; }
+  .hv_tile[data-sheet] .hv_tile_sub { padding-right: 0; }
+}

@@ -1,0 +1,58 @@
+/* Decor — option C, chosen by the owner 06.11.2026 («C але пасма що були минулий раз анімацією»).
+   1) The logo strands (components/Decorations/Strands.tsx, five paths after the logo's line-drawn hair)
+      drawn once on scroll — in five section corners (StrandCorner: home SERVICES, «Про нас» short,
+      salon teaser; /salon prices; /about founder) and as the strand dividers that were already in the
+      pages (StrandDivider, hidden by the skin 31.10 — back). The motion is decEffects' draw-once.
+   2) A short solid pink rule under every section head.
+   Colours: strands = --fx-strand (the page ink, 85 %) with a pink tip — white / grey on the dark salon,
+   black on the light academy; the rule is solid #f898d0. No translucent pink (it reads mauve on black —
+   Daryna 03.11 «фіолетовий … ніде»). Nothing covers copy: corners sit behind it, pointer-events none.
+   16.11.2026: part 1 is unused — the corners went first (Daryna «ці білі елементи виглядають дивно»),
+   then the dividers too (Dana «их нужно прямые попробовать сделать (или чем то заменить)», the owner:
+   the client wants the hair decoration removed). Only part 2, the pink rule, is live. The part-1 rules
+   stay for a quick revert; without the markup they match nothing. Where a divider stood, the two
+   sections now meet at the normal spacing (.sec padding, layout.css) — same-step neighbours get the
+   hairline of components.css «SECTION STEPS». */
+
+/* ---------- 1 · strands in a section corner (unused since 16.11.2026) ---------- */
+.sec:has(> .dec_corner) {
+  position: relative;
+  isolation: isolate;
+  overflow-x: clip;
+}
+/* The strands live in the band above the heading — the section's own top padding (.sec, layout.css)
+   minus a 12 px gap — so no line crosses a heading or the copy (owner 08.11.2026 «Так зсунути ті
+   лінії»; they started 8–24 px from the top and ran through the h2 at every width). */
+.dec_divider.dec_corner {
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  width: clamp(280px, 52vw, 720px);
+  height: calc(clamp(var(--space-10), 8vw, var(--space-12)) - 12px);
+  padding: 0;
+  background: none;
+  overflow: visible;
+}
+.dec_corner_right { right: clamp(-60px, -4vw, -16px); }
+.dec_corner_left { left: clamp(-60px, -4vw, -16px); transform: scaleX(-1); }
+
+/* SERVICES: the arrows sit top right — the strands go above them */
+#services-carousel > .dec_corner { top: 0; height: clamp(70px, 9vw, 120px); }
+
+/* the dividers between sections carry the same strands, at a calmer height on phones
+   (unused since 16.11.2026 — client: hair decoration removed) */
+@media (max-width: 767px) {
+  .dec_divider:not(.dec_corner) { height: 64px; }
+}
+
+/* ---------- 2 · the short pink rule under section heads ---------- */
+main :is(.sec_head, .sec_head_row, .svc_carousel_head) h2::after {
+  content: '';
+  display: block;
+  width: 56px;
+  height: 3px;
+  margin-top: var(--space-4);
+  border-radius: 2px;
+  background: #f898d0;
+}
+main .sec_head.sec_head_center h2::after { margin-inline: auto; }

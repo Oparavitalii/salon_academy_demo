@@ -1,0 +1,145 @@
+/* Daryna's edits 03.11.2026 (built 06.11): ServiceSheet · ServicesCarousel «SERVICES» · AboutVideo «ABOUT US».
+   Colours come only from the scope's tokens (salon dark / academy light — skin_insta.css). */
+
+/* ---------- ServiceSheet — price list of one direction over the page ---------- */
+.svc_sheet {
+  position: fixed;
+  inset: auto 0 0 0;
+  width: 100%;
+  max-width: 100%;
+  max-height: 86svh;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 22px 22px 0 0;
+  background: var(--color-surface);
+  color: var(--color-fg);
+  overflow: hidden;
+  box-shadow: 0 -12px 40px rgba(0, 0, 0, .45);
+}
+.svc_sheet[open] { display: flex; flex-direction: column; }
+.svc_sheet::backdrop { background: rgba(3, 3, 3, .62); }
+.svc_sheet_inner { display: flex; flex-direction: column; min-height: 0; max-height: 86svh; }
+.svc_sheet_head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding: var(--space-5) var(--space-5) var(--space-3); border-bottom: 1px solid var(--color-border); }
+.svc_sheet_head::before { content: ''; position: absolute; top: 8px; left: 50%; width: 40px; height: 4px; border-radius: 4px; background: var(--color-border-strong); transform: translateX(-50%); }
+.svc_sheet_title { margin: 0; font: 400 var(--fs-2xl)/1.1 var(--font-secondary); letter-spacing: .02em; text-transform: uppercase; }
+.svc_sheet_close { display: grid; place-items: center; flex: none; width: 44px; height: 44px; border: 1px solid var(--color-border-strong); border-radius: 50%; background: transparent; color: var(--color-fg); cursor: pointer; }
+.svc_sheet_close svg { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
+.svc_sheet_close:hover { border-color: var(--color-accent); color: var(--color-accent-text); }
+.svc_sheet_close:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+.svc_sheet_body { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: var(--space-2) var(--space-5) var(--space-4); }
+.svc_sheet_group + .svc_sheet_group { margin-top: var(--space-6); }
+.svc_sheet_group_name { margin: var(--space-4) 0 var(--space-2); font: 600 var(--fs-xs)/1.3 var(--font-primary); letter-spacing: .16em; text-transform: uppercase; color: var(--color-accent-text); }
+.svc_sheet_desc { margin: var(--space-2) 0; font-size: var(--fs-sm); line-height: 1.5; color: var(--color-fg-muted); }
+.svc_sheet_rows { margin: 0; padding: 0; list-style: none; }
+/* phones: the price goes under the name (a price like «від 500 / 550 / 600 / 650 zł» is ~230 px wide);
+   from 560 px name and price share the row */
+.svc_sheet_row { display: grid; gap: var(--space-1); padding: var(--space-3) 0; border-bottom: 1px solid var(--color-border); }
+.svc_sheet_name { display: grid; gap: 2px; font-size: var(--fs-md); line-height: 1.35; }
+.svc_sheet_meta { font-size: var(--fs-xs); letter-spacing: .02em; color: var(--color-fg-muted); }
+.svc_sheet_price { font: 500 var(--fs-md)/1.3 var(--font-primary); color: var(--color-accent-text); overflow-wrap: anywhere; }
+@media (min-width: 560px) {
+  .svc_sheet_row { grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; column-gap: var(--space-4); }
+  .svc_sheet_price { max-width: 46ch; text-align: right; white-space: nowrap; }
+}
+.svc_sheet_price.is_note { white-space: normal; font-size: var(--fs-xs); font-weight: 400; color: var(--color-fg-muted); }
+.svc_sheet_foot { padding: var(--space-4) var(--space-5) calc(var(--space-4) + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--color-border); }
+.svc_sheet_book { width: 100%; justify-content: center; }
+
+@media (min-width: 768px) {
+  .svc_sheet { inset: 0; width: min(680px, 92vw); max-height: 84vh; margin: auto; border-radius: 22px; }
+  .svc_sheet_inner { max-height: 84vh; }
+  .svc_sheet_head { padding: var(--space-6) var(--space-7) var(--space-4); }
+  .svc_sheet_head::before { content: none; }
+  .svc_sheet_body { padding: var(--space-2) var(--space-7) var(--space-5); }
+  .svc_sheet_foot { padding: var(--space-4) var(--space-7) var(--space-6); }
+  .svc_sheet_book { width: auto; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .svc_sheet[open] { animation: svc_sheet_up .32s cubic-bezier(.22, .61, .36, 1); }
+  .svc_sheet[open]::backdrop { animation: svc_sheet_fade .32s ease; }
+}
+@keyframes svc_sheet_up { from { transform: translateY(40px); opacity: 0; } }
+@keyframes svc_sheet_fade { from { opacity: 0; } }
+
+/* ---------- ServicesCarousel — «SERVICES», photos in a row with arrows ---------- */
+.svc_carousel { overflow: hidden; }
+.svc_carousel_head { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--space-5); margin-bottom: var(--space-6); }
+.svc_carousel_title { margin: 0 0 var(--space-2); }
+.svc_carousel_head .lede { margin: 0; }
+.svc_carousel_arrows { display: flex; flex: none; gap: var(--space-2); }
+.svc_arrow { display: grid; place-items: center; width: 48px; height: 48px; border: 1px solid var(--color-accent); border-radius: 50%; background: transparent; color: var(--color-accent-text); cursor: pointer; transition: background-color .2s ease, color .2s ease, opacity .2s ease; }
+.svc_arrow svg { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.svc_arrow:hover { background: var(--color-accent); color: #030303; }
+.svc_arrow:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; }
+
+.svc_carousel_track {
+  display: flex;
+  gap: 12px;
+  margin: 0;
+  padding: 0 max(var(--gutter), calc((100vw - var(--content-max)) / 2 + var(--gutter))) var(--space-2);
+  list-style: none;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: max(var(--gutter), calc((100vw - var(--content-max)) / 2 + var(--gutter)));
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+}
+.svc_carousel_track::-webkit-scrollbar { display: none; }
+.svc_carousel_item { flex: 0 0 68vw; max-width: 300px; scroll-snap-align: start; }
+.svc_card { display: grid; gap: var(--space-2); color: var(--color-fg); text-decoration: none; }
+.svc_card_media { position: relative; display: block; aspect-ratio: 4 / 5; overflow: hidden; border-radius: 14px; background: var(--color-surface); }
+.svc_card_media img { width: 100%; height: 100%; object-fit: cover; transition: transform .7s cubic-bezier(.22, .61, .36, 1); }
+/* Dana 16.11 «Фото пожалуйста поставьте на одной высоте, много обрезаных волос и сверху пространство»:
+   every card has the same 4:5 frame on one top line (no per-card reveal — data-rv-skip on the track);
+   a photo with empty room above the head is zoomed from its bottom edge (FRAMES in ServicesCarousel.tsx
+   sets --svc-zoom / --svc-y), so the crowns sit at one height and the hair keeps its full length.
+   `scale` is its own property, so the hover zoom (transform) still adds on top of it. */
+.svc_card_media img {
+  object-position: 50% var(--svc-y, 50%);
+  transform-origin: 50% var(--svc-y, 50%);
+  scale: var(--svc-zoom, 1);
+}
+.svc_card_media::after { content: '+'; position: absolute; right: 12px; bottom: 12px; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--color-accent); color: #030303; font: 500 22px/1 var(--font-primary); }
+.svc_card_name { margin-top: var(--space-1); font: 400 var(--fs-xl)/1.15 var(--font-secondary); letter-spacing: .02em; text-transform: uppercase; }
+.svc_card_sub { font-size: var(--fs-xs); letter-spacing: .08em; text-transform: uppercase; color: var(--color-fg-muted); }
+.svc_card:hover .svc_card_media img, .svc_card:focus-visible .svc_card_media img { transform: scale(1.04); }
+.svc_card:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 4px; border-radius: 14px; }
+@media (min-width: 768px) { .svc_carousel_item { flex-basis: 38vw; } }
+@media (min-width: 1024px) { .svc_carousel_item { flex-basis: 280px; } }
+@media (max-width: 479px) { .svc_carousel_head { flex-direction: column; align-items: flex-start; } }
+@media (prefers-reduced-motion: reduce) { .svc_card_media img { transition: none; } }
+
+/* ---------- AboutVideo — «ABOUT US» over another video ---------- */
+.about_video { padding: 0 0 var(--space-10); }
+.about_video_stage { position: relative; height: min(118vw, 78svh); overflow: hidden; background: var(--color-bg); }
+.about_video_media { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.about_video_stage::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(3, 3, 3, .78), rgba(3, 3, 3, .12) 55%, rgba(3, 3, 3, .3)); pointer-events: none; }
+.about_video_text { position: absolute; left: var(--gutter); right: var(--gutter); bottom: var(--space-8); z-index: 1; display: grid; justify-items: start; gap: var(--space-3); color: #fbfbfb; }
+.about_video_title { margin: 0; font: 300 clamp(2.75rem, 11vw, 6.5rem)/1 var(--font-secondary); letter-spacing: .12em; text-transform: uppercase; }
+.about_video_line { margin: 0; max-width: 34ch; font-size: var(--fs-md); line-height: 1.5; color: #e9e4e7; }
+.about_video_cta { margin-top: var(--space-2); color: #fbfbfb !important; border-color: #f898d0 !important; }
+.about_video_toggle { position: absolute; top: 50%; left: 50%; z-index: 2; display: grid; place-items: center; width: 64px; height: 64px; border: 1px solid rgba(251, 251, 251, .7); border-radius: 50%; background: rgba(3, 3, 3, .35); color: #fbfbfb; cursor: pointer; transform: translate(-50%, -70%); backdrop-filter: blur(4px); transition: background-color .2s ease, border-color .2s ease; }
+.about_video_toggle svg { fill: currentColor; }
+.about_video_toggle:hover { background: #f898d0; border-color: #f898d0; color: #030303; }
+.about_video_toggle:focus-visible { outline: 2px solid #f898d0; outline-offset: 3px; }
+/* From 768 px the 9:16 clip keeps its own proportion (never upscaled past its 576 px): text on the
+   left over the dark surface, the video in a frame on the right. */
+@media (min-width: 768px) {
+  .about_video { padding-inline: var(--gutter); }
+  .about_video_stage { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; height: auto; max-width: var(--content-max); margin: 0 auto; border-radius: 22px; background: var(--color-surface); }
+  .about_video_stage::after { content: none; }
+  .about_video_media { position: relative; inset: auto; grid-column: 2; grid-row: 1; width: auto; height: min(72vh, 640px); aspect-ratio: 9 / 16; border-radius: 0 22px 22px 0; }
+  .about_video_text { position: static; grid-column: 1; grid-row: 1; align-self: center; padding: var(--space-9); color: var(--color-fg); }
+  .about_video_line { color: var(--color-fg-dim); }
+  .about_video_cta { color: var(--color-fg) !important; }
+  .about_video_toggle { top: auto; left: auto; right: calc(min(72vh, 640px) * 9 / 16 / 2); bottom: calc(min(72vh, 640px) / 2); width: 76px; height: 76px; transform: translate(50%, 50%); }
+}
+
+/* ---------- SuccessStories: city, translation note, original (R-07, 06.11) ---------- */
+.story_city { display: block; margin-top: 2px; font: 500 var(--fs-xs)/1.3 var(--font-primary); letter-spacing: .14em; text-transform: uppercase; color: var(--color-fg-muted); }
+.story_card .story_tr_note { margin: 0; font-size: var(--fs-xs); font-style: italic; letter-spacing: .02em; text-transform: none; color: var(--color-fg-muted); }
+.story_original { width: 100%; }
+.story_original summary { display: inline-flex; align-items: center; min-height: 44px; cursor: pointer; color: var(--color-accent-text); text-decoration: underline; text-underline-offset: 3px; }
+.story_original summary:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+.story_original p { margin: var(--space-2) 0 0; font-size: var(--fs-sm); line-height: 1.6; color: var(--color-fg-dim); }

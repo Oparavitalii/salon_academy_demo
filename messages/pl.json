@@ -1,0 +1,488 @@
+{
+  "meta": {
+    "siteName": "Studio Demo",
+    "home": {
+      "title": "Studio Demo — salon urody i kursy przedłużania włosów w Warszawie",
+      "description": "Przedłużanie, koloryzacja i pielęgnacja włosów w Warszawie. Intensyw stacjonarny i kurs online przedłużania mikrokapsułkowego z międzynarodowym certyfikatem."
+    },
+    "salon": {
+      "title": "Usługi i cennik — Studio Demo, Warszawa",
+      "description": "Trudne koloryzacje, wyjście z czerni i przedłużanie dobrane do Pani włosów. Każdą stylistkę szkoliła Olena Demchenko — pracujemy według jednego standardu."
+    },
+    "courses": {
+      "title": "Kursy przedłużania włosów — Studio Demo",
+      "description": "Autorskie programy Oleny Demchenko: przedłużanie mikrokapsułkowe i rekonstrukcja włosów — intensywy stacjonarne w studiu w Warszawie i kursy online. Po szkoleniu — międzynarodowy certyfikat."
+    },
+    "about": {
+      "title": "O nas — Studio Demo",
+      "description": "Salon urody i kursy pod jedną marką. Za oboma stoi ponad 20 lat praktyki założycielki, Oleny Demchenko — w pracy stylistek i w programach dla kursantek."
+    },
+    "contacts": {
+      "title": "Kontakt — Studio Demo, Warszawa",
+      "description": "Prosimy o kontakt w najwygodniejszy sposób — chętnie odpowiemy na pytania o zabiegi i szkolenia"
+    },
+    "privacy": {
+      "title": "Polityka prywatności — Studio Demo",
+      "description": "Jak Studio Demo przetwarza dane osobowe na stronie: co zbieramy, w jakim celu, komu przekazujemy i jakie masz prawa."
+    },
+    "terms": {
+      "title": "Regulamin — Studio Demo",
+      "description": "Warunki zakupu kursu online i intensywu na stronie Studio Demo: płatność, dostęp, zwroty."
+    },
+    "login": {
+      "title": "Logowanie do panelu — Studio Demo",
+      "description": "Link do logowania przychodzi na e-mail po zakupie kursu."
+    },
+    "notFound": {
+      "title": "Nie ma takiej strony — Studio Demo"
+    },
+    "cabinet": {
+      "title": "Moje kursy — Studio Demo"
+    },
+    "checkout": {
+      "title": "Płatność otrzymana — Studio Demo"
+    },
+    "checkoutPending": {
+      "title": "Czekamy na potwierdzenie płatności — Studio Demo"
+    },
+    "forgotPassword": {
+      "title": "Odzyskiwanie hasła — Studio Demo"
+    },
+    "resetPassword": {
+      "title": "Nowe hasło — Studio Demo"
+    }
+  },
+  "header": {
+    "salonAlt": "Studio Demo",
+    "langLabel": "Język strony",
+    "menuOpen": "Menu",
+    "menuClose": "Zamknij menu",
+    "book": "Umów się",
+    "buy": "Kup kurs",
+    "choose": "Wybierz",
+    "bookSalon": "Umów wizytę w salonie",
+    "buyCourse": "Kup kurs",
+    "cabinetLogin": "Panel kursantki",
+    "cabinetMine": "Mój panel",
+    "mainNav": "Menu główne"
+  },
+  "legal": {
+    "privacy": "Polityka prywatności"
+  },
+  "login": {
+    "heading": "Logowanie do panelu",
+    "sub": "Link do logowania przychodzi na e-mail po zakupie kursu.",
+    "email": "E-mail",
+    "emailHint": "Ten sam e-mail, co przy płatności.",
+    "password": "Hasło",
+    "forgot": "Nie pamiętasz hasła?",
+    "submit": "Zaloguj się",
+    "noCourse": "Nie masz jeszcze kursu?",
+    "chooseCourse": "Wybierz kurs",
+    "intentBuy": "Zakup kursu zaczyna się od logowania: płatność będzie dostępna po uruchomieniu panelu.",
+    "unavailable": "Logowanie będzie dostępne po uruchomieniu panelu.",
+    "bannerLabel": "Jedno konto — jedno urządzenie",
+    "bannerBody": "Logowanie z innego urządzenia kończy poprzednią sesję. Konto udostępniane innym osobom jest blokowane.",
+    "errorInvalid": "Nieprawidłowy e-mail lub hasło.",
+    "errorRate": "Zbyt wiele prób. Spróbuj za minutę.",
+    "errorBlocked": "Logowanie niedostępne. Napisz do nas na Instagramie akademii.",
+    "sessionEnded": "Sesja zakończona: ktoś zalogował się do panelu z innego urządzenia."
+  },
+  "notFound": {
+    "heading": "Nie ma takiej strony",
+    "body": "Link mógł się zdezaktualizować. Proszę wybrać: salon albo kursy.",
+    "home": "Strona główna",
+    "write": "Napisz do nas"
+  },
+  "serverError": {
+    "heading": "Coś poszło nie tak",
+    "body": "Widzimy już błąd. Proszę odświeżyć stronę za minutę.",
+    "retry": "Odśwież",
+    "home": "Strona główna"
+  },
+  "cabinet": {
+    "welcome": "Witaj, {name}",
+    "progress": "Ukończono {done} z {total} lekcji",
+    "continueLesson": "Kontynuuj lekcję {n}",
+    "start": "Zacznij",
+    "continue": "Kontynuuj",
+    "tier": "Pakiet: {name}",
+    "emptyHeading": "Nie masz jeszcze kursów",
+    "emptyCta": "Wybierz kurs",
+    "lessons": "Lekcje: {n}",
+    "lesson": "Lekcja {n}",
+    "minutes": "{min} min",
+    "watched": "Obejrzano",
+    "notStarted": "Nie rozpoczęto",
+    "audioLanguage": "Język lektora",
+    "materials": "Materiały do lekcji",
+    "download": "Pobierz",
+    "noMaterials": "Do tej lekcji nie ma materiałów",
+    "prevLesson": "Poprzednia lekcja",
+    "nextLesson": "Następna lekcja",
+    "toLessons": "Do listy lekcji",
+    "certName": "Imię i nazwisko na certyfikat",
+    "phone": "Telefon",
+    "save": "Zapisz",
+    "saved": "Zapisano",
+    "currentPassword": "Obecne hasło",
+    "newPassword": "Nowe hasło",
+    "repeatPassword": "Powtórz hasło",
+    "changePassword": "Zmień hasło",
+    "passwordChanged": "Hasło zmienione",
+    "certificate": "Certyfikat",
+    "toSite": "Na stronę główną",
+    "myCourses": "Moje kursy",
+    "help": "Pomoc",
+    "settings": "Ustawienia",
+    "logout": "Wyloguj się",
+    "fullscreen": "Pełny ekran",
+    "exitFullscreen": "Zamknij pełny ekran",
+    "markWatched": "Oznacz jako obejrzaną",
+    "certPending": "Będzie dostępny po obejrzeniu wszystkich {n} lekcji",
+    "certReady": "Wszystkie lekcje obejrzane",
+    "intensiveDetails": "Zobacz szczegóły",
+    "intensiveDateNote": "Napiszemy do Pani w sprawie terminu",
+    "close": "Zamknij",
+    "profile": "Profil",
+    "email": "E-mail",
+    "emailHint": "E-mail można zmienić przez studio.",
+    "certLeft": "Do certyfikatu: {left, plural, one {została # lekcja} few {zostały # lekcje} many {zostało # lekcji} other {zostało # lekcji}}",
+    "certDone": "Wszystkie lekcje obejrzane — kurs ukończony w 100%",
+    "watchedPct": "Obejrzano {pct}%",
+    "certSent": "Certyfikat wysłano na Twój e-mail",
+    "menu": "Menu konta",
+    "certificates": "Certyfikaty",
+    "certIntro": "Certyfikat przychodzi na Twój e-mail automatycznie, gdy obejrzysz wszystkie lekcje kursu. Tutaj zawsze możesz go otworzyć i pobrać.",
+    "certNone": "Certyfikat pojawi się tutaj, gdy obejrzysz wszystkie lekcje kursu online.",
+    "certNumber": "Numer: {number}",
+    "certIssued": "Data wydania: {date}",
+    "certOpen": "Otwórz PDF",
+    "certWaitName": "Certyfikat wyda studio. Sprawdź, czy w Ustawieniach jest podane imię i nazwisko na certyfikat.",
+    "helpIntro": "Pytania o kurs, dostęp lub płatność — napisz do nas, odpowiemy.",
+    "helpWrite": "Kontakt z akademią",
+    "helpInstagram": "Instagram akademii",
+    "helpFaq": "Częste pytania",
+    "helpQCert": "Jak otrzymać certyfikat?",
+    "helpACert": "Obejrzyj wszystkie lekcje kursu i oznacz je jako obejrzane. Certyfikat przyjdzie na e-mail automatycznie, z imieniem z Ustawień, i pojawi się w zakładce «Certyfikaty».",
+    "helpQPassword": "Jak zmienić hasło?",
+    "helpAPassword": "W zakładce «Ustawienia» → «Zmień hasło». Jeśli nie pamiętasz hasła, kliknij «Nie pamiętasz hasła?» na stronie logowania.",
+    "helpQDevice": "Dlaczego zostałam wylogowana?",
+    "helpADevice": "Jedno konto — jedno urządzenie: logowanie na innym urządzeniu kończy poprzednią sesję. Po prostu zaloguj się ponownie.",
+    "helpQEmail": "Jak zmienić e-mail?",
+    "helpAEmail": "E-mail można zmienić przez studio — napisz do nas w dowolny sposób powyżej."
+  },
+  "checkout": {
+    "successHeading": "Płatność otrzymana",
+    "pendingHeading": "Czekamy na potwierdzenie płatności",
+    "successBody": "Wiadomość z linkiem do logowania jest już w drodze na {email}. Proszę sprawdzić też „Spam”.",
+    "login": "Zaloguj się",
+    "pending": "Płatność jest przetwarzana. Wiadomość przyjdzie, gdy tylko bank ją potwierdzi.",
+    "cancelHeading": "Płatność nie została zakończona",
+    "cancelBody": "Pieniądze nie zostały pobrane. Możesz wrócić do kursu i spróbować jeszcze raz.",
+    "backToCourse": "Wróć do kursu",
+    "intensiveBody": "Potwierdzenie przyjdzie na {email}. Studio skontaktuje się z Tobą w sprawie terminu intensywu.",
+    "priceSoon": "Cenę ustalamy",
+    "paySoon": "Płatność wkrótce"
+  },
+  "password": {
+    "forgotHeading": "Odzyskiwanie hasła",
+    "email": "E-mail",
+    "sendLink": "Wyślij link",
+    "sent": "Jeśli taki e-mail istnieje, wiadomość jest już w drodze.",
+    "newHeading": "Nowe hasło",
+    "repeat": "Powtórz hasło",
+    "saveAndLogin": "Zapisz i zaloguj się",
+    "expired": "Link wygasł. Poproś o nowy.",
+    "changeHeading": "Zmień hasło",
+    "changeSub": "Zalogowano Cię tymczasowym hasłem. Ustaw własne — co najmniej 8 znaków.",
+    "tooShort": "Co najmniej 8 znaków.",
+    "mismatch": "Hasła nie są zgodne.",
+    "wrongCurrent": "Obecne hasło jest nieprawidłowe.",
+    "backToLogin": "Do logowania",
+    "save": "Zapisz hasło"
+  },
+  "admin": {
+    "meta": {
+      "title": "{title} — panel admina"
+    },
+    "nav": {
+      "payments": "Płatności i certyfikaty",
+      "students": "Kursantki",
+      "logins": "Logowania",
+      "courses": "Kursy",
+      "prices": "Cennik salonu",
+      "certificates": "Certyfikaty",
+      "profile": "Profil",
+      "logout": "Wyloguj",
+      "home": "Panel admina",
+      "brand": "{name} · panel admina",
+      "menu": "Menu admina",
+      "today": "Dziś",
+      "account": "Konto"
+    },
+    "shell": {
+      "msg": {
+        "saved": "Zapisano.",
+        "blocked": "Konto zablokowane, sesja zakończona.",
+        "unblocked": "Konto odblokowane.",
+        "email_changed": "E-mail zmieniony, wysłano wiadomość z nowym dostępem.",
+        "resent": "Wysłano wiadomość z linkiem do hasła (ważny 72 godz.).",
+        "created": "Kursantka dodana, wysłano wiadomość z dostępem.",
+        "granted": "Dostęp do kursu otwarty.",
+        "revoked": "Dostęp do kursu zamknięty.",
+        "refunded": "Zwrot zasymulowany: dostęp odebrany.",
+        "bad_email": "Sprawdź e-mail.",
+        "email_taken": "Ten e-mail ma już inne konto.",
+        "bad_price": "Cena kursu — liczba całkowita w euro, np. 990.",
+        "bad_lesson": "Sprawdź nazwę lekcji.",
+        "cert_sent": "Certyfikat wysłany na e-mail.",
+        "cert_not_sent": "Certyfikat zapisany, ale e-mail nie wyszedł. Spróbuj «Wyślij ponownie».",
+        "cert_number_taken": "Certyfikat o tym numerze już istnieje. Zostaw numer pusty — strona weźmie kolejny.",
+        "bad_cert": "Sprawdź pola certyfikatu: kursantka, data, nazwa kursu.",
+        "cert_no_name": "Kursantka nie ma imienia w profilu. Wpisz imię na certyfikacie w formularzu."
+      }
+    },
+    "common": {
+      "save": "Zapisz",
+      "search": "Szukaj",
+      "course": "Kurs",
+      "status": "Status",
+      "email": "E-mail",
+      "student": "Kursantka",
+      "countryUnknown": "kraj nieznany",
+      "suspicious": "podejrzane",
+      "online": "online",
+      "available": "dostępny",
+      "soon": "wkrótce"
+    },
+    "payments": {
+      "title": "Płatności",
+      "note": "Zwroty — w panelu Stripe; po zwrocie dostęp do kursu jest odbierany automatycznie.",
+      "th": {
+        "date": "Data",
+        "tier": "Pakiet",
+        "sum": "Kwota",
+        "format": "Format"
+      },
+      "empty": "Nie ma jeszcze płatności.",
+      "kind": {
+        "offline": "intensyw stacjonarny"
+      },
+      "status": {
+        "paid": "opłacone",
+        "failed": "nieudana",
+        "disputed": "spór",
+        "refunded": "zwrócone"
+      },
+      "noEmail": "płatność bez wiadomości",
+      "test": "test",
+      "devRefund": "Symuluj zwrot"
+    },
+    "students": {
+      "title": "Kursantki",
+      "placeholder": "E-mail lub imię",
+      "find": "Szukaj",
+      "th": {
+        "courses": "Kursy",
+        "lastLogin": "Ostatnie logowanie",
+        "actions": "Akcje"
+      },
+      "empty": "Nie znaleziono kursantek.",
+      "since": "od {date}",
+      "manual": "ręcznie",
+      "revoke": "Zamknij dostęp",
+      "grant": "Otwórz dostęp",
+      "allLogins": "wszystkie logowania →",
+      "neverLoggedIn": "jeszcze się nie logowała",
+      "blocked": "zablokowana",
+      "active": "aktywna",
+      "unblock": "Odblokuj",
+      "block": "Zablokuj",
+      "newEmail": "Nowy e-mail",
+      "changeEmail": "Zmień e-mail i wyślij dostęp",
+      "resend": "Wyślij link do hasła",
+      "add": {
+        "heading": "Dodaj kursantkę ręcznie",
+        "note": "Gotówka lub inna forma płatności: konto zostaje utworzone, kurs otwarty, a na e-mail trafia wiadomość z linkiem „ustaw hasło”.",
+        "submit": "Dodaj"
+      },
+      "suspicious": {
+        "heading": "Podejrzane logowania",
+        "note": "Logowanie z innego kraju w ciągu 24 godz. od poprzedniego. Kursantka i admin dostają wiadomość; blokada — ręcznie.",
+        "fullLog": "Pełny dziennik logowań →",
+        "none": "Brak podejrzanych logowań."
+      },
+      "addOpen": "+ Dodaj kursantkę ręcznie",
+      "moreEmail": "Zmień e-mail",
+      "blockConfirm": "Zablokować {email}? Jej sesja się zakończy i nie zaloguje się, dopóki nie odblokujesz."
+    },
+    "logins": {
+      "title": "Dziennik logowań",
+      "placeholder": "E-mail kursantki",
+      "onlySuspicious": "tylko podejrzane",
+      "show": "Pokaż",
+      "reset": "Wyczyść",
+      "userCount": "Logowania {who}: {n}.",
+      "userNone": "Ta kursantka jeszcze się nie logowała.",
+      "summary": "Strona {page} · logowań na niej: {n} · krajów: {countries}.",
+      "geoNote": "Kraj i miasto serwer ustala na podstawie IP we własnej bazie, bez zewnętrznych usług. To przybliżenie: VPN lub internet mobilny mogą pokazać inne miasto. Nowe logowanie kończy sesję na innym urządzeniu. Geolokalizacja IP:",
+      "th": {
+        "when": "Kiedy",
+        "who": "Kto",
+        "device": "Urządzenie",
+        "from": "Skąd"
+      },
+      "admin": "admin",
+      "normal": "zwykłe",
+      "newer": "← Nowsze",
+      "older": "Starsze →"
+    },
+    "courses": {
+      "title": "Kursy",
+      "intro": "Na górze — cena i widoczność każdego kursu na stronie. Niżej — jak kursantki przechodzą kursy online, oraz lekcje.",
+      "lessonsCount": "lekcji: {n}",
+      "noLessons": "Nie ma jeszcze lekcji (kurs na zapisach wstępnych) — statystyki pojawią się, gdy dodasz lekcje, a pierwsze kursantki dostaną dostęp.",
+      "kpi": {
+        "enrolled": "Kursantki z dostępem",
+        "started": "Zaczęły",
+        "finished": "Ukończyły",
+        "avgProgress": "Średni postęp",
+        "active": "Aktywne w ciągu {n, plural, one {{n} dnia} few {{n} dni} many {{n} dni} other {{n} dnia}}",
+        "notStarted": "Jeszcze nie zaczęły"
+      },
+      "funnel": {
+        "summary": "Postęp w lekcjach",
+        "biggestDrop": "Najwięcej kursantek zatrzymuje się po lekcji {position} (−{lost}).",
+        "value": "{watched} z {enrolled} · {pct}%"
+      },
+      "studentsRegion": "Kursantki kursu {course}",
+      "th": {
+        "since": "Dostęp od",
+        "progress": "Postęp",
+        "lastLesson": "Ostatnia lekcja",
+        "lastActivity": "Ostatnia aktywność",
+        "state": "Stan"
+      },
+      "noStudents": "Żadna kursantka nie ma jeszcze dostępu do kursu.",
+      "viewLessons": "Zobacz lekcje",
+      "state": {
+        "finished": "ukończyła — można wydać certyfikat",
+        "learning": "w trakcie nauki",
+        "stale": "nie logowała się {n}+ dni",
+        "notStarted": "jeszcze nie zaczęła"
+      },
+      "lessons": {
+        "summary": "Lekcje ({n})",
+        "region": "Pakiety i lekcje",
+        "thNum": "Nr",
+        "thFields": "Nazwa · wideo Bunny · min",
+        "titleAria": "Nazwa lekcji {n}",
+        "videoPlaceholder": "ID wideo",
+        "videoAria": "ID wideo lekcji {n}",
+        "minutesPlaceholder": "min",
+        "minutesAria": "Minuty w lekcji {n}"
+      },
+      "site": "Cena i widoczność na stronie"
+    },
+    "prices": {
+      "title": "Cennik salonu",
+      "courseTable": {
+        "heading": "Kursy — cena na stronie",
+        "note": "Liczba całkowita w euro. Puste pole — na stronie zostaje cena z tekstu kursu. Nowa cena pojawia się w katalogu, na stronie głównej i na stronie kursu (jeśli nie widać jej od razu — odśwież stronę jeszcze raz).",
+        "region": "Ceny kursów",
+        "now": "Teraz na stronie",
+        "newPrice": "Nowa cena, €",
+        "onSite": "Na stronie",
+        "fromText": "{price} (z tekstu)",
+        "priceAria": "Cena na stronie, €: {course}",
+        "statusAria": "Status na stronie: {course}",
+        "soonHidden": "wkrótce (ukryty)",
+        "offline": "stacjonarny"
+      },
+      "services": {
+        "heading": "Zabiegi salonu",
+        "note": "Puste pole na stronie pokazuje się jako „do ustalenia” (czas) lub pusta komórka (cena). Jeden przycisk zapisuje całą grupę.",
+        "region": "Usługi",
+        "thService": "Usługa",
+        "thFields": "Stylistka · top stylistka · czas trwania",
+        "masterAria": "Cena, stylistka: {name}",
+        "masterPlaceholder": "stylistka",
+        "topAria": "Cena, top stylistka: {name}",
+        "topPlaceholder": "top",
+        "durationAria": "Czas trwania: {name}",
+        "durationPlaceholder": "czas trwania",
+        "saveGroup": "Zapisz grupę"
+      }
+    },
+    "settings": {
+      "title": "Profil",
+      "personal": "Dane osobowe",
+      "name": "Imię",
+      "emailHint": "E-mail admina to login; zmienia się go przez ADMIN_EMAIL i skrypt seed.",
+      "forgot": "Nie pamiętasz hasła? Wyloguj się i kliknij „Nie pamiętasz hasła?” na stronie logowania — link przyjdzie na {email}.",
+      "recentLogins": "Moje ostatnie logowania",
+      "noLogins": "Brak zapisanych logowań.",
+      "note": "Nowe logowanie kończy sesję na innym urządzeniu. Nie rozpoznajesz logowania? Od razu zmień hasło."
+    },
+    "certificates": {
+      "title": "Certyfikaty",
+      "form": {
+        "heading": "Wystaw certyfikat",
+        "date": "Data wydania",
+        "otherCourse": "Inny kurs — wpisz nazwę poniżej",
+        "line1": "Nazwa kursu, wiersz 1 (po angielsku)",
+        "line2": "Wiersz 2 (opcjonalnie)",
+        "linesHint": "Puste wiersze — nazwa wybranego kursu. Wpisany wiersz 1 zastępuje nazwę kursu.",
+        "number": "Numer (opcjonalnie)",
+        "numberHint": "Puste — kolejny numer: {number}.",
+        "preview": "Podgląd PDF",
+        "send": "Wyślij na e-mail",
+        "studentPick": "Wybierz kursantkę",
+        "name": "Imię na certyfikacie (alfabetem łacińskim)",
+        "nameHint": "Puste — «Imię do certyfikatu» z profilu kursantki."
+      },
+      "list": {
+        "heading": "Wystawione certyfikaty",
+        "empty": "Nie wystawiono jeszcze żadnego certyfikatu.",
+        "number": "Numer",
+        "sent": "Wysłano",
+        "notSent": "nie wysłano",
+        "actions": "Akcje",
+        "open": "PDF",
+        "resend": "Wyślij ponownie"
+      },
+      "pending": {
+        "heading": "Ukończyły kurs — bez certyfikatu",
+        "note": "Te kursantki obejrzały wszystkie lekcje, ale certyfikat nie został wysłany: kurs ukończono przed uruchomieniem automatycznego wydawania albo w profilu brak imienia. «Wydaj» — certyfikat z imieniem z profilu, dzisiejszą datą i kolejnym numerem.",
+        "issue": "Wydaj",
+        "noName": "Brak imienia",
+        "useForm": "brak imienia — wydaj przez formularz powyżej"
+      }
+    },
+    "tabs": {
+      "students": "Kursantki",
+      "logins": "Dziennik logowań",
+      "payments": "Płatności",
+      "certificates": "Certyfikaty"
+    },
+    "today": {
+      "title": "Dziś",
+      "todo": "Do zrobienia",
+      "certs": "Ukończyły kurs, a certyfikatu jeszcze nie ma: {n}",
+      "suspicious": "Podejrzane logowania z 7 dni: {n}",
+      "noEmail": "Płatności, których e-mail nie dotarł do kursantki: {n}",
+      "none": "Nic do zrobienia — wszystko w porządku.",
+      "go": "Otwórz →",
+      "paid7": "Płatności z 7 dni",
+      "sum7": "Suma z 7 dni",
+      "enrolled": "Kursantki z dostępem",
+      "active7": "Logowały się w 7 dni",
+      "recentPayments": "Ostatnie płatności",
+      "allPayments": "Wszystkie płatności →",
+      "newStudents": "Nowe kursantki",
+      "allStudents": "Wszystkie kursantki →",
+      "none2": "Na razie pusto."
+    }
+  }
+}

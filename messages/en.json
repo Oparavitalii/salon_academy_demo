@@ -1,0 +1,488 @@
+{
+  "meta": {
+    "siteName": "Studio Demo",
+    "home": {
+      "title": "Studio Demo — beauty salon and hair extension courses in Warsaw",
+      "description": "Hair extensions, colour and care in Warsaw. An in-person intensive and an online micro-capsule extension course with an international certificate."
+    },
+    "salon": {
+      "title": "Salon services and prices — Studio Demo, Warsaw",
+      "description": "Advanced colour, going from black and extensions matched to your hair. Every stylist was trained by Olena Demchenko and works to the same standard."
+    },
+    "courses": {
+      "title": "Hair extension courses — Studio Demo",
+      "description": "Olena Demchenko's own programmes: micro-capsule extensions and hair reconstruction — in-person intensives at our Warsaw studio and online courses. You finish with an international certificate."
+    },
+    "about": {
+      "title": "About — Studio Demo",
+      "description": "A beauty salon and training courses under one brand. Both rest on 20+ years of practice by our founder, Olena Demchenko — in our stylists' work and in our student programmes."
+    },
+    "contacts": {
+      "title": "Contact — Studio Demo, Warsaw",
+      "description": "Get in touch however suits you — we're happy to answer questions about salon treatments or training"
+    },
+    "privacy": {
+      "title": "Privacy policy — Studio Demo",
+      "description": "How Studio Demo processes personal data on the site: what we collect, why, who we share it with and what your rights are."
+    },
+    "terms": {
+      "title": "Public offer — Studio Demo",
+      "description": "Terms for buying the online course and the intensive on the Studio Demo site: payment, access, refunds."
+    },
+    "login": {
+      "title": "Sign in to your account — Studio Demo",
+      "description": "Your login link arrives by e-mail after you buy a course."
+    },
+    "notFound": {
+      "title": "Page not found — Studio Demo"
+    },
+    "cabinet": {
+      "title": "My courses — Studio Demo"
+    },
+    "checkout": {
+      "title": "Payment received — Studio Demo"
+    },
+    "checkoutPending": {
+      "title": "Waiting for payment confirmation — Studio Demo"
+    },
+    "forgotPassword": {
+      "title": "Password recovery — Studio Demo"
+    },
+    "resetPassword": {
+      "title": "New password — Studio Demo"
+    }
+  },
+  "header": {
+    "salonAlt": "Studio Demo",
+    "langLabel": "Site language",
+    "menuOpen": "Menu",
+    "menuClose": "Close menu",
+    "book": "Book",
+    "buy": "Buy a course",
+    "choose": "Choose",
+    "bookSalon": "Book at the salon",
+    "buyCourse": "Buy a course",
+    "cabinetLogin": "My account",
+    "cabinetMine": "My account",
+    "mainNav": "Main menu"
+  },
+  "legal": {
+    "privacy": "Privacy policy"
+  },
+  "login": {
+    "heading": "Sign in to your account",
+    "sub": "Your login link arrives by e-mail after you buy a course.",
+    "email": "E-mail",
+    "emailHint": "The same e-mail you used to pay.",
+    "password": "Password",
+    "forgot": "Forgot your password?",
+    "submit": "Sign in",
+    "noCourse": "Don’t have a course yet?",
+    "chooseCourse": "Choose a course",
+    "intentBuy": "Buying a course starts with signing in: payment will be available once the account area launches.",
+    "unavailable": "Sign-in will be available once the account area launches.",
+    "bannerLabel": "One account — one device",
+    "bannerBody": "Signing in on another device ends the previous session. Accounts whose access is shared are blocked.",
+    "errorInvalid": "Incorrect e-mail or password.",
+    "errorRate": "Too many attempts. Try again in a minute.",
+    "errorBlocked": "Sign-in is unavailable. Message us on the academy’s Instagram.",
+    "sessionEnded": "Session ended: your account was signed in from another device."
+  },
+  "notFound": {
+    "heading": "This page doesn’t exist",
+    "body": "The link may be out of date. Where to: the salon or the courses?",
+    "home": "Home",
+    "write": "Contact us"
+  },
+  "serverError": {
+    "heading": "Something went wrong",
+    "body": "We're on it. Refresh the page in a minute.",
+    "retry": "Refresh",
+    "home": "Home"
+  },
+  "cabinet": {
+    "welcome": "Welcome, {name}",
+    "progress": "{done} of {total} lessons completed",
+    "continueLesson": "Continue lesson {n}",
+    "start": "Start",
+    "continue": "Continue",
+    "tier": "Plan: {name}",
+    "emptyHeading": "You don’t have any courses yet",
+    "emptyCta": "Choose a course",
+    "lessons": "Lessons: {n}",
+    "lesson": "Lesson {n}",
+    "minutes": "{min} min",
+    "watched": "Watched",
+    "notStarted": "Not started",
+    "audioLanguage": "Audio language",
+    "materials": "Lesson materials",
+    "download": "Download",
+    "noMaterials": "There are no materials for this lesson",
+    "prevLesson": "Previous lesson",
+    "nextLesson": "Next lesson",
+    "toLessons": "Back to lessons",
+    "certName": "Name for the certificate",
+    "phone": "Phone",
+    "save": "Save",
+    "saved": "Saved",
+    "currentPassword": "Current password",
+    "newPassword": "New password",
+    "repeatPassword": "Repeat password",
+    "changePassword": "Change password",
+    "passwordChanged": "Password changed",
+    "certificate": "Certificate",
+    "toSite": "Back to main site",
+    "myCourses": "My courses",
+    "help": "Help",
+    "settings": "Settings",
+    "logout": "Sign out",
+    "fullscreen": "Full screen",
+    "exitFullscreen": "Exit full screen",
+    "markWatched": "Mark as watched",
+    "certPending": "Available once you’ve watched all {n} lessons",
+    "certReady": "All lessons watched",
+    "intensiveDetails": "View details",
+    "intensiveDateNote": "We'll message you about the date",
+    "close": "Close",
+    "profile": "Profile",
+    "email": "E-mail",
+    "emailHint": "To change your e-mail, contact the studio.",
+    "certLeft": "To the certificate: {left, plural, one {# lesson left} other {# lessons left}}",
+    "certDone": "All lessons watched — course 100% complete",
+    "watchedPct": "{pct}% watched",
+    "certSent": "Your certificate has been sent to your e-mail",
+    "menu": "Account menu",
+    "certificates": "Certificates",
+    "certIntro": "Your certificate is e-mailed to you automatically once you’ve watched every lesson of the course. You can always open and download it here.",
+    "certNone": "Your certificate will appear here once you’ve watched every lesson of an online course.",
+    "certNumber": "Number: {number}",
+    "certIssued": "Issued: {date}",
+    "certOpen": "Open PDF",
+    "certWaitName": "The studio will issue your certificate. Please check that your name for the certificate is filled in under Settings.",
+    "helpIntro": "Questions about the course, access or payment — write to us and we’ll reply.",
+    "helpWrite": "Contact the academy",
+    "helpInstagram": "Academy Instagram",
+    "helpFaq": "Frequently asked questions",
+    "helpQCert": "How do I get my certificate?",
+    "helpACert": "Watch every lesson of the course and mark it as watched. The certificate is e-mailed to you automatically with the name from Settings, and it appears under «Certificates».",
+    "helpQPassword": "How do I change my password?",
+    "helpAPassword": "Go to «Settings» → «Change password». If you’ve forgotten it, click «Forgot your password?» on the sign-in page.",
+    "helpQDevice": "Why was I signed out?",
+    "helpADevice": "One account — one device: signing in on another device ends the previous session. Just sign in again.",
+    "helpQEmail": "How do I change my e-mail?",
+    "helpAEmail": "Your e-mail can be changed through the studio — write to us using any of the options above."
+  },
+  "checkout": {
+    "successHeading": "Payment received",
+    "pendingHeading": "Waiting for payment confirmation",
+    "successBody": "A login link is on its way to {email}. Check your spam folder too.",
+    "login": "Sign in",
+    "pending": "Your payment is being processed. The e-mail will arrive as soon as the bank confirms it.",
+    "cancelHeading": "Payment not completed",
+    "cancelBody": "You haven’t been charged. You can go back to the course and try again.",
+    "backToCourse": "Back to the course",
+    "intensiveBody": "Confirmation will be sent to {email}. The studio will contact you about the intensive date.",
+    "priceSoon": "Price to be confirmed",
+    "paySoon": "Payment coming soon"
+  },
+  "password": {
+    "forgotHeading": "Password recovery",
+    "email": "E-mail",
+    "sendLink": "Send link",
+    "sent": "If that e-mail is registered, a message is on its way.",
+    "newHeading": "New password",
+    "repeat": "Repeat password",
+    "saveAndLogin": "Save and sign in",
+    "expired": "The link has expired. Request a new one.",
+    "changeHeading": "Change your password",
+    "changeSub": "You signed in with a temporary password. Set your own — at least 8 characters.",
+    "tooShort": "At least 8 characters.",
+    "mismatch": "Passwords don’t match.",
+    "wrongCurrent": "Current password is incorrect.",
+    "backToLogin": "Back to sign-in",
+    "save": "Save password"
+  },
+  "admin": {
+    "meta": {
+      "title": "{title} — admin"
+    },
+    "nav": {
+      "payments": "Payments & certificates",
+      "students": "Students",
+      "logins": "Logins",
+      "courses": "Courses",
+      "prices": "Salon prices",
+      "certificates": "Certificates",
+      "profile": "Profile",
+      "logout": "Log out",
+      "home": "Admin",
+      "brand": "{name} · admin",
+      "menu": "Admin menu",
+      "today": "Today",
+      "account": "Account"
+    },
+    "shell": {
+      "msg": {
+        "saved": "Saved.",
+        "blocked": "Account blocked, session ended.",
+        "unblocked": "Account unblocked.",
+        "email_changed": "E-mail changed; a message with the new access has been sent.",
+        "resent": "Password link sent (valid for 72 hours).",
+        "created": "Student added; an access e-mail has been sent.",
+        "granted": "Course access granted.",
+        "revoked": "Course access revoked.",
+        "refunded": "Refund simulated: access removed.",
+        "bad_email": "Check the e-mail.",
+        "email_taken": "This e-mail already belongs to another account.",
+        "bad_price": "The course price is a whole number in euros, e.g. 990.",
+        "bad_lesson": "Check the lesson title.",
+        "cert_sent": "Certificate sent by e-mail.",
+        "cert_not_sent": "Certificate saved, but the e-mail did not go out. Try «Send again».",
+        "cert_number_taken": "A certificate with this number already exists. Leave the number empty to use the next one.",
+        "bad_cert": "Check the certificate fields: student, date, course title.",
+        "cert_no_name": "The student has no name in her profile. Type the name on the certificate in the form."
+      }
+    },
+    "common": {
+      "save": "Save",
+      "search": "Search",
+      "course": "Course",
+      "status": "Status",
+      "email": "E-mail",
+      "student": "Student",
+      "countryUnknown": "country unknown",
+      "suspicious": "suspicious",
+      "online": "online",
+      "available": "available",
+      "soon": "coming soon"
+    },
+    "payments": {
+      "title": "Payments",
+      "note": "Refunds are made in the Stripe dashboard; after a refund, course access is removed automatically.",
+      "th": {
+        "date": "Date",
+        "tier": "Plan",
+        "sum": "Amount",
+        "format": "Format"
+      },
+      "empty": "No payments yet.",
+      "kind": {
+        "offline": "in-person intensive"
+      },
+      "status": {
+        "paid": "paid",
+        "failed": "failed",
+        "disputed": "disputed",
+        "refunded": "refunded"
+      },
+      "noEmail": "paid, no e-mail sent",
+      "test": "test",
+      "devRefund": "Simulate refund"
+    },
+    "students": {
+      "title": "Students",
+      "placeholder": "E-mail or name",
+      "find": "Search",
+      "th": {
+        "courses": "Courses",
+        "lastLogin": "Last login",
+        "actions": "Actions"
+      },
+      "empty": "No students found.",
+      "since": "since {date}",
+      "manual": "manually",
+      "revoke": "Revoke access",
+      "grant": "Grant access",
+      "allLogins": "all logins →",
+      "neverLoggedIn": "no logins yet",
+      "blocked": "blocked",
+      "active": "active",
+      "unblock": "Unblock",
+      "block": "Block",
+      "newEmail": "New e-mail",
+      "changeEmail": "Change e-mail and send access",
+      "resend": "Send password link",
+      "add": {
+        "heading": "Add a student manually",
+        "note": "Cash or another payment method: the account is created, the course is opened, and an e-mail with a “set your password” link is sent.",
+        "submit": "Add"
+      },
+      "suspicious": {
+        "heading": "Suspicious logins",
+        "note": "A login from another country less than 24 hours after the previous one. The student and the admin get an e-mail; blocking is manual.",
+        "fullLog": "Full login log →",
+        "none": "No suspicious logins."
+      },
+      "addOpen": "+ Add a student manually",
+      "moreEmail": "Change e-mail",
+      "blockConfirm": "Block {email}? Her session ends and she cannot log in until you unblock her."
+    },
+    "logins": {
+      "title": "Login log",
+      "placeholder": "Student e-mail",
+      "onlySuspicious": "suspicious only",
+      "show": "Show",
+      "reset": "Reset",
+      "userCount": "Logins of {who}: {n}.",
+      "userNone": "This student hasn’t logged in yet.",
+      "summary": "Page {page} · {n} logins on it · countries: {countries}.",
+      "geoNote": "The server determines the country and city from the IP in its own database, without third-party services. This is an approximation: a VPN or mobile internet may show a different city. A new login ends the session on the other device. IP geolocation:",
+      "th": {
+        "when": "When",
+        "who": "Who",
+        "device": "Device",
+        "from": "From"
+      },
+      "admin": "admin",
+      "normal": "normal",
+      "newer": "← Newer",
+      "older": "Older →"
+    },
+    "courses": {
+      "title": "Courses",
+      "intro": "At the top — each course’s price and visibility on the site. Below — how students progress through the online courses, and the lessons.",
+      "lessonsCount": "lessons: {n}",
+      "noLessons": "No lessons yet (the course is in pre-registration) — statistics will appear once you add lessons and the first students get access.",
+      "kpi": {
+        "enrolled": "Students with access",
+        "started": "Started",
+        "finished": "Finished",
+        "avgProgress": "Average progress",
+        "active": "Active in the last {n, plural, one {day} other {{n} days}}",
+        "notStarted": "Not started yet"
+      },
+      "funnel": {
+        "summary": "Progress by lesson",
+        "biggestDrop": "Most students stop after lesson {position} (−{lost}).",
+        "value": "{watched} of {enrolled} · {pct}%"
+      },
+      "studentsRegion": "Students of {course}",
+      "th": {
+        "since": "Access since",
+        "progress": "Progress",
+        "lastLesson": "Last lesson",
+        "lastActivity": "Last activity",
+        "state": "State"
+      },
+      "noStudents": "No student has access to this course yet.",
+      "viewLessons": "View lessons",
+      "state": {
+        "finished": "finished — certificate due",
+        "learning": "learning",
+        "stale": "inactive {n}+ days",
+        "notStarted": "not started yet"
+      },
+      "lessons": {
+        "summary": "Lessons ({n})",
+        "region": "Plans and lessons",
+        "thNum": "No.",
+        "thFields": "Title · Bunny video · min",
+        "titleAria": "Lesson {n} title",
+        "videoPlaceholder": "Video ID",
+        "videoAria": "Lesson {n} video ID",
+        "minutesPlaceholder": "min",
+        "minutesAria": "Minutes in lesson {n}"
+      },
+      "site": "Price and visibility on the site"
+    },
+    "prices": {
+      "title": "Salon prices",
+      "courseTable": {
+        "heading": "Courses — price on the site",
+        "note": "A whole number in euros. Empty field — the site keeps the price from the course text. The new price appears in the catalogue, on the home page and on the course page (if you don’t see it right away, refresh the page again).",
+        "region": "Course prices",
+        "now": "Now on the site",
+        "newPrice": "New price, €",
+        "onSite": "On the site",
+        "fromText": "{price} (from the text)",
+        "priceAria": "Price on the site, €: {course}",
+        "statusAria": "Status on the site: {course}",
+        "soonHidden": "coming soon (hidden)",
+        "offline": "in-person"
+      },
+      "services": {
+        "heading": "Salon services",
+        "note": "An empty field shows on the site as “to be confirmed” (duration) or an empty cell (price). One button saves the whole group.",
+        "region": "Services",
+        "thService": "Service",
+        "thFields": "Stylist · top stylist · duration",
+        "masterAria": "Price, stylist: {name}",
+        "masterPlaceholder": "stylist",
+        "topAria": "Price, top stylist: {name}",
+        "topPlaceholder": "top",
+        "durationAria": "Duration: {name}",
+        "durationPlaceholder": "duration",
+        "saveGroup": "Save group"
+      }
+    },
+    "settings": {
+      "title": "Profile",
+      "personal": "Personal details",
+      "name": "Name",
+      "emailHint": "The admin e-mail is the login; it is changed via ADMIN_EMAIL and the seed script.",
+      "forgot": "Forgot your password? Log out and click “Forgot your password?” on the sign-in page — the link will be sent to {email}.",
+      "recentLogins": "My recent logins",
+      "noLogins": "No logins recorded yet.",
+      "note": "A new login ends the session on the other device. Don’t recognise a login? Change your password right away."
+    },
+    "certificates": {
+      "title": "Certificates",
+      "form": {
+        "heading": "Issue a certificate",
+        "date": "Date of issue",
+        "otherCourse": "Other course — type the title below",
+        "line1": "Course title, line 1 (English)",
+        "line2": "Line 2 (optional)",
+        "linesHint": "Empty lines — the title of the selected course. Line 1, if filled, replaces the course title.",
+        "number": "Number (optional)",
+        "numberHint": "Empty — the next one: {number}.",
+        "preview": "Preview PDF",
+        "send": "Send by e-mail",
+        "studentPick": "Choose a student",
+        "name": "Name on the certificate (Latin letters)",
+        "nameHint": "Empty — the «Name for the certificate» from her profile."
+      },
+      "list": {
+        "heading": "Issued certificates",
+        "empty": "No certificates issued yet.",
+        "number": "Number",
+        "sent": "Sent",
+        "notSent": "not sent",
+        "actions": "Actions",
+        "open": "PDF",
+        "resend": "Send again"
+      },
+      "pending": {
+        "heading": "Finished a course — no certificate yet",
+        "note": "These students watched every lesson, but no certificate went out: they finished before automatic issuing started, or their profile has no name. «Issue» — a certificate with the profile name, today's date and the next number.",
+        "issue": "Issue",
+        "noName": "No name given",
+        "useForm": "no name — issue it with the form above"
+      }
+    },
+    "tabs": {
+      "students": "Students",
+      "logins": "Login log",
+      "payments": "Payments",
+      "certificates": "Certificates"
+    },
+    "today": {
+      "title": "Today",
+      "todo": "To do",
+      "certs": "Finished a course but have no certificate yet: {n}",
+      "suspicious": "Suspicious logins in 7 days: {n}",
+      "noEmail": "Payments whose e-mail did not reach the student: {n}",
+      "none": "Nothing to do — all calm.",
+      "go": "Open →",
+      "paid7": "Payments in 7 days",
+      "sum7": "Total in 7 days",
+      "enrolled": "Students with access",
+      "active7": "Logged in within 7 days",
+      "recentPayments": "Latest payments",
+      "allPayments": "All payments →",
+      "newStudents": "New students",
+      "allStudents": "All students →",
+      "none2": "Nothing yet."
+    }
+  }
+}

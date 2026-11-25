@@ -1,0 +1,345 @@
+/* ============================================================
+   Studio Demo — design tokens  (Phase 7 · Ui-Kit · re-run 22.10.2026)
+   ------------------------------------------------------------
+   Moodboard 01 «Яскравий акцент» — the client's pick (Дана 21.10.2026 14:06
+   «Мне нравиться первый вариант», 14_Project_Edits/Decisions.md → Design 21.10).
+   Two opposite themes, ONE pink accent as a monocolour in both.
+   Colours measured from the client's methodichka:
+     pink #F898D0 on ink #030303 · deep magenta #780040 · paper #FBFBFB / #FEF3FB.
+
+   THEME MECHANISM (4_Technology/4.2_Architecture.md § Theme scopes, 4.3_Rules.md):
+     1) BASE colour tokens, dark  — :root, [data-theme='dark']
+     2) BASE colour tokens, light — [data-theme='light'], html:has(main[data-theme='light'])
+     3) DERIVED colour tokens (color-mix / var of a colour token, incl. --fx-* --hv-* --ix-*
+        --bg-ink*) — :root, [data-theme]   (recomputed inside every scope)
+     4) NON-COLOUR tokens (fonts, sizes, radii, motion) — :root only
+   Default (no attribute) = dark. No toggle, no prefers-color-scheme switch.
+
+   NAMES: every name of the 19.10 set is kept (same list as app/styles/tokens.css);
+   new names only: --color-accent-text, --color-focus, --font-accent, --fs-hero, --font-wt-hero,
+   --font-wt-display, --radius-edge, --reveal-scale, --load-step, --load-dur,
+   --fx-accent-text, --fx-muted, --ix-edge-from.
+
+   LOAD ORDER: skill library.css → THIS file → Interactions.css → Decorations.css.
+   Never put a star followed by a slash inside this header — it closes the comment.
+   Measured: Contrast_Check.mjs (both themes, exit 0) → Evidence/7_Ui-Kit/2026-10-21/.
+   ============================================================ */
+
+/* ============================================================
+   1 · BASE — DARK (default). The 7 + deep + states + rgb twins.
+   ============================================================ */
+:root,
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  /* THE 7 — dark */
+  --color-accent:        #f898d0;   /* 1 · brand pink — ONE value in both themes (NFR-06) */
+  --color-accent-hover:  #fcb8de;   /* 2 · :hover fill — lighter pink, same value in both themes */
+  --color-fg:            #fbfbfb;   /* 3 · ink = methodichka paper */
+  --color-fg-muted:      #a69ea3;   /* 4 · muted — meta, captions */
+  --color-bg:            #030303;   /* 5 · page = methodichka ink */
+  --color-surface:       #141113;   /* 6 · cards, fields */
+  --color-border:        #2b2629;   /* 7 · hairline only (decorative) */
+
+  /* outside the seven — the methodichka's second tone, same in both themes */
+  --color-accent-deep:     #780040;   /* deep magenta — label on pink, «Важно» band, light-theme pink text */
+  --color-accent-deep-rgb: 120, 0, 64;
+
+  /* semantic accent roles */
+  --color-accent-text:   #f898d0;   /* pink AS TEXT (eyebrow, numerals, stars, links) — pink on ink 10.21 */
+  --color-accent-fg:     #780040;   /* text ON the pink fill — magenta 5.55 (white on pink 2.02 fails) */
+  --color-focus:         #f898d0;   /* focus ring, active underline/border — pink on ink 10.21 */
+
+  /* rgb twins — comma (Web_Hover_Effects grammar) */
+  --color-accent-rgb:    248, 152, 208;
+  --color-fg-rgb:        251, 251, 251;
+  --color-bg-rgb:        3, 3, 3;
+
+  /* ink for a surface that is dark in EVERY scope (photo scrim, «Важно» band) — literal in both blocks */
+  --color-on-dark:        #fbfbfb;
+  --color-on-dark-dim:    #d3d3d3;
+  --color-on-dark-muted:  #a69ea3;
+  --color-on-dark-line:   #817a7e;
+  --color-accent-on-dark: #f898d0;
+
+  /* 4 UI states — forms only, never brand */
+  --color-danger:  #ff9b91;
+  --color-success: #6fcf97;
+  --color-warning: #f3c26b;
+  --color-info:    #8ab8f0;
+
+  /* depth — darkness on ink */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.55);
+  --shadow-lg: 0 28px 70px rgba(0, 0, 0, 0.7);
+
+  /* hook triplets that differ per theme */
+  --hv-shadow:    0, 0, 0;            /* Web_Hover_Effects — comma */
+  --ix-ink-rgb:   251 251 251;        /* Web_Interactions — space */
+  --ix-paper-rgb: 3 3 3;
+  --ix-accent-rgb: 248 152 208;
+  --bg-accent:    248 152 208;        /* Web_Backgrounds — space: rgb(var(--bg-accent) / .1) */
+  --bg-accent-2:  120 0 64;           /* = accent-deep */
+  --bg-cool:      166 158 163;        /* = fg-muted */
+  --bg-violet:    120 0 64;           /* no third hue — library.css reads the name (.bg-mesh) */
+  --bg-muted:     43 38 41;           /* = border */
+}
+
+/* ============================================================
+   2 · BASE — LIGHT. Same names, light values. html:has(...) paints the canvas light
+   (html and body read var(--color-bg), components.css:11) — no JS, no flash.
+   ============================================================ */
+[data-theme='light'],
+html:has(main[data-theme='light']) {
+  color-scheme: light;
+
+  /* THE 7 — light */
+  --color-accent:        #f898d0;   /* same value as dark */
+  --color-accent-hover:  #fcb8de;   /* same value as dark */
+  --color-fg:            #030303;   /* ink */
+  --color-fg-muted:      #5a4752;   /* muted — plum-grey (dark enough for the .8 rest state) */
+  --color-bg:            #fbfbfb;   /* page = methodichka paper */
+  --color-surface:       #fef3fb;   /* pale pink = methodichka «Совет мастера» card */
+  --color-border:        #ead9e3;   /* hairline only */
+
+  --color-accent-deep:     #780040;
+  --color-accent-deep-rgb: 120, 0, 64;
+
+  --color-accent-text:   #780040;   /* pink text on paper is 1.95 → magenta 10.84 (methodichka headings) */
+  --color-accent-fg:     #780040;
+  --color-focus:         #780040;   /* pink ring on paper is 1.95 → magenta 10.84 */
+
+  --color-accent-rgb:    248, 152, 208;
+  --color-fg-rgb:        3, 3, 3;
+  --color-bg-rgb:        251, 251, 251;
+
+  /* dark-surface ink keeps its light values here and never equals this scope's --color-fg */
+  --color-on-dark:        #fbfbfb;
+  --color-on-dark-dim:    #d3d3d3;
+  --color-on-dark-muted:  #a69ea3;
+  --color-on-dark-line:   #817a7e;
+  --color-accent-on-dark: #f898d0;
+
+  /* states — dark tones for a light page */
+  --color-danger:  #b42318;
+  --color-success: #1e7a46;
+  --color-warning: #8a5300;
+  --color-info:    #1d5fa8;
+
+  /* depth — soft magenta shade on paper */
+  --shadow-sm: 0 1px 2px rgba(120, 0, 64, 0.08);
+  --shadow-md: 0 8px 24px rgba(120, 0, 64, 0.10);
+  --shadow-lg: 0 28px 70px rgba(120, 0, 64, 0.14);
+
+  --hv-shadow:    120, 0, 64;
+  --ix-ink-rgb:   3 3 3;
+  --ix-paper-rgb: 251 251 251;
+  --ix-accent-rgb: 248 152 208;
+  --bg-accent:    248 152 208;
+  --bg-accent-2:  120 0 64;
+  --bg-cool:      90 71 82;           /* = fg-muted */
+  --bg-violet:    120 0 64;
+  --bg-muted:     234 217 227;        /* = border */
+}
+
+/* ============================================================
+   3 · DERIVED — every colour token built from another colour token.
+   On :root alone it would be computed once on <html> and inherited dark
+   into a light section — so it lives on every scope.
+   ============================================================ */
+:root,
+[data-theme] {
+  /* surface ladder — one formula, right in both themes */
+  --color-bg-dark:       color-mix(in srgb, var(--color-surface) 60%, var(--color-bg));   /* band step: dark #0d0b0d · light #fdf6fb */
+  --color-surface-2:     color-mix(in srgb, var(--color-border) 45%, var(--color-surface));
+  --color-fg-dim:        color-mix(in srgb, var(--color-fg) 84%, var(--color-bg));        /* body copy */
+  --color-border-strong: color-mix(in srgb, var(--color-fg-muted) 70%, var(--color-border)); /* UI boundary ≥ 3 : 1 both themes */
+  --color-accent-tint:   color-mix(in srgb, var(--color-accent) 22%, var(--color-bg));   /* 30 % gave muted 4.46 on dark */
+
+  /* gray ramp — mixes of the seven */
+  --color-gray-50:  var(--color-fg);
+  --color-gray-100: color-mix(in srgb, var(--color-fg) 70%, var(--color-fg-muted));
+  --color-gray-200: var(--color-fg-muted);
+  --color-gray-300: color-mix(in srgb, var(--color-fg-muted) 75%, var(--color-border));
+  --color-gray-400: var(--color-border-strong);
+  --color-gray-500: color-mix(in srgb, var(--color-fg-muted) 30%, var(--color-border));
+  --color-gray-600: var(--color-border);
+  --color-gray-700: var(--color-surface-2);
+  --color-gray-800: var(--color-surface);
+  --color-gray-900: var(--color-bg);
+
+  --shadow-glow: 0 0 24px rgba(var(--color-accent-rgb), 0.35);
+
+  /* Web_Backgrounds (.bg-*) */
+  --bg-ink:   var(--color-bg-dark);
+  --bg-ink-2: var(--color-bg);
+  --bg-paper: var(--color-surface);
+
+  /* Web_Hover_Effects (.hv-*) — comma rgb */
+  --hv-ink:          var(--color-fg);
+  --hv-ink-soft:     var(--color-fg-muted);
+  --hv-paper:        var(--color-bg);
+  --hv-accent:       var(--color-accent-text);   /* hover TEXT — pink on dark, magenta on light */
+  --hv-accent-2:     var(--color-accent);        /* card frame / glow — the pink itself */
+  --hv-ink-rgb:      var(--color-fg-rgb);
+  --hv-paper-rgb:    var(--color-bg-rgb);
+  --hv-accent-rgb:   var(--color-accent-rgb);
+  --hv-accent-2-rgb: var(--color-accent-rgb);
+
+  /* Phase 8 — the only colour source Decorations.css may read; it adds no hex */
+  --fx-ink:             var(--color-fg);
+  --fx-paper:           var(--color-bg);
+  --fx-surface:         var(--color-surface);
+  --fx-accent:          var(--color-accent);           /* fills, tickers, frames, confetti — never text on paper */
+  --fx-accent-rgb:      var(--color-accent-rgb);
+  --fx-accent-text:     var(--color-accent-text);      /* pink words: pink on dark, magenta on light */
+  --fx-accent-deep:     var(--color-accent-deep);
+  --fx-accent-deep-rgb: var(--color-accent-deep-rgb);
+  --fx-accent-soft:     var(--color-accent-tint);      /* legacy name */
+  --fx-muted:           var(--color-fg-muted);
+  --fx-line:            var(--color-border);
+  --fx-line-strong:     var(--color-border-strong);
+  --fx-line-dark:       var(--color-border);           /* legacy name */
+  --fx-strand:          rgba(var(--color-fg-rgb), 0.85);
+  --fx-underline:       linear-gradient(90deg, var(--fx-accent) 0%, var(--fx-accent) 70%, rgba(var(--fx-accent-rgb), 0) 100%);
+  --fx-frame-rest:      rgba(var(--fx-accent-rgb), 0.35);
+  --fx-frame-hover:     var(--fx-accent);
+  --fx-glow-box:        0 0 0 1px var(--fx-accent);    /* a pink ring, not a neon halo (moodboard 01 has no glow) */
+  --fx-glow:            var(--fx-glow-box);            /* legacy name */
+
+  /* Web_Interactions (.ix-*) */
+  --ix-ink:    var(--color-fg);
+  --ix-paper:  var(--color-bg);
+  --ix-accent: var(--color-accent-text);
+  --ix-line:   var(--color-border-strong);
+  --ix-stage:  color-mix(in srgb, var(--color-bg-dark) 96%, transparent);
+}
+
+/* Each scope paints itself — a light section inside a dark <main> has its own background. */
+[data-theme] {
+  background-color: var(--color-bg);
+  color: var(--color-fg);
+}
+
+/* ============================================================
+   4 · NON-COLOUR — :root only (4.2: fonts, sizes, spacing, radii, motion are exempt)
+   ============================================================ */
+:root {
+  /* TYPE — Unbounded (display) · Onest (text) · Playfair Display italic (one accent word)
+     Family names come from next/font variables (4.3 Fonts): --font-montserrat · --font-unbounded · --font-playfair,
+     set in app/[locale]/layout.tsx; no family literal here. Google Fonts CSS fetched 22.10.2026:
+     Unbounded and Onest serve cyrillic + cyrillic-ext + latin-ext, Playfair Display italic serves cyrillic + latin-ext,
+     0 missing uk ґ є і ї · ru ё ъ ы э · pl ą ć ę ł ń ó ś ź ż (Evidence/7_Ui-Kit/2026-10-21/Fonts_Check.txt).
+     */
+  --font-primary:   var(--font-montserrat), system-ui, -apple-system, 'Segoe UI', sans-serif;   /* Montserrat — text, UI — 400 · 500 · 600 (28.10, agreed base face) */
+  --font-secondary: var(--font-unbounded), 'Arial Black', system-ui, sans-serif;         /* Unbounded — display caps — 300 hero · 700 headings */
+  --font-accent:    var(--font-playfair), Georgia, 'Times New Roman', serif;              /* Playfair Display italic 500 · 600 — one word, prices */
+  --font-script:    var(--font-greatvibes), var(--font-playfair), Georgia, cursive;   /* Great Vibes — decorative spots only (28.10): hero line, monograms, heading accent word */
+  --font-mono:      ui-monospace, Consolas, monospace;                                   /* system stack */
+
+  --font-wt-hero:    300;   /* wireframe §2 «large thin uppercase title» */
+  --font-wt-display: 700;   /* section heads — CREATIVE AGENCY / MADISON GLOW caps */
+  --font-numeric-display: lining-nums tabular-nums;
+  --font-ls-display: -0.01em;
+  --font-ls-eyebrow: 0.14em;
+  --lh-display: 1.05;
+  --lh-body: 1.6;
+
+  /* TYPE SCALE — Layout_Profile 23.10 (docs/7_Ui-Kit/Layout_Profile.json, skill Web_Layout_System).
+     Seven text sizes in main + the hero wordmark (declared exception). Exact at 390 px (phone set) and
+     ≥ 1200 px (desktop set), fluid between: min + (max − min) × (100vw − 390px) / 810.
+     Phone 12 · 14 · 16 · 18 · 20 · 24 (ratio ≈ 1.2; caps heads at 24 stay ≤ 3 lines) · desktop 12 · 14 · 16 · 18 · 24 · 36 · 52 (ratio ≈ 1.45). */
+  --fs-xs:  0.75rem;     /* 12 · eyebrows, captions, tags */
+  --fs-sm:  0.875rem;    /* 14 · notes, meta */
+  --fs-md:  1rem;        /* 16 · body */
+  --fs-lg:  1.125rem;    /* 18 · lead */
+  --fs-xl:  clamp(1.25rem, calc(1.25rem + 4 * (100vw - 390px) / 810), 1.5rem);    /* 20 → 24 · card titles, h3 */
+  --fs-2xl: clamp(1.5rem, calc(1.5rem + 12 * (100vw - 390px) / 810), 2.25rem);    /* 24 → 36 · sub-section heads */
+  --fs-3xl: clamp(1.5rem, calc(1.5rem + 28 * (100vw - 390px) / 810), 3.25rem);    /* 24 → 52 · page and section heads (the copy's longest head, 59 chars, fits 2 lines) */
+  --fs-poster: var(--fs-3xl);                                                      /* stat numerals share the head size */
+  --fs-hero: clamp(2.75rem, calc(2.75rem + 68 * (100vw - 390px) / 810), 7rem);    /* 44 → 112 · home wordmark only */
+
+  /* SPACING SCALE — the only lengths margin / padding / gap may use (Layout_Profile «contrasting»: tight
+     inside a group, big between sections). 4 · 8 · 12 · 16 · 20 · 24 · 32 · 40 · 48 · 64 · 80 · 96 · 128 · 160 */
+  --space-1: 4px;   --space-2: 8px;   --space-3: 12px;  --space-4: 16px;  --space-5: 20px;
+  --space-6: 24px;  --space-7: 32px;  --space-8: 40px;  --space-9: 48px;  --space-10: 64px;
+  --space-11: 80px; --space-12: 96px; --space-13: 128px; --space-14: 160px;
+
+  /* SHAPE */
+  --radius-sm:   4px;
+  --radius-md:   8px;
+  --radius-lg:   16px;
+  --radius-xl:   28px;      /* Madison Glow rounded tiles, pink cards */
+  --radius-full: 9999px;    /* pill buttons, chips */
+  --radius-edge: clamp(28px, 6vw, 72px);   /* rounded top of a light section (wireframe §7, §8) */
+
+  /* LAYOUT */
+  --content-max: 1200px;
+  --gutter: clamp(16px, 4vw, 48px);
+
+  /* MOTION */
+  --dur-fast:    180ms;
+  --dur-med:     320ms;
+  --dur-slow:    600ms;
+  --dur-zoom:    700ms;
+  --ease-out:    cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-expo:   cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* Web_Backgrounds — non-colour */
+  --bg-ease:        cubic-bezier(0.22, 0.61, 0.36, 1);
+  --bg-drift-dur:   24s;     /* nothing drifts — library.css reads the name */
+  --bg-aurora-dur:  5s;      /* retired — library.css reads the name */
+  --bg-grain-alpha: 0.04;    /* static grain, dark heroes only */
+  --bg-leak-angle:  118deg;  /* .bg-leak retired 22.10 — names kept, build library.css reads them */
+  --bg-leak-peak:   0;
+  --bg-leak-tail:   0;
+
+  /* Web_Hover_Effects — non-colour */
+  --hv-ease:      cubic-bezier(0.22, 0.61, 0.36, 1);
+  --hv-ease-soft: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --hv-fast: 180ms; --hv-base: 320ms; --hv-slow: 600ms; --hv-zoom: 700ms;
+
+  /* Reveal — moderate floor (Release_Floor F1: y 24–40 px · 0.7–0.9 s · stagger 80–100 ms · media 1.04 → 1) */
+  --reveal-y:       32px;
+  --reveal-dur:     0.8s;
+  --reveal-stagger: 90ms;
+  --reveal-scale:   1.04;
+  /* first screen: H1 → sub → CTA → media, ≤ 1.2 s; the LCP media moves by transform only */
+  --load-step: 120ms;
+  --load-dur:  0.8s;
+
+  /* Phase 8 — non-colour */
+  --fx-strand-width: 1.5px;
+  --fx-underline-h:  4px;
+  --fx-glow-text:    none;   /* no neon halo in moodboard 01 */
+  --fx-grain:        var(--bg-grain-alpha);
+  --fx-radius:       var(--radius-xl);
+  --fx-ease:         var(--ease-expo);
+  --fx-dur:          var(--dur-slow);
+
+  /* Web_Interactions — non-colour */
+  --ix-dur:          var(--dur-zoom);
+  --ix-ease:         var(--ease-expo);
+  --ix-radius:       var(--radius-lg);
+  --ix-font:         var(--font-primary);
+  --ix-font-display: var(--font-secondary);
+  --ix-dim-rest:     0.8;
+  --ix-fill-rest:    0.5;
+  --ix-cover-tilt:   42deg;
+  --ix-edge-from:    0px;    /* .ix-edge — light-section corner radius before it enters */
+}
+
+/* ============================================================
+   REDUCED MOTION — tokens collapse so every consumer follows.
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 1ms; --dur-med: 1ms; --dur-slow: 1ms; --dur-zoom: 1ms;
+    --reveal-y: 0px; --reveal-dur: 0s; --reveal-stagger: 0ms; --reveal-scale: 1;
+    --load-step: 0ms; --load-dur: 0s;
+    --hv-fast: 1ms; --hv-base: 1ms; --hv-slow: 1ms; --hv-zoom: 1ms;
+    --fx-dur: 1ms;
+    --ix-dur: 1ms;
+  }
+}

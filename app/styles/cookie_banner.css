@@ -1,0 +1,252 @@
+/* Cookie banner — semantic tokens from app/styles/tokens.css only: no colour
+   literals and no theme selector here (4.2_Architecture.md § Theme scopes, NFR-06).
+   The banner sits in <body>, outside <main>, so it takes its theme from the root:
+   tokens.css declares the light set on html:has(main[...light]) as well as on every
+   light scope (nearest scope wins, 4.2_Architecture.md) — dark on /salon, /about,
+   /contacts, light on /courses, /cabinet, /privacy; same token names per scope.
+   Pink as TEXT or as a thin line uses --color-accent-text (pink on paper fails
+   contrast); the fallback --color-fg keeps it readable until Phase 7 ships that token.
+   BUILD COPY (Phase 11 part B, 22.10.2026) of docs/10_Legal/Cookie_Banner/Cookie_Banner.css; one rule
+   added at the end (body padding while layer 1 is open — Release floor F6).
+   Every consent button uses .cookie_banner__button: one class, so «Reject» can
+   never look quieter than «Accept» (UODO, March 2025). No flex-grow on buttons:
+   on a phone a grown button reads as the primary one. */
+
+/* Layer 1 — fix round 22.10 (D-19), mobile first. Phone: a compact bar on the bottom edge (≈ 25 %
+   of 390 × 844 in uk/ru/pl/en, was 50 %), the three choices in ONE row, same class and size; the home hero ends
+   above it (pages.css). Tablet: the same bar, inset. ≥ 1024 px: a card in the bottom-right corner,
+   clear of the left-aligned hero text and buttons. Same text in every layout; only size changes. */
+.cookie_banner {
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: 1000;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  padding: 10px 14px calc(10px + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--color-border-strong);
+  border-radius: 12px 12px 0 0;
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-primary);
+  box-shadow: var(--shadow-lg);
+}
+
+.cookie_banner .cookie_banner__title {
+  margin: 0 0 2px;
+  font-size: 0.9375rem;
+}
+
+.cookie_banner .cookie_banner__text {
+  margin: 0 0 4px;
+  font-size: 0.8125rem;
+  line-height: 1.35;
+}
+
+.cookie_banner .cookie_banner__controller {
+  margin: 0 0 8px;
+  font-size: 0.6875rem;
+  line-height: 1.3;
+}
+
+.cookie_banner .cookie_banner__actions {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+/* the shared button, tighter inside the bar: still ≥ 44 px tall, labels may wrap to two lines */
+.cookie_banner .cookie_banner__button {
+  padding: 6px 8px;
+  font-size: 0.875rem;
+}
+
+@media (min-width: 768px) {
+  .cookie_banner .cookie_banner__title { margin-bottom: 4px; font-size: 1rem; }
+  .cookie_banner .cookie_banner__text { font-size: 0.875rem; line-height: 1.4; }
+  .cookie_banner .cookie_banner__controller { font-size: 0.75rem; }
+  .cookie_banner {
+    inset: auto 16px 16px 16px;
+    max-width: 720px;
+    margin-inline: auto;
+    padding: 16px 20px;
+    border: 1px solid var(--color-border-strong);
+    border-radius: 12px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .cookie_banner {
+    inset: auto 24px 24px auto;
+    width: min(440px, calc(100vw - 48px));
+    max-width: none;
+    margin: 0;
+  }
+}
+
+.cookie_banner__title,
+.cookie_settings__title {
+  margin: 0 0 8px;
+  font-family: var(--font-secondary);
+  font-size: 1.25rem;
+}
+
+.cookie_banner__text,
+.cookie_banner__controller,
+.cookie_category__description {
+  margin: 0 0 12px;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--color-fg-dim);
+}
+
+.cookie_banner__controller {
+  font-size: 0.8125rem;
+  color: var(--color-fg-muted);
+}
+
+.cookie_banner__link {
+  color: var(--color-accent-text, var(--color-fg));
+  text-decoration: underline;
+}
+
+.cookie_banner__actions,
+.cookie_settings__actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 8px;
+}
+
+/* The one shared button. Same size, colour and weight for every choice. */
+.cookie_banner__button {
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 1px solid var(--color-fg);
+  border-radius: 8px;
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font: 600 0.9375rem/1.2 var(--font-primary);
+  cursor: pointer;
+}
+
+.cookie_banner__button:hover {
+  background: var(--color-surface);
+}
+
+.cookie_banner__button:focus-visible,
+.cookie_settings__close:focus-visible,
+.cookie_settings_link:focus-visible {
+  outline: 2px solid var(--color-accent-text, var(--color-fg));
+  outline-offset: 2px;
+}
+
+.cookie_settings {
+  position: fixed;
+  inset: 0;
+  z-index: 1001;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  /* Veil in the page's own colour: dims a dark page, fades a light one. */
+  background: color-mix(in srgb, var(--color-bg) 80%, transparent);
+}
+
+.cookie_settings__dialog {
+  width: min(640px, 100%);
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+  padding: 20px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 12px;
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-primary);
+  box-shadow: var(--shadow-lg);
+}
+
+.cookie_settings__header,
+.cookie_category__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.cookie_settings__close {
+  width: 44px;
+  height: 44px;
+  border: 0;
+  background: transparent;
+  color: var(--color-fg);
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.cookie_category {
+  padding-block: 12px;
+  border-top: 1px solid var(--color-border);
+}
+
+.cookie_category__name {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.cookie_category__badge {
+  font-size: 0.8125rem;
+  color: var(--color-fg-muted);
+}
+
+.cookie_category__toggle {
+  width: 22px;
+  height: 22px;
+  accent-color: var(--color-accent);
+}
+
+.cookie_category__list summary {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  color: var(--color-accent-text, var(--color-fg));
+}
+
+.cookie_disclosure {
+  margin: 0;
+}
+
+.cookie_disclosure__row {
+  padding-block: 8px;
+  border-top: 1px dashed var(--color-border);
+}
+
+.cookie_disclosure__name {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  overflow-wrap: anywhere;
+}
+
+.cookie_disclosure__detail {
+  display: grid;
+  gap: 2px;
+  margin: 4px 0 0;
+  font-size: 0.8125rem;
+  color: var(--color-fg-dim);
+}
+
+/* Footer link is a <button> that looks like the footer's other links. */
+.cookie_settings_link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+/* Build (Phase 11 part B): while layer 1 is open the page gets room to scroll its last controls above
+   it — Cookie_Banner.tsx writes the banner height to --cookie-banner-h on <body>. */
+body { padding-bottom: var(--cookie-banner-h, 0px); }
+
+/* D-05: the banner is in the server HTML now. A stored answer hides it before paint (`cc-known`,
+   Consent_Known_Script); without JS it stays hidden — no tracker loads without JS anyway. */
+html.cc-known .cookie_banner,
+html:not(.js) .cookie_banner { display: none; }

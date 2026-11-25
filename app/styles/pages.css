@@ -1,0 +1,734 @@
+/* ============================================================
+   Studio Demo — public page blocks (Phase 11 · part B · 22.10.2026)
+   The blocks of 5.0_Sitemap / 6.0_Karkas 22.10 for /, /salon, /courses, both course pages, /about,
+   /contacts. MOBILE-FIRST (4.2 § Layout breakpoints, NFR-07): base rules = phone; `min-width: 768px`
+   tablet; `min-width: 1200px` desktop. No max-width query in this file; the old desktop-first rules of
+   these blocks are deleted from layout.css / visuals.css / components.css. Semantic tokens only — no
+   colour literal (4.3 Theme scopes); each block reads the theme of its own scope.
+   Looks: 7.0 component layer (components.css). Decor: 8.0 classes (decorations.css), placed by the
+   components. Loads after app.css, before decorations.css.
+   ============================================================ */
+
+/* ---- small text classes (4.3 allow-list: 12–14 px) + helpers ---- */
+.caption, .label, .meta { font-size: var(--fs-sm); color: var(--color-fg-muted); line-height: 1.45; }
+.label { font-size: var(--fs-xs); font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
+.body { color: var(--color-fg-dim); max-width: 64ch; }
+.sec_foot { margin-top: clamp(var(--space-7), 4vw, var(--space-8)); }
+.hero_actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-2); }
+/* Two buttons side by side are the same size (Daryna 16.11: «однакові по розміру кнопки … в ряд …
+   записатися в салон, просто зробити в 2 рядки») — a long label wraps instead of widening its button. */
+.hero_actions:has(> :nth-child(2):last-child) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 460px; }
+.hero_actions:has(> :nth-child(2):last-child) > .btn { width: 100%; padding-inline: var(--space-3); line-height: 1.3; text-align: center; white-space: normal; }
+.chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.icon { flex: none; }
+.display_xl, .display_lg { text-wrap: balance; }
+
+/* ============================================================
+   HERO — `/` HeroHome (Header31, full-width photo)
+   ============================================================ */
+/* SignatureHero (components/SignatureHero) — Oksana «Вариант 1» 24.10, owner 28.10: dark plum band,
+   text left, the studio photo right melting into the background, script line, faded wordmark.
+   Used by `/` (.hero_home, stacked wordmark), `/salon`, `/courses`, `/about`. */
+.page_hero_scrim { position: absolute; inset: 0; background: linear-gradient(180deg, color-mix(in srgb, var(--color-bg) 25%, transparent) 0%, color-mix(in srgb, var(--color-bg) 55%, transparent) 45%, color-mix(in srgb, var(--color-bg) 92%, transparent) 100%); }
+.sig_hero {
+  --sig-plum: #2a0d22; --sig-ink: #140811;
+  position: relative; isolation: isolate; overflow: hidden; color: var(--color-fg);
+  display: flex; align-items: flex-end; min-height: min(80svh, 720px);
+  background:
+    radial-gradient(80% 90% at 78% 35%, color-mix(in srgb, var(--color-accent-deep) 55%, var(--sig-plum)) 0%, transparent 60%),
+    linear-gradient(180deg, #120710 0%, #1c0a17 55%, #0a0408 100%);
+}
+/* D-19: below 1024 px the cookie bar sits on the bottom edge on the first visit — the home hero stops
+   short of it, so both buttons stay clear and clickable (static height, CLS 0). */
+.hero_home.sig_hero { min-height: min(60svh, 540px); }
+.sig_hero_media { position: absolute; inset: 0; z-index: 0; }
+.sig_hero_media::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, color-mix(in srgb, var(--sig-ink) 10%, transparent) 0%, color-mix(in srgb, var(--sig-ink) 50%, transparent) 36%, color-mix(in srgb, var(--sig-ink) 95%, transparent) 76%); }
+.sig_hero_photo { position: absolute; inset: 0; margin: 0; }
+.sig_hero_photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 12%; }
+.sig_hero_inset, .sig_hero_polaroid { display: none; }
+.sig_hero_script { position: absolute; right: var(--space-5); top: var(--space-5); margin: 0; z-index: 1; font: 400 clamp(1.6rem, 1.1rem + 2.2vw, 3rem)/1 var(--font-script); color: var(--color-accent); rotate: -7deg; text-shadow: 0 2px 18px rgba(0, 0, 0, .55); max-width: 9ch; text-align: center; }
+.sig_hero_inner { position: relative; z-index: 1; width: 100%; padding-block: var(--space-12) var(--space-8); }
+.sig_hero_text { display: grid; gap: var(--space-4); }
+.sig_hero_text .eyebrow { margin: 0; }
+.sig_hero_title { margin: 0; font: normal 500 var(--fs-3xl)/1.08 var(--font-accent); color: var(--color-fg); text-wrap: balance; letter-spacing: .005em; }
+.sig_hero_stack .sig_hero_title { font: normal 500 clamp(2.5rem, 1.4rem + 4.6vw, 7.25rem)/.95 var(--font-accent); text-transform: uppercase; color: var(--color-accent); letter-spacing: .01em; overflow-wrap: normal; hyphens: none; }
+.sig_hero_sub { color: var(--color-fg); max-width: 44ch; margin: 0; }
+.sig_hero_mark { position: absolute; left: 50%; bottom: 0; translate: -50% 38%; z-index: 0; margin: 0; white-space: nowrap; pointer-events: none;
+  font: normal 500 clamp(4rem, 17vw, 17rem)/1 var(--font-accent); text-transform: uppercase; letter-spacing: .02em;
+  color: color-mix(in srgb, var(--color-accent-deep) 50%, transparent); }
+@media (max-width: 1023px) {
+  .hero_home .sig_hero_inner { padding-bottom: var(--space-6); }
+  .hero_home .sig_hero_text { gap: var(--space-3); }
+  .sig_hero_mark { display: none; }
+}
+@media (min-width: 1024px) {
+  .sig_hero { display: block; min-height: min(88svh, 820px); }
+  .hero_home.sig_hero { min-height: min(88svh, 820px); }
+  .sig_hero_media { left: auto; width: 52%; }
+  .sig_hero_media::after { content: none; }
+  .sig_hero_photo {
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 38%), linear-gradient(0deg, transparent 0%, #000 28%);
+    -webkit-mask-composite: source-in;
+            mask-image: linear-gradient(90deg, transparent 0%, #000 38%), linear-gradient(0deg, transparent 0%, #000 28%);
+            mask-composite: intersect;
+  }
+  .sig_hero_inset { display: block; position: absolute; left: 8%; bottom: 14%; width: 26%; aspect-ratio: 4 / 5; margin: 0; z-index: 1; border-radius: var(--radius-lg); overflow: hidden; border: 4px solid color-mix(in srgb, var(--color-accent) 70%, #fff); box-shadow: var(--shadow-md); rotate: -4deg; }
+  .sig_hero_inset img { width: 100%; height: 100%; object-fit: cover; }
+  .sig_hero_polaroid { display: block; position: absolute; width: 24%; z-index: 1; }
+  .sig_hero_polaroid_1 { left: 34%; bottom: 9%; }
+  .sig_hero_polaroid_2 { right: 5%; bottom: 30%; }
+  .sig_hero_script { right: 7%; top: 11%; }
+  .sig_hero_inner { min-height: inherit; display: grid; align-content: center; padding-block: var(--space-10) var(--space-13); }
+  .sig_hero_text { max-width: min(50%, 640px); gap: var(--space-5); }
+  .sig_hero_stack .sig_hero_title span { display: block; }
+  .sig_hero_title { font-size: clamp(2.25rem, 1rem + 2.2vw, 3.25rem); }
+  .sig_hero_stack .sig_hero_title { font-size: clamp(4rem, 1rem + 6vw, 7.25rem); }
+}
+
+/* ============================================================
+   HERO — Header31 for /salon (photo), /about (split + inset), /courses (split + polaroids)
+   ============================================================ */
+.page_hero { position: relative; isolation: isolate; overflow: hidden; color: var(--color-fg); }
+.page_hero_text { display: grid; gap: var(--space-4); align-content: center; }
+.page_hero_text .eyebrow, .page_hero_head .eyebrow { margin: 0; }
+.page_hero_head { display: grid; gap: var(--space-3); }
+.page_hero_head .display { font-size: var(--fs-3xl); }
+.page_hero_text .display { font-size: var(--fs-3xl); }
+.page_hero_photo { min-height: min(86svh, 760px); display: flex; align-items: flex-end; }
+.page_hero_bg { position: absolute; inset: 0; z-index: -1; }
+.page_hero_bg img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 25%; }
+.page_hero_photo .page_hero_inner { padding-block: var(--space-13) var(--space-10); }
+.page_hero_photo .lede { color: var(--color-fg); }
+.page_hero_split .page_hero_inner { display: grid; gap: var(--space-8); padding-block: var(--space-8) var(--space-10); }
+.page_hero_media { position: relative; }
+.page_hero_main { border-radius: var(--radius-xl); overflow: hidden; aspect-ratio: 4 / 5; max-height: 72svh; }
+.page_hero_main img { width: 100%; height: 100%; object-fit: cover; }
+.page_hero_inset { position: absolute; left: -4px; bottom: -24px; width: 38%; aspect-ratio: 4 / 5; border-radius: var(--radius-lg); overflow: hidden; border: 6px solid var(--color-bg); }
+.page_hero_inset img { width: 100%; height: 100%; object-fit: cover; }
+.page_hero_cluster .page_hero_media { padding-inline: 8%; }
+.page_hero_polaroid { position: absolute; width: 38%; z-index: 1; }
+.page_hero_polaroid_1 { left: -2%; top: 6%; }
+.page_hero_polaroid_2 { right: -2%; bottom: -6%; }
+@media (min-width: 768px) {
+  .page_hero_split .page_hero_inner { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); align-items: center; gap: var(--space-9) var(--space-10); padding-block: var(--space-10) var(--space-12); }
+  .page_hero_split .page_hero_head { grid-column: 1 / -1; }   /* H1 runs the container width in ≤ 2 lines */
+  .page_hero_split .page_hero_text { align-self: start; }   /* lede + CTA start at the photo's top edge, no hole under the H1 */
+  .page_hero_photo .page_hero_inner { padding-block: var(--space-14) var(--space-11); }
+  .page_hero_photo .page_hero_text { max-width: 880px; }
+}
+@media (min-width: 1200px) {
+  .page_hero_text .display { font-size: var(--fs-3xl); }
+  .page_hero_photo { min-height: min(84svh, 780px); }
+  .page_hero_photo .page_hero_scrim { background: linear-gradient(90deg, color-mix(in srgb, var(--color-bg) 90%, transparent) 0%, color-mix(in srgb, var(--color-bg) 72%, transparent) 60%, color-mix(in srgb, var(--color-bg) 10%, transparent) 100%); }   /* the wider H1 keeps its contrast */
+  .page_hero_bg img { object-position: 70% 25%; }
+  .page_hero_polaroid { width: 34%; }
+}
+
+/* ============================================================
+   `/` AboutShort (Layout9)
+   ============================================================ */
+.about_short_grid { display: grid; gap: var(--space-9); }
+.about_short_media { position: relative; padding-bottom: var(--space-9); }
+.about_short_big { width: 82%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: var(--radius-xl); }
+.about_short_small { position: absolute; right: 0; bottom: 0; width: 44%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: var(--radius-lg); border: 6px solid var(--color-bg); }
+.about_short_text { display: grid; gap: var(--space-4); align-content: center; }
+.about_short_text .display { font-size: var(--fs-3xl); }
+@media (min-width: 768px) {
+  .about_short_grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; gap: var(--space-10); }
+}
+
+/* ============================================================
+   Stats (Stats27, signature) — `/` and `/about`
+   ============================================================ */
+.stats_grid { display: grid; gap: var(--space-7); align-items: center; }
+.stats_body { display: grid; gap: var(--space-2); }
+.stats_figure { border-radius: var(--radius-xl); overflow: hidden; aspect-ratio: 4 / 3; }
+.stats_figure img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
+@media (min-width: 768px) {
+  .stats_grid { grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: var(--space-9); }
+  .stats_figure { aspect-ratio: 1 / 1; }
+  .stat { padding: var(--space-6) var(--space-4) var(--space-3); }
+  .stats_grid.stats_grid_solo { grid-template-columns: minmax(0, 1fr); }   /* `/` — four tiles across (wireframe §4) */
+}
+
+/* ============================================================
+   `/` SalonTeaser (Layout13) + before / after pair
+   ============================================================ */
+.salon_teaser_grid { display: grid; gap: var(--space-9); }
+.salon_teaser_head { margin-bottom: 0; }
+.salon_cards { display: grid; gap: var(--space-4); }
+@media (min-width: 768px) { .salon_cards { gap: var(--space-6); } }
+.salon_card { height: 100%; text-decoration: none; color: inherit; }
+.salon_card .card_img { aspect-ratio: 4 / 5; }
+.salon_card .card_img img { transition: transform var(--dur-zoom, .7s) var(--ease-out); }
+.salon_card_num { font: var(--font-wt-display) var(--fs-sm)/1 var(--font-secondary); color: var(--color-accent-text); letter-spacing: .1em; }
+.salon_card_title { font-weight: 600; font-size: var(--fs-lg); line-height: 1.3; }
+.salon_card_text { color: var(--color-fg-dim); }
+.salon_card .price { color: var(--color-accent-text); font-size: var(--fs-xl); margin-top: var(--space-2); }
+.salon_card:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; }
+.ba_pair { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); margin-top: var(--space-9); }
+.ba_figure { display: grid; gap: var(--space-2); }
+.ba_figure img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: var(--radius-lg); }
+@media (min-width: 768px) {
+  .salon_cards { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .ba_pair { gap: var(--space-6); }   /* same gutter as the cards above; spans the container (wireframe grid) */
+  .ba_figure img { aspect-ratio: 4 / 3; }
+}
+
+/* ============================================================
+   Testimonials (Testimonial9) — `/` and `/salon`
+   ============================================================ */
+.reviews_sec { position: relative; isolation: isolate; overflow: hidden; background: var(--color-bg-dark); }
+.reviews_bg { position: absolute; inset: 0; z-index: -1; opacity: .18; }
+.reviews_bg img { width: 100%; height: 100%; object-fit: cover; }
+.reviews_grid { display: grid; gap: var(--space-7); }
+.reviews_head { display: grid; gap: var(--space-4); align-content: start; }
+.rating { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-2) var(--space-3); }
+.rating_count { font-weight: 600; color: var(--color-fg-dim); }
+.review_slider { display: grid; gap: var(--space-4); min-width: 0; }
+.review_track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; border-radius: var(--radius-xl); }
+.review_track::-webkit-scrollbar { display: none; }
+.review_track:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; }
+.review_track > .review { flex: 0 0 100%; scroll-snap-align: start; padding: var(--space-7) var(--space-6); }
+.review_nav { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.review_nav .dots { flex-wrap: wrap; justify-content: center; gap: 0; }   /* 12 reviews (28.10): 32 px targets keep the dots on one row */
+.dot { position: relative; width: 32px; height: 40px; border: 0; padding: 0; background: transparent; cursor: pointer; }
+.dot::before { content: ""; position: absolute; left: 50%; top: 50%; width: 8px; height: 8px; translate: -50% -50%; border-radius: 4px; background: var(--color-border-strong); transition: width var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out); }
+.dot.is_active::before { width: 24px; background: var(--color-accent-text); }
+.dot:focus-visible { outline: 2px solid var(--color-focus); outline-offset: -4px; border-radius: var(--radius-full); }
+.avatar_initial { display: inline-grid; place-items: center; border: 1px solid var(--color-border-strong); color: var(--color-accent-text); font: var(--font-wt-display) var(--fs-lg)/1 var(--font-secondary); }
+@media (min-width: 768px) {
+  .review_track > .review { padding: var(--space-8) var(--space-9); }
+}
+@media (min-width: 1200px) {
+  .reviews_grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: var(--space-10); align-items: center; }
+}
+
+/* ============================================================
+   `/` AcademyTeaser (own · Academy_Teaser) — light paper, rounded top (.theme-edge + .ix-edge)
+   ============================================================ */
+.academy_teaser { padding-top: clamp(var(--space-10), 9vw, var(--space-13)); }
+.academy_head { display: grid; gap: var(--space-6); margin-bottom: var(--space-7); }
+.academy_head .sec_head { margin-bottom: 0; }
+.academy_inset { width: 56%; justify-self: end; rotate: 2deg; border-radius: var(--radius-lg); overflow: hidden; border: 6px solid var(--color-surface); box-shadow: var(--shadow-md); }
+.academy_inset img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
+/* Benefits — owner 28.10 «красивее в нашем стиле»: big Playfair numerals on a pink hairline */
+.benefits { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; border-top: 1px solid color-mix(in srgb, var(--color-accent) 70%, transparent); }
+.benefit { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: var(--space-4); align-items: baseline; padding: var(--space-5) 0; border-bottom: 1px solid var(--color-border); }
+.benefit_num { grid-row: span 2; margin: 0; font: italic 500 clamp(2.5rem, 2rem + 2vw, 3.75rem)/.9 var(--font-accent); color: var(--color-accent-text); min-width: 2ch; }
+.benefit_title { margin: 0; font: 600 var(--fs-lg)/1.25 var(--font-primary); }
+.benefit_text { margin: var(--space-1) 0 0; color: var(--color-fg-dim); }
+.academy_courses { margin-top: var(--space-9); }
+@media (min-width: 768px) {
+  .academy_head { grid-template-columns: minmax(0, 1fr) minmax(0, 240px); align-items: end; }
+  .academy_inset { width: 100%; }
+  .benefits { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--space-8); }
+}
+@media (min-width: 1200px) {
+  .benefits { grid-template-columns: repeat(5, minmax(0, 1fr)); column-gap: 0; border-top: 0; }
+  .benefit { grid-template-columns: minmax(0, 1fr); align-content: start; padding: var(--space-5) var(--space-5) var(--space-6); border-bottom: 0; border-top: 2px solid var(--color-accent); }
+  .benefit + .benefit { border-left: 1px solid var(--color-border); }
+  .benefit_num { grid-row: auto; margin-bottom: var(--space-3); }
+}
+
+/* ============================================================
+   Polaroid grids — StudentWorks (`/`, `/courses`), CourseGallery (course pages)
+   ============================================================ */
+.polaroid_grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-7) var(--space-4); padding: var(--space-3) var(--space-1); }
+.polaroid_grid .dec_polaroid img { aspect-ratio: 4 / 5; object-fit: cover; }
+@media (min-width: 768px) {
+  .polaroid_grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-8) var(--space-7); }
+  .polaroid_grid .dec_polaroid:nth-child(3n + 2) { margin-top: var(--space-7); }
+}
+
+/* SuccessStories (`/`, `/courses`, E-42) — one card per graduate: polaroid, name, before / now, quote */
+.stories_list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-7); align-items: start; }   /* an opened story does not stretch its neighbour (28.10) */
+.story_card { display: flex; flex-direction: column; gap: var(--space-5); padding: var(--space-5); }
+.story_card .dec_polaroid { max-width: 320px; }
+.story_card .dec_polaroid img { aspect-ratio: 4 / 5; object-fit: cover; }
+.story_body { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-3); }
+/* Layout S2 (round 8): the name sits closer to its own facts (20 px) than to the course chip above; `.story_card` beats `.card h3 { margin }`. */
+.story_card .story_name { margin: var(--space-3) 0 0; }
+.story_facts { display: grid; gap: var(--space-2); margin: 0; }
+.story_facts dt { margin: 0; }
+.story_facts dd { margin: 0; color: var(--color-fg-dim); }
+.story_quote p { margin: 0; }
+@media (min-width: 768px) {
+  .stories_list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-6); } /* 4 stories (E-45) → 2 × 2 */
+  .story_card .dec_polaroid { max-width: none; }
+}
+@media (min-width: 1024px) {
+  /* 2 × 2 (E-45): photo beside the text keeps four cards about as tall as the old row of three */
+  .story_card { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); align-items: start; }
+}
+
+/* ============================================================
+   `/salon` ServiceCatalog (Pricing19) — tabs of the 9 groups, `.row_price` rows
+   ============================================================ */
+.services_head { display: grid; gap: var(--space-5); margin-bottom: var(--space-7); }
+.services_head .sec_head { margin-bottom: 0; }
+.services_intro { display: grid; gap: var(--space-3); align-content: start; }
+.services_notes { display: grid; gap: var(--space-2); }
+.services_notes li::before { content: "— "; color: var(--color-accent-text); }
+.pricing_tabs { flex-wrap: nowrap; overflow-x: auto; gap: var(--space-1) var(--space-6); scrollbar-width: thin; margin-bottom: var(--space-6); }
+.pricing_tabs .tab { flex: none; white-space: nowrap; }
+.pricing_panel { display: grid; gap: var(--space-2); }
+.pricing_group { margin-bottom: var(--space-1); }
+.pricing_desc { color: var(--color-fg-dim); max-width: 70ch; margin-bottom: var(--space-2); }
+.pricing_rows { border-bottom: 1px solid var(--color-border); }
+.row_text { min-width: 0; }
+/* phones: a text price («cenę podajemy na konsultacji») took the row and left the service name 127 px —
+   «modelowanie/m» split mid-word (phase 12, 07.11). The price column stops at 40 % of the row. */
+@media (max-width: 639px) { .row_price { grid-template-columns: minmax(0, 1fr) fit-content(40%); } }
+.row_value { color: var(--color-fg); font-size: var(--fs-lg); white-space: normal; text-align: right; }
+.row_note { text-align: right; font-style: italic; max-width: 20ch; }
+.row_price:hover .row_name { color: var(--color-accent-text); }
+@media (min-width: 768px) {
+  .services_head { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-9); align-items: end; }
+  .pricing_tabs { flex-wrap: wrap; overflow: visible; }
+  .row_value { white-space: nowrap; }
+}
+
+/* ============================================================
+   `/salon` Portfolio (Gallery24) — `.ix-flip` grid of polaroids
+   ============================================================ */
+.portfolio_grid.ix-flip__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-7) var(--space-4); padding: var(--space-3) var(--space-1); }
+.portfolio_polaroid .ix-flip__link { display: block; aspect-ratio: 4 / 5; overflow: hidden; border-radius: 2px; }
+.portfolio_polaroid .ix-flip__link img { width: 100%; height: 100%; object-fit: cover; }
+.portfolio_polaroid figcaption { overflow-wrap: anywhere; }
+@media (min-width: 768px) {
+  .portfolio_grid.ix-flip__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-8) var(--space-6); }
+}
+@media (min-width: 1200px) {
+  .portfolio_grid.ix-flip__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+/* ============================================================
+   Faq (Faq1) — `/salon`, `/courses`, course pages
+   ============================================================ */
+.faq_grid { display: grid; gap: var(--space-7); }
+.faq_head { margin-bottom: 0; align-content: start; }
+.faq_aside { display: grid; gap: var(--space-3); justify-items: start; margin-top: var(--space-3); padding-top: var(--space-5); border-top: 1px solid var(--color-border); }
+.faq_aside_title { font-weight: 600; }
+.faq_list { min-width: 0; border-bottom: 1px solid var(--color-border-strong); }
+@media (min-width: 1200px) {
+  .faq_grid { grid-template-columns: minmax(0, 380px) minmax(0, 1fr); gap: var(--space-10); }
+  .faq_head { position: sticky; top: 104px; }
+}
+
+/* ============================================================
+   Location (`/salon`) · Map (`/contacts`) — Contact7
+   ============================================================ */
+.location_grid { display: grid; gap: var(--space-7); }
+.location_info { display: grid; gap: var(--space-4); align-content: start; }
+.location_list { display: grid; gap: var(--space-4); margin: var(--space-2) 0 0; }
+.location_list dd { margin: var(--space-1) 0 0; font-weight: 600; }
+.location_list address { font-style: normal; }
+/* /salon: the storefront under the hours (shoot 03.11) — 3:2, the frame of the source */
+.location_door { display: grid; gap: var(--space-2); margin: var(--space-2) 0 0; }
+.location_door img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; border-radius: var(--radius-lg); }
+.location_door figcaption { color: var(--color-fg-dim); }
+@media (min-width: 1200px) {
+  .location_grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: var(--space-10); align-items: start; }
+  .location_grid_solo { grid-template-columns: minmax(0, 1fr); }   /* /contacts: no info column — the map runs the full width (owner 28.10) */
+}
+
+/* ============================================================
+   BookingChannels (Contact24) — six channels, FR-23
+   ============================================================ */
+.booking { display: grid; gap: var(--space-5); }
+.booking_head { display: grid; gap: var(--space-3); max-width: 64ch; }
+.booking_text { color: var(--color-fg-dim); }
+.booking_list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
+.booking_btn { display: flex; align-items: center; gap: var(--space-3); min-height: 52px; padding: var(--space-3) var(--space-4); border-radius: var(--radius-full); border: 1px solid var(--color-border-strong); color: var(--color-fg); text-decoration: none; font-weight: 600; transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out); }
+.booking_btn .icon { color: var(--color-accent-text); }
+.booking_btn:hover, .booking_btn:focus-visible { background: var(--color-accent); border-color: transparent; color: var(--color-accent-fg); }
+.booking_btn:hover .icon, .booking_btn:focus-visible .icon { color: var(--color-accent-fg); }
+.booking_btn:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; }
+.booking_btn_booksy { background: var(--color-accent); border-color: transparent; color: var(--color-accent-fg); }
+.booking_btn_booksy .icon { color: var(--color-accent-fg); }
+.booking_btn_booksy:hover { background: var(--color-accent-hover); }
+/* phones: the channel names split mid-word in the two-column panel («Подзвони/ти», «Instagra/m», phase 12,
+   07.11) — a tighter button, and one column under 380 px */
+@media (max-width: 479px) { .booking_btn { gap: var(--space-2); padding-inline: var(--space-3); font-size: var(--fs-sm); } }
+@media (max-width: 379px) { .booking_list { grid-template-columns: minmax(0, 1fr); } }
+.booking_panel { margin-top: var(--space-8); padding: var(--space-6) var(--space-4);   /* inner edge = the map bar's (A1) */ border-radius: var(--radius-xl); border: 1px solid var(--color-border); background: var(--color-bg); }
+.sec_page .booking_panel { background: var(--color-surface); }
+@media (min-width: 768px) {
+  .booking_list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .booking_panel { padding: var(--space-7); }
+}
+@media (min-width: 1200px) {
+  .booking { grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: var(--space-5) var(--space-10); align-items: start; }
+  .booking_caption { grid-column: 2; }
+}
+
+/* ============================================================
+   `/courses` PlatformBenefits (Features9) · CourseCatalog (own · Course_Grid)
+   ============================================================ */
+.platform_grid { display: grid; gap: var(--space-6); }
+.platform_figure { border-radius: var(--radius-xl); overflow: hidden; aspect-ratio: 4 / 3; }
+.platform_figure img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
+.platform_cards { display: grid; gap: var(--space-3); }
+.platform_card h3 { font-size: var(--fs-lg); }
+.catalog_list { display: grid; gap: var(--space-5); margin: 0; padding: 0; list-style: none; }
+.catalog_item { min-width: 0; }
+.catalog_card { display: flex; flex-direction: column; height: 100%; padding: 0; overflow: hidden; color: inherit; text-decoration: none; }
+.catalog_media { position: relative; display: block; aspect-ratio: 16 / 10; overflow: hidden; }
+.catalog_media img { width: 100%; height: 100%; object-fit: cover; }
+.catalog_thumbs { display: none; }
+@media (min-width: 768px) {
+  .catalog_thumbs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; padding-top: 4px; }
+  .catalog_thumb { position: relative; display: block; aspect-ratio: 16 / 8; overflow: hidden; }
+  .catalog_thumb img { width: 100%; height: 100%; object-fit: cover; }
+}
+.catalog_badge { position: absolute; left: var(--space-3); top: var(--space-3); padding: .45em .9em; border-radius: var(--radius-full); font: 600 var(--fs-xs)/1 var(--font-primary); letter-spacing: .06em; text-transform: uppercase; box-shadow: 0 2px 10px rgba(0, 0, 0, .18); }
+.catalog_badge_online { background: var(--color-accent); color: var(--color-accent-fg); }
+.catalog_badge_offline { background: #1a0915; color: #fff; }
+.catalog_body { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); flex: 1; padding: var(--space-5); }
+.catalog_format { margin: 0; color: var(--color-fg-muted); }
+.catalog_title { display: block; margin: 0; font: 600 var(--fs-xl)/1.25 var(--font-primary); text-wrap: balance; }
+.catalog_text { margin: var(--space-1) 0 0; color: var(--color-fg-dim); max-width: 60ch; }
+.catalog_row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3) var(--space-5); width: 100%; margin-top: auto; padding-top: var(--space-4); border-top: 1px solid var(--color-border); }
+.catalog_body .catalog_price { margin: 0; color: var(--color-accent-text); font-size: var(--fs-2xl); }
+/* both buttons the same size (Daryna 16.11: the wide black one over the short outline one was «дисбаланс»):
+   stacked at full width — side by side only where both labels fit on one line */
+.catalog_actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-3); width: 100%; }
+.catalog_actions > .btn { width: 100%; line-height: 1.3; text-align: center; white-space: normal; }
+.catalog_more { font-weight: 600; color: var(--color-accent-text); }
+.catalog_card:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; }
+/* the filter — tabs; the CSS hides the other format (works without JS: «Усі» is the default) */
+.filter_tabs { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-6); }
+.filter_tab { display: inline-flex; align-items: center; gap: var(--space-2); min-height: 44px; padding: 0 var(--space-4); border-radius: var(--radius-full); border: 1px solid var(--color-border-strong); background: transparent; color: var(--color-fg); font: 600 var(--fs-sm)/1 var(--font-primary); cursor: pointer; transition: background-color var(--dur-fast, .15s), color var(--dur-fast, .15s), border-color var(--dur-fast, .15s); }
+.filter_tab:hover { border-color: var(--color-accent); }
+.filter_tab.is_active { background: var(--color-accent); border-color: var(--color-accent); color: var(--color-accent-fg); }
+.filter_tab:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; }
+.filter_count { display: inline-grid; place-items: center; min-width: 1.6em; height: 1.6em; padding: 0 .35em; border-radius: var(--radius-full); background: color-mix(in srgb, currentColor 14%, transparent); font-size: .85em; }
+.course_filter[data-filter='online'] [data-kind='offline'],
+.course_filter[data-filter='offline'] [data-kind='online'] { display: none; }
+@media (min-width: 768px) {
+  .catalog_list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-6); }
+}
+
+@media (min-width: 1200px) {
+  .platform_grid { grid-template-columns: minmax(0, 360px) minmax(0, 1fr); gap: var(--space-8); align-items: stretch; }
+  .platform_figure { aspect-ratio: auto; }
+}
+
+/* ============================================================
+   Course pages — HeroCourse (Product16)
+   ============================================================ */
+.course_hero_grid { display: grid; gap: var(--space-7); padding-block: var(--space-7) var(--space-10); }
+.course_hero_media { position: relative; padding-right: 22%; padding-bottom: var(--space-7); }
+.course_hero_img { border-radius: var(--radius-xl); overflow: hidden; }
+.course_hero_img img { width: 100%; height: 100%; object-fit: cover; }
+.course_hero_img_1 { aspect-ratio: 4 / 5; }
+.course_hero_img_2 { position: absolute; right: 0; bottom: 0; width: 42%; aspect-ratio: 4 / 5; border: 6px solid var(--color-bg); border-radius: var(--radius-lg); }
+.course_hero_text { display: grid; gap: var(--space-4); align-content: center; }
+.course_hero_text .eyebrow { margin: 0; }
+.course_hero_kind { display: block; font-size: var(--fs-xl); color: var(--color-accent-text); margin-bottom: var(--space-2); }   /* format name inside the H1 (Онлайн-курс / Офлайн-інтенсив) */
+.course_hero_text .display { font-size: var(--fs-3xl); }
+.switch { display: inline-flex; flex-wrap: wrap; justify-self: start; gap: 2px; padding: 3px; border: 1px solid var(--color-border-strong); border-radius: var(--radius-full); }
+.switch a { display: inline-flex; align-items: center; min-height: 40px; padding: var(--space-2) var(--space-3); border-radius: var(--radius-full); font-size: var(--fs-xs); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--color-fg-dim); text-decoration: none; }
+.switch a.is_active { background: var(--color-fg); color: var(--color-bg); }
+.switch a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+/* Fix round 22.10 (D-20, D-24), mobile first: one column up to 1023 px (the photo capped so the text
+   still starts high on a tablet); two columns from 1024; from 1200 the photo column takes the larger
+   share — the main photo is ≈ 450 × 562 at 1440 (≈ 19 % of 1440 × 900, floor F5 ≥ 15 %). */
+@media (min-width: 768px) {
+  .course_hero_grid { gap: var(--space-8); padding-block: var(--space-9) var(--space-11); }
+  .course_hero_media { max-width: 560px; }
+}
+@media (min-width: 1024px) {
+  .course_hero_grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); align-items: center; gap: var(--space-9); padding-block: var(--space-10) var(--space-12); }
+  .course_hero_media { max-width: none; }
+}
+@media (min-width: 1200px) {
+  .course_hero_grid { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: var(--space-10); }
+  .course_hero_media { padding-right: 18%; }
+}
+
+/* ---- Audience (Services12) ---- */
+.audience_cards { display: grid; gap: var(--space-3); }
+.audience_card h3 { font-size: var(--fs-lg); }
+.skills { display: grid; gap: var(--space-7); margin-top: var(--space-8); }
+.skills_figure { border-radius: var(--radius-xl); overflow: hidden; aspect-ratio: 4 / 3; }
+.skills_figure img { width: 100%; height: 100%; object-fit: cover; }
+.skills_text { display: grid; gap: var(--space-4); align-content: center; }
+.check_list { display: grid; gap: var(--space-3); }
+.check_list li { position: relative; padding: var(--space-3) var(--space-4) var(--space-3) var(--space-9); border: 1px solid var(--color-border-strong); border-radius: var(--radius-md); color: var(--color-fg-dim); }
+.check_list li::before { content: ""; position: absolute; left: 18px; top: 50%; width: 10px; height: 6px; border-left: 2px solid var(--color-accent-text); border-bottom: 2px solid var(--color-accent-text); translate: 0 -70%; rotate: -45deg; }
+@media (min-width: 768px) {
+  .audience_cards { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .skills { grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: var(--space-9); align-items: center; }
+  .skills_figure { aspect-ratio: 4 / 5; }
+}
+
+/* ---- Program (Process28, signature) ---- */
+.program_row { display: grid; grid-template-columns: 3.5rem minmax(0, 1fr); gap: var(--space-3) var(--space-4); padding: var(--space-5) 0; align-items: start; }
+.program_row:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 4px; }
+.program_text { display: grid; gap: var(--space-2); }
+.program_text h3 { font: 600 var(--fs-lg)/1.3 var(--font-primary); color: var(--color-fg); }
+.program_text p { color: var(--color-fg-dim); max-width: 60ch; }
+.program_subs { grid-column: 2; color: var(--color-fg-dim); }
+.program_day_img { grid-column: 1 / -1; border-radius: var(--radius-xl); overflow: hidden; aspect-ratio: 4 / 3; }
+.program_day_img img { width: 100%; height: 100%; object-fit: cover; }
+@media (min-width: 768px) {
+  .program_row { grid-template-columns: 5.5rem minmax(0, 1fr) minmax(0, 240px); gap: var(--space-3) var(--space-7); padding: var(--space-6) 0; }
+  .program_subs { grid-column: 3; }
+  .program_day { grid-template-columns: 5.5rem minmax(0, 1fr) minmax(0, 300px); }
+  .program_day_img { grid-column: 3; grid-row: 1; aspect-ratio: 4 / 5; }
+}
+
+/* ---- Inclusions (Layout10) ---- */
+.inclusions_grid { display: grid; gap: var(--space-7); }
+.inclusions_list { display: grid; gap: var(--space-3); }
+.inclusion { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: var(--space-3); align-items: start; padding: var(--space-3) 0; border-top: 1px solid var(--color-border); }
+/* muted ring, not an accent fill: six pink discs + the CTA broke «≤ 3 accents per screen» (D-31) */
+.inclusion_icon { width: 40px; height: 40px; display: grid; place-items: center; border-radius: var(--radius-full); background: transparent; border: 1px solid var(--color-border); color: var(--color-fg); }
+.inclusion_sub { display: block; color: var(--color-fg-dim); margin-top: var(--space-1); }
+.inclusions_note { margin-top: var(--space-5); color: var(--color-fg); font-style: italic; }
+.inclusions_figure { border-radius: var(--radius-xl); overflow: hidden; aspect-ratio: 4 / 5; }
+.inclusions_figure img { width: 100%; height: 100%; object-fit: cover; }
+@media (min-width: 768px) {
+  .inclusions_list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 var(--space-7); }
+  .inclusions_grid.has_image { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: var(--space-10); align-items: center; }
+}
+
+/* ---- Author (About31) + ghost «20+» ---- */
+.author_grid { display: grid; gap: var(--space-8); }
+.author_media { position: relative; padding-right: 24%; padding-bottom: var(--space-7); }
+.author_img { border-radius: var(--radius-xl); overflow: hidden; }
+.author_img img { width: 100%; height: 100%; object-fit: cover; }
+.author_img_1 { aspect-ratio: 4 / 5; }
+.author_img_2 { position: absolute; right: 0; bottom: 0; width: 44%; aspect-ratio: 4 / 5; border: 6px solid var(--color-surface); border-radius: var(--radius-lg); }
+.author_text { display: grid; gap: var(--space-4); align-content: center; }
+.facts_list { display: grid; gap: 0; border-top: 1px solid var(--color-border-strong); }
+.facts_list li { padding: var(--space-3) 0 var(--space-3) var(--space-7); border-bottom: 1px solid var(--color-border); position: relative; color: var(--color-fg); }
+.facts_list li::before { content: ""; position: absolute; left: 4px; top: 1.45em; width: 10px; height: 10px; border-radius: 50%; background: var(--color-accent); }
+@media (min-width: 768px) {
+  .author_grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: var(--space-10); align-items: center; }
+}
+
+/* ---- PriceCard (Pricing4, intensive) ---- */
+.price_grid { display: grid; gap: var(--space-7); }
+.price_figure { border-radius: var(--radius-xl); overflow: hidden; aspect-ratio: 4 / 3; }
+.price_figure img { width: 100%; height: 100%; object-fit: cover; }
+.price_card { display: grid; gap: var(--space-4); border-color: var(--color-border-strong); }
+.price_card h3 { font-size: var(--fs-xl); }
+.price_card_list { display: grid; gap: var(--space-3); }
+.price_card_list li { display: flex; gap: var(--space-3); align-items: flex-start; color: var(--color-fg); }
+.price_card_list .icon { color: var(--color-accent-text); margin-top: 3px; }
+.price_book > summary { list-style: none; cursor: pointer; }
+.price_book > summary::-webkit-details-marker { display: none; }
+.price_book[open] > summary { margin-bottom: var(--space-1); }
+.price_book .booking_panel { margin-top: var(--space-4); padding: var(--space-5) var(--space-4); }
+.price_book .booking { grid-template-columns: minmax(0, 1fr); }
+.price_book .booking_caption { grid-column: auto; }
+@media (min-width: 768px) {
+  .price_grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: var(--space-10); align-items: center; }
+  .price_figure { aspect-ratio: 4 / 5; }
+}
+
+/* ---- FinalCta (Cta20) — deep magenta band ---- */
+.final_band { display: grid; gap: var(--space-7); padding: var(--space-7) var(--space-5); border-radius: var(--radius-xl); overflow: hidden; }
+.final_text { display: grid; gap: var(--space-4); align-content: center; }
+.final_band .display { color: var(--color-fg); }
+.final_guarantee { font: italic 600 var(--fs-lg)/1.4 var(--font-accent); color: var(--color-accent-text) !important; }
+.final_figure { border-radius: var(--radius-lg); overflow: hidden; aspect-ratio: 4 / 3; rotate: 2deg; }
+.final_figure img { width: 100%; height: 100%; object-fit: cover; }
+.final_legal a { color: var(--color-fg); }
+@media (min-width: 768px) {
+  .final_band { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); padding: var(--space-9); gap: var(--space-9); }
+  .final_figure { aspect-ratio: 4 / 5; }
+}
+
+/* ============================================================
+   `/about` — FounderStory · Masters · Philosophy · AcademyRecognition · FinalCta (Cta7)
+   ============================================================ */
+.founder_grid { display: grid; gap: var(--space-9); }
+.founder_media { position: relative; padding: var(--space-4) 20% var(--space-8) var(--space-2); }
+.founder_media .dec_polaroid img { aspect-ratio: 4 / 5; object-fit: cover; }
+.founder_second { position: absolute; right: 0; bottom: 0; width: 42%; aspect-ratio: 4 / 5; border-radius: var(--radius-lg); overflow: hidden; border: 6px solid var(--color-surface); }
+.founder_second img { width: 100%; height: 100%; object-fit: cover; }
+.founder_text { display: grid; gap: var(--space-5); align-content: center; }
+.founder_quote { display: grid; gap: var(--space-3); margin-top: var(--space-2); padding-left: var(--space-4); border-left: 2px solid var(--color-focus); }
+.founder_quote blockquote { margin: 0; font: italic 500 var(--fs-2xl)/1.3 var(--font-accent); color: var(--color-fg); }
+@media (min-width: 768px) {
+  .founder_grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: var(--space-10); align-items: center; }
+}
+
+.masters_grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-7) var(--space-4); }
+.master_card { display: grid; gap: var(--space-2); align-content: start; }
+.master_photo, .master_mono { aspect-ratio: 4 / 5; border-radius: var(--radius-xl); overflow: hidden; }
+.master_photo img { width: 100%; height: 100%; object-fit: cover; }
+.master_mono { display: grid; place-items: center; background: var(--color-surface); border: 1px solid var(--color-border-strong); }
+.master_mono span { font: 400 clamp(4rem, 18vw, 7rem)/1 var(--font-script); font-size-adjust: 0.5; color: var(--color-accent-text); }
+.master_name { font: 600 var(--fs-xl)/1.2 var(--font-primary); margin-top: var(--space-2); }
+.master_role { color: var(--color-fg-dim); }
+/* phones: five cards in two columns leave the fifth alone at the left — centre it (08.11, blind review) */
+@media (max-width: 767.98px) {
+  .masters_grid > .master_card:last-child:nth-child(odd) { grid-column: 1 / -1; justify-self: center; width: calc((100% - var(--space-4)) / 2); }
+}
+@media (min-width: 768px) {
+  .masters_grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-8) var(--space-6); }
+}
+@media (min-width: 1200px) {
+  .masters_grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .master_card:nth-child(even) { margin-top: var(--space-9); }
+}
+
+.philosophy_grid { display: grid; gap: var(--space-8); }
+.standards { display: grid; gap: 0; border-top: 1px solid var(--color-border-strong); }
+.standard { display: grid; grid-template-columns: 4.5rem minmax(0, 1fr); gap: var(--space-4); padding: var(--space-5) 0; border-bottom: 1px solid var(--color-border); }
+.standard_num { font: var(--font-wt-display) var(--fs-2xl)/1 var(--font-secondary); color: var(--color-accent-text); }
+.standard_title { font-weight: 600; font-size: var(--fs-lg); margin-bottom: var(--space-1); }
+.standard p { color: var(--color-fg-dim); }
+.philosophy_media { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); align-items: start; }
+.philosophy_img { border-radius: var(--radius-xl); overflow: hidden; aspect-ratio: 4 / 5; }
+.philosophy_img img { width: 100%; height: 100%; object-fit: cover; }
+.philosophy_img_2 { margin-top: var(--space-9); }
+@media (min-width: 1200px) {
+  .philosophy_grid { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: var(--space-10); align-items: center; }
+}
+
+.recognition_grid { display: grid; gap: var(--space-8); }
+.recognition_text { display: grid; gap: var(--space-4); align-content: center; }
+.recognition_media { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
+.recognition_img { border-radius: var(--radius-xl); overflow: hidden; aspect-ratio: 4 / 5; }
+.recognition_img img { width: 100%; height: 100%; object-fit: cover; }
+.recognition_img_1 { grid-row: span 2; aspect-ratio: auto; }
+@media (min-width: 768px) {
+  .recognition_grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: var(--space-10); align-items: center; }
+}
+
+.about_cta { position: relative; isolation: isolate; overflow: hidden; min-height: 560px; display: flex; align-items: flex-end; color: var(--color-fg); }
+.about_cta_bg { position: absolute; inset: 0; z-index: -1; }
+.about_cta_bg img { width: 100%; height: 100%; object-fit: cover; }
+.about_cta_inner { display: grid; gap: var(--space-4); padding-block: var(--space-12) var(--space-10); }
+.about_cta_inner .lede { color: var(--color-fg); }
+@media (min-width: 768px) { .about_cta_inner { max-width: var(--content-max); margin-inline: auto; padding-block: var(--space-13) var(--space-12); } }
+
+/* ============================================================
+   `/contacts` — ContactCards (Contact6) + photo strip
+   ============================================================ */
+.contacts_head { margin-bottom: var(--space-8); }
+.contact_cards { display: grid; gap: var(--space-3); }
+.contact_card { display: grid; gap: var(--space-2); align-content: start; }
+.contact_icon { width: 44px; height: 44px; display: grid; place-items: center; border-radius: var(--radius-full); background: var(--color-accent); color: var(--color-accent-fg); margin-bottom: var(--space-2); }
+.contact_title { font-size: var(--fs-xs); font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--color-fg-muted); }
+.contact_value { font-weight: 600; font-size: var(--fs-lg); color: var(--color-fg); text-decoration: none; overflow-wrap: anywhere; }
+.contact_value address { font-style: normal; }
+/* «Салон @… / Курси @…»: the handles share one left edge in every language (A1) — subgrid, Safari 16+ */
+.contact_pairs { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--space-1) var(--space-2); }
+.contact_pair { display: grid; grid-column: 1 / -1; grid-template-columns: subgrid; align-items: baseline; }
+.card .contact_note { color: var(--color-fg-dim); }
+/* The strip in the order a client meets the studio: the storefront (`strip_wide`: a full 16:9 row on
+   phones, two columns from 768 — its image is out of flow, so it takes the 4:5 tiles' row height),
+   the reception (`strip_top`: the gold DEMO letters sit at the top of the frame, 08.11), three works. */
+.contacts_strip { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); margin-top: var(--space-7); }
+.contacts_strip img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: var(--radius-lg); }
+.contacts_strip .strip_wide { grid-column: 1 / -1; position: relative; aspect-ratio: 16 / 9; }
+.contacts_strip .strip_wide img { position: absolute; inset: 0; height: 100%; aspect-ratio: auto; object-position: 50% 30%; }   /* the DEMO sign sits in the upper third */
+.contacts_strip .strip_top img { object-position: 50% 0%; }
+@media (min-width: 768px) {
+  .contact_cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .contacts_strip { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .contacts_strip .strip_wide { grid-column: span 2; aspect-ratio: auto; }
+}
+@media (min-width: 768px) and (max-width: 1199.98px) {
+  /* five cards (e-mail added 27.10): the odd last card spans the row instead of hanging alone */
+  .contact_cards > .contact_card:last-child:nth-child(odd) { grid-column: 1 / -1; }
+}
+@media (min-width: 1200px) {
+  /* 3 + 2: address · phone · hours, then e-mail · Instagram on wider cells (the address and the
+     e-mail stay readable — five equal columns would break them mid-word) */
+  .contact_cards { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .contact_cards > .contact_card { grid-column: span 2; }
+  .contact_cards > .contact_card:nth-child(n + 4) { grid-column: span 3; }
+}
+
+/* ============================================================
+   Decor placement (8.0 §5) — host spacing only; the looks live in decorations.css
+   ============================================================ */
+.stats_sec .dec_ghost_num { top: auto; bottom: -.08em; }
+.author_sec .dec_ghost_num { top: -.04em; }
+.dec_tape { margin-block: -8px; z-index: 2; }
+.page_hero_text .dec_scribble, .page_hero_head .dec_scribble { white-space: normal; }
+
+/* Grid / flex children never grow past their track: a long word (PL «MIKROKAPSUŁKOWE» in Unbounded caps)
+   wraps inside its column instead of widening the page (390 / 1440 overflow check, part B). */
+:where(.sig_hero_inner, .sig_hero_text, .course_hero_grid, .page_hero_inner, .about_short_grid, .stats_grid, .salon_teaser_grid, .reviews_grid,
+  .academy_head, .services_head, .faq_grid, .location_grid, .booking, .platform_grid, .skills, .inclusions_grid,
+  .author_grid, .price_grid, .final_band, .founder_grid, .philosophy_grid, .recognition_grid, .catalog_card,
+  .card_body, .row_price) > * { min-width: 0; }
+.course_hero_text .display { font-size: var(--fs-3xl); }
+/* D-20 (fix round 22.10): a text column that is itself a grid sized its one implicit track to the
+   min-content of the longest uppercase word (RU «МИКРОКАПСУЛЬНОЕ», AboutShort «СТВОРЮЄМО»), so the
+   column grew past its track at 768–1024 px (+197 px). The inner track may now shrink, and the
+   display heading scales with its own column (container units) so the longest word of every
+   locale fits; break-word is the last guard, never the layout. */
+.course_hero_text, .about_short_text { grid-template-columns: minmax(0, 1fr); container-type: inline-size; }
+.course_hero_text .display { font-size: var(--fs-3xl); overflow-wrap: break-word; }
+.about_short_text .display { font-size: var(--fs-3xl); overflow-wrap: break-word; }
+
+/* ============================================================
+   Course prices (T-12 · E-31, 22.10): one price per course — catalog, course hero, PriceCard, FinalCta.
+   `.price` = Playfair italic (components.css); colours from the scope.
+   ============================================================ */
+.catalog_body .catalog_price { color: var(--color-accent-text); font-size: var(--fs-2xl); margin: 0; }
+.course_hero_price { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-1) var(--space-3); margin: 0; }
+.course_hero_price .note { margin: 0; text-transform: uppercase; letter-spacing: var(--font-ls-eyebrow); font-weight: 600; }
+.course_hero_price .price { color: var(--color-accent-text); font-size: var(--fs-2xl); }
+.price_card .price_card_price { color: var(--color-accent-text); font-size: var(--fs-3xl); line-height: 1; margin: 0; }
+.final_band .final_price { color: var(--color-on-dark); font-size: var(--fs-2xl); margin: 0; }
+.final_band .final_price_pair { display: flex; flex-wrap: wrap; gap: 0 var(--space-5); white-space: normal; }   /* mentoring: «2 дні — 2 000 €» and «3 дні — 3 000 €» wrap as whole options */
+.final_band .final_price_pair > span { white-space: nowrap; }
+
+/* «Життя студії» (/about, owner 08.11.2026 — more frames of the shoot 03.11). Phones: one swipe row
+   that runs to the screen edges, every tile the same height (wide 4:3, tall 4:5). From 768 px: a
+   4-column bento — wide · tall · tall / tall · wide · tall; the wide tile takes the row's height. */
+.life_grid {
+  display: flex; gap: var(--space-3);
+  margin: var(--space-7) calc(var(--gutter) * -1) 0; padding: 0 var(--gutter) var(--space-3);
+  list-style: none; overflow-x: auto; overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory; scroll-padding-inline: var(--gutter); scrollbar-width: thin;
+}
+.life_grid:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 4px; }
+.life_tile { position: relative; flex: none; height: clamp(200px, 60vw, 340px); aspect-ratio: 4 / 5; overflow: hidden; border-radius: var(--radius-lg); scroll-snap-align: start; }
+.life_tile_wide { aspect-ratio: 4 / 3; }
+/* out of flow: an in-flow image filling a fixed-ratio frame is the Safari incident pattern (Cross_Matrix C4b) */
+.life_tile img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; }
+@media (min-width: 768px) {
+  .life_grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-4); margin-inline: 0; padding: 0; overflow: visible; }
+  .life_tile { height: auto; }
+  /* the wide frame takes the height the tall ones give the row (its image is out of flow) */
+  .life_tile_wide { grid-column: span 2; aspect-ratio: auto; }
+}
+
+/* «Як проходить візит» (/salon, owner 08.11.2026 — album «робочий процес»). Below 1200 px: one swipe
+   row to the screen edges, each step 70 % / 34 % of the screen; from 1200 px five columns. Each step: a
+   4:5 frame (image out of flow — Cross_Matrix C4b), «01/», a short title, one line. */
+.visit_row {
+  display: flex; gap: var(--space-4);
+  margin: var(--space-7) calc(var(--gutter) * -1) 0; padding: 0 var(--gutter) var(--space-3);
+  list-style: none; overflow-x: auto; overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory; scroll-padding-inline: var(--gutter); scrollbar-width: thin;
+}
+.visit_row:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 4px; }
+.visit_step { flex: none; width: min(70vw, 300px); display: grid; align-content: start; gap: var(--space-1); scroll-snap-align: start; }
+.visit_photo { position: relative; aspect-ratio: 4 / 5; overflow: hidden; border-radius: var(--radius-lg); margin-bottom: var(--space-3); }
+.visit_photo img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; }
+.visit_num { margin: 0; font: var(--font-wt-display) var(--fs-xl)/1 var(--font-secondary); color: var(--color-accent-text); }
+.visit_title { margin: 0; font-weight: 600; font-size: var(--fs-lg); }
+.visit_body { margin: 0; color: var(--color-fg-dim); }
+@media (min-width: 768px) { .visit_step { width: 34vw; } }
+@media (min-width: 1200px) {
+  .visit_row { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); margin-inline: 0; padding: 0; overflow: visible; }
+  .visit_step { width: auto; }
+}
+
+/* The reconstruction card's second thumb (Salon_Hero_03, a 4:5 portrait in a 2:1 strip): the centre
+   crop cut the head at the brow — framed from above the hair, like the salon tiles (owner 08.11.2026
+   «краще щоб голову повністю видно було»). Tied to that file. */
+.catalog_thumb img[src*='Salon_Hero_03'] { object-position: 50% 30%; }

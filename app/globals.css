@@ -1,0 +1,105 @@
+/* ============================================================
+   Studio Demo — build stylesheet (Phase 11 · part A re-run 22.10.2026)
+   Cascade (4.2_Architecture / Skill_Coding):
+     1) tailwindcss          — preflight + utilities (layered → every unlayered rule below wins)
+     2) library.css          — .hv-* / .bg-* / .reveal subset (Phase 7 library)
+     3) tokens.css           — brand tokens, VERBATIM copy of 7_Ui-Kit/Tokens.css (moodboard 01, 22.10:
+                               dark + light scopes, one pink) — `cmp` passes
+     3b) interactions.css    — section interactions (.ix-*), VERBATIM copy of 7_Ui-Kit/Interactions.css
+     4) components.css       — component layer (semantic tokens only, both themes)
+     5) layout.css           — page-level layout helpers that the component layer does not cover
+     5b) app.css             — cabinet / admin / checkout / password pages — tokens only
+     5c) pages.css           — public page blocks, mobile-first (part B 22.10; replaces visuals.css + floor.css)
+     6) decorations.css      — decor «Колаж на двох папірцях», copy of 8_Effects/Decorations.css minus
+                               the RETIRING section (its header lists the cut)
+     7) map.css · cookie_banner.css (Phase-10 banner, B-22) · motion.css (reveal states, last)
+   Themes: the theme attribute on <main>/<header>/<footer>/<section> (4.2 § Theme scopes); no colour here.
+   Head script (app/[locale]/layout.tsx) sets html.js + html.rv-js before first paint; the
+   Interactions component adds html.ix-js; the Decorations component runs the decor script.
+   All @imports sit first because CSS requires it; @theme and the font map follow.
+   ============================================================ */
+@import 'tailwindcss';
+@import './styles/library.css';
+@import './styles/tokens.css';
+@import './styles/interactions.css';
+@import './styles/components.css';
+@import './styles/layout.css';
+@import './styles/app.css';
+@import './styles/admin_mobile.css';
+@import './styles/pages.css';
+@import './styles/decorations.css';
+@import './styles/map.css';
+@import './styles/cookie_banner.css';
+@import './styles/lang_pill.css';
+@import './styles/motion.css';
+@import './styles/mobile_guard.css';
+@import './styles/refine.css';
+@import './styles/hero_video.css';
+@import './styles/fx_kit.css';   /* owner's UI-kit pick 31.10.2026 (kl libraries) — behaviour in components/Fx/FxKit.tsx */
+@import './styles/benefits_3d.css';   /* /courses 3D benefits block (owner 01.11.2026) */
+@import './styles/lightbox.css';   /* site-wide gallery viewer (31.10) */
+@import './styles/skin_insta.css';   /* Instagram skin (owner 31.10.2026) — last; ?skin=classic turns it off */
+@import './styles/logo_mark.css';   /* header logo without the circle (31.10) */
+@import './styles/burger.css';   /* full-screen burger menu, kl Web_Burger_Menu (31.10) */
+@import './styles/reviews.css';   /* reviews: horizontal-only swipe, counter (31.10) */
+@import './styles/bottom_bar.css';   /* phone bottom bar Салон | DEMO | Курси (31.10) */
+@import './styles/home_blocks.css';   /* price sheet, SERVICES carousel, ABOUT US video (Daryna 03.11, built 06.11) */
+@import './styles/decor.css';   /* logo strands in 5 corners + pink rule under heads (owner 06.11, option C) */
+@import './styles/Studio_Home.css';   /* Oksana 16.11 (B-119): home, reviews, footer */
+@import './styles/Studio_Salon.css';   /* Oksana 16.11 (B-119): salon, FAQ, contacts */
+@import './styles/Studio_About.css';   /* Oksana 16.11 (B-119): courses, about */
+@import './styles/cross_browser.css';   /* cross-browser floor: buttons and long words wrap (kl Web_Cross_Browser, 06.11) — last */
+
+/* Brand tokens → Tailwind 4 utilities (bg-accent, text-fg-muted, font-display …).
+   `inline` makes the utility read the token value; tokens.css stays the single source. */
+@theme inline {
+  --color-accent: var(--color-accent);
+  --color-accent-hover: var(--color-accent-hover);
+  --color-accent-fg: var(--color-accent-fg);
+  --color-fg: var(--color-fg);
+  --color-fg-dim: var(--color-fg-dim);
+  --color-fg-muted: var(--color-fg-muted);
+  --color-bg: var(--color-bg);
+  --color-bg-dark: var(--color-bg-dark);
+  --color-surface: var(--color-surface);
+  --color-surface-2: var(--color-surface-2);
+  --color-border: var(--color-border);
+  --color-border-strong: var(--color-border-strong);
+  --color-on-dark: var(--color-on-dark);
+  --color-on-dark-dim: var(--color-on-dark-dim);
+  --color-on-dark-muted: var(--color-on-dark-muted);
+  --color-on-dark-line: var(--color-on-dark-line);
+  --color-accent-on-dark: var(--color-accent-on-dark);
+  --color-danger: var(--color-danger);
+  --color-success: var(--color-success);
+  --font-display: var(--font-secondary);
+  --font-body: var(--font-primary);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+}
+
+/* next/font/google exposes hashed family names on --font-unbounded / --font-montserrat / --font-playfair
+   (app/[locale]/layout.tsx). The only place a family variable is mapped onto the brand roles
+   (4.3 Fonts, 7.0 §10) — same stacks as tokens.css, so nothing overrides the Phase 7 mapping.
+   Non-colour tokens stay on :root (4.2 exempt list). */
+:root {
+  --font-primary: var(--font-montserrat), system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-secondary: var(--font-unbounded), 'Arial Black', system-ui, sans-serif;
+  --font-accent: var(--font-playfair), Georgia, 'Times New Roman', serif;
+}
+
+/* No-JS guard (belt and braces): library.css already hides .reveal only under html.rv-js. */
+html:not(.js) .reveal {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
+/* Skill_Coding trap: [hidden] loses to any class that sets display. */
+[hidden] {
+  display: none !important;
+}

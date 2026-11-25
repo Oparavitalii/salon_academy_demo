@@ -1,0 +1,156 @@
+/* ============================================================
+   /courses «Переваги навчання» — 3D block (owner 01.11.2026, «Справжній 3D (Three.js)»).
+   Sticky stage (poster → canvas) + four text steps that scroll past it. Phone: the stage sits under
+   the header and the steps pass beneath it; ≥ 900 px: stage left, steps right.
+   Behaviour: components/PlatformBenefits/Benefits_3D.tsx · scene: lib/three/Benefits_Scene.ts.
+   ============================================================ */
+.b3d {
+  --b3d-bg: var(--color-surface);
+  --b3d-accent: var(--color-accent);
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  margin-top: var(--space-6);
+}
+
+.b3d_stage {
+  position: sticky;
+  top: 64px;
+  z-index: 1;
+  height: 52svh;
+  min-height: 300px;
+  background: var(--b3d-bg);
+  /* a soft pink glow behind the prints (CSS, free — Web_3D_Scroll_Site «cheap wins») */
+  background-image: radial-gradient(60% 55% at 50% 52%, color-mix(in srgb, var(--color-accent) 22%, transparent), transparent 70%);
+}
+
+.b3d_canvas,
+.b3d_poster {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.b3d_canvas { display: block; opacity: 0; transition: opacity .6s ease; }
+.b3d[data-live] .b3d_canvas { opacity: 1; }
+
+.b3d_poster { display: grid; place-items: center; transition: opacity .6s ease; }
+.b3d[data-live] .b3d_poster { opacity: 0; }
+.b3d_poster img {
+  grid-area: 1 / 1;
+  width: auto;
+  height: 82%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border-radius: 14px;
+  border: 5px solid #fbf3f8;
+  box-shadow: 0 24px 50px rgb(3 3 3 / .22);
+  opacity: 0;
+  transform: perspective(900px) rotateY(-14deg) scale(.96);
+  transition: opacity .45s ease, transform .6s cubic-bezier(.22, 1, .36, 1);
+}
+.b3d_poster img.is-on { opacity: 1; transform: perspective(900px) rotateY(-6deg); }
+
+.b3d_count {
+  position: absolute;
+  right: var(--space-3);
+  bottom: var(--space-3);
+  margin: 0;
+  font: 500 var(--fs-sm)/1 var(--font-primary);
+  letter-spacing: .14em;
+  color: var(--color-fg-muted);
+}
+.b3d_count b { color: var(--color-fg); font-weight: 700; }
+
+.b3d_steps { list-style: none; margin: 0; padding: 0; position: relative; z-index: 0; }
+.b3d_step {
+  min-height: 78svh;
+  display: flex;
+  align-items: flex-end;
+  padding-bottom: calc(14svh + var(--bottom-bar-h, 0px));
+}
+.b3d_step:last-child { min-height: 60svh; }
+.b3d_card {
+  width: 100%;
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  /* no opacity fade: a faded card failed AA contrast (axe, CI 01.11) — the active one turns pink instead */
+  transform: scale(.97);
+  transition: transform .5s cubic-bezier(.22, 1, .36, 1), background-color .4s ease, color .4s ease;
+}
+.b3d_step.is-on .b3d_card { opacity: 1; transform: none; background: var(--color-accent); color: var(--color-accent-fg); border-color: transparent; }
+.b3d_card h3 { margin: 0 0 var(--space-2); font-size: var(--fs-lg); }
+.b3d_card p { margin: 0; }
+.b3d_card .card_num { margin-bottom: var(--space-2); }
+
+/* phone: the stage runs edge to edge, so the side prints leave the screen, not a box in the gutter */
+@media (max-width: 899px) {
+  .b3d_stage { margin-inline: calc(var(--gutter) * -1); }
+}
+@media (min-width: 768px) {
+  .b3d_stage { top: 72px; }
+}
+@media (min-width: 900px) {
+  .b3d { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: var(--space-8); align-items: start; }
+  .b3d_stage { top: calc(72px + var(--space-6)); height: min(76svh, 680px); border-radius: var(--radius-lg); }
+  .b3d_step { min-height: 72svh; align-items: center; padding-bottom: 0; }
+  .b3d_step:first-child { min-height: 50svh; align-items: flex-start; padding-top: var(--space-8); }
+  .b3d_step:last-child { min-height: 64svh; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .b3d_card, .b3d_poster img { transition: none; }
+}
+
+/* ============================================================
+   16.11.2026 — the flat version that replaced the 3D ring (Daryna: «фон … просто білим», photos
+   «засвічені», «тінь … неприродно», «не можу перегорнути», «великий проміжок»). The `.b3d` rules
+   above are kept only for a revert to Benefits_3D.tsx. Markup: PlatformBenefits.tsx.
+   Plain page background (the section no longer takes the pink surface), no shadows, no gloss.
+   ============================================================ */
+.pb_list {
+  list-style: none;
+  margin: var(--space-6) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-4);
+}
+.pb_card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+}
+.pb_img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+.pb_body { padding: var(--space-4) var(--space-5) var(--space-5); }
+.pb_body h3 { margin: 0 0 var(--space-2); font-size: var(--fs-lg); }
+.pb_body p { margin: 0; }
+.pb_body .card_num { margin-bottom: var(--space-2); }
+
+/* phone: one swipe strip, edge to edge, the next card peeking in */
+@media (max-width: 639.98px) {
+  .pb_list {
+    grid-auto-flow: column;
+    grid-auto-columns: 82%;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--gutter);
+    margin-inline: calc(var(--gutter) * -1);
+    padding-inline: var(--gutter);
+    padding-bottom: var(--space-2);
+    scrollbar-width: none;
+  }
+  .pb_list::-webkit-scrollbar { display: none; }
+  .pb_card { scroll-snap-align: start; }
+}
+@media (min-width: 640px) { .pb_list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1024px) {
+  .pb_list { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .pb_img { aspect-ratio: 4 / 5; }
+}

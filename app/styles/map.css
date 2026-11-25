@@ -1,0 +1,22 @@
+/* map — Release floor fix 20.10.2026 (Pilot_Run) · part A 22.10: colour literals → tokens (4.3). */
+
+/* MapEmbed — click-to-load Google map (F4). Local OSM preview → iframe after the click. */
+.map_embed { display: flex; flex-direction: column; min-width: 0; border-radius: var(--radius-lg); overflow: hidden;
+  border: 1px solid var(--color-border-strong); background: var(--color-bg); }
+.map_embed_frame { position: relative; flex: 1 1 auto; height: clamp(360px, 38vw, 420px); min-height: 360px; background: var(--color-surface-2); }
+.map_embed_preview { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; display: block; }
+.map_embed_iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; }
+.map_embed_iframe:focus-visible { outline: 2px solid var(--color-focus); outline-offset: -2px; }
+.map_embed_pin { position: absolute; top: 50%; left: 50%; width: 30px; height: 30px; translate: -50% -100%; border-radius: 50% 50% 50% 0;
+  rotate: -45deg; transform-origin: 50% 50%; background: var(--color-accent); box-shadow: var(--shadow-md); border: 2px solid var(--color-on-dark); }
+.map_embed_pin::after { content: ""; position: absolute; inset: 8px; border-radius: 50%; background: var(--color-on-dark); }
+.map_embed_attr { position: absolute; right: 0; bottom: 0; padding: 3px var(--space-2); font-size: var(--fs-xs); line-height: 1.3; color: var(--ix-ink);
+  background: rgb(var(--ix-paper-rgb) / .82); border-top-left-radius: 6px; text-decoration: none; }
+.map_embed_attr:hover, .map_embed_attr:focus-visible { text-decoration: underline; }
+/* D-21 (fix round 22.10): the attribution link is a real 44 px tall target (was 177 × 20). */
+.map_embed_attr { display: inline-flex; align-items: center; min-height: 44px; padding: 0 var(--space-3); font-size: var(--fs-xs); }
+.map_embed_noscript { position: absolute; left: 16px; bottom: 16px; }
+.map_embed_bar { display: grid; gap: var(--space-3); padding: var(--space-4) var(--space-4) var(--space-4); border-top: 1px solid var(--color-border); }
+.map_embed_notice { margin: 0; font-size: var(--fs-md); color: var(--color-fg-muted); line-height: 1.5; }
+.map_embed_notice a { color: var(--color-fg); }
+.map_embed_actions { display: flex; flex-wrap: wrap; gap: var(--space-3); }

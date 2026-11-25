@@ -1,0 +1,227 @@
+# Nightly encrypted logical backup of the production Neon database to Cloudflare R2.
+#
+#   pg_dump (unpooled URL) | gzip -9 | AES-256-GCM (scripts/Backup/Backup_Crypto.mjs)
+#     -> self-check (decrypt + gunzip + "dump complete" trailer) -> upload to R2
+#     -> delete objects older than 30 days
+#
+# Why this exists: Neon's built-in history on the Free plan is 6 hours
+# (history_retention_seconds = 21600, read 20.10.2026). A bad migration or a
+# deleted row noticed the next morning is already outside it.
+#
+# R2 is not configured yet (board item B-57). Until all four R2_* secrets are
+# set, every run ends GREEN with a notice "skipped" — so the nightly schedule
+# does not paint the Actions tab red. A HALF-configured setup (some R2 secrets
+# set, others empty, or a malformed key) fails loudly instead: that is a
+# mistake, not a pending setup.
+#
+# Setup and restore steps: scripts/Backup/Readme.md.
+# Adapted from an earlier project's .github/workflows/backup.yml — its lessons are kept
+# in the comments below.
+name: Db Backup
+
+on:
+  # PUBLIC DEMO: kept as a reference implementation. The nightly schedule is removed and this
+  # repository holds none of the secrets below, so a manual run ends green with «Backup skipped».
+  # A real deployment re-adds:
+  #   schedule:
+  #     - cron: '0 2 * * *' # 02:00 UTC daily
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: db-backup
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    # Pinned image, not ubuntu-latest: the PATH trick and the preinstalled
+    # `aws` CLI below are image facts; a silent image bump should not be what
+    # breaks the 02:00 run.
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      DATABASE_URL_UNPOOLED: ${{ secrets.DATABASE_URL_UNPOOLED }}
+      BACKUP_ENCRYPTION_KEY: ${{ secrets.BACKUP_ENCRYPTION_KEY }}
+      R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+      R2_ACCESS_KEY: ${{ secrets.R2_ACCESS_KEY }}
+      R2_SECRET_KEY: ${{ secrets.R2_SECRET_KEY }}
+      R2_BUCKET: ${{ secrets.R2_BUCKET }}
+      RETENTION_DAYS: '30'
+      BACKUP_PREFIX: backups/
+    steps:
+      # GitHub renders an UNSET secret as "" — defined, not undefined — so
+      # every check here is `-n`, never "is the variable present". (an earlier project's
+      # lost a run to a default that only fired on undefined.)
+      - name: Check configuration
+        id: cfg
+        shell: bash
+        run: |
+          set -euo pipefail
+          r2_missing=()
+          for n in R2_ENDPOINT R2_ACCESS_KEY R2_SECRET_KEY R2_BUCKET; do
+            [ -n "${!n}" ] || r2_missing+=("$n")
+          done
+          if [ "${#r2_missing[@]}" -eq 4 ]; then
+            echo "::notice title=Backup skipped::R2 is not configured yet (B-57). Set R2_ENDPOINT, R2_ACCESS_KEY, R2_SECRET_KEY, R2_BUCKET, BACKUP_ENCRYPTION_KEY, DATABASE_URL_UNPOOLED — see scripts/Backup/Readme.md."
+            echo "### Backup skipped — R2 not configured (B-57)" >> "$GITHUB_STEP_SUMMARY"
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          bad=0
+          if [ "${#r2_missing[@]}" -gt 0 ]; then
+            echo "::error::R2 is half-configured — empty secret(s): ${r2_missing[*]}"; bad=1
+          fi
+          [ -n "$DATABASE_URL_UNPOOLED" ] || { echo "::error::secret DATABASE_URL_UNPOOLED is empty"; bad=1; }
+          if ! [[ "$BACKUP_ENCRYPTION_KEY" =~ ^[0-9a-fA-F]{64}$ ]]; then
+            echo "::error::secret BACKUP_ENCRYPTION_KEY must be 64 hex chars (openssl rand -hex 32); it has ${#BACKUP_ENCRYPTION_KEY}"; bad=1
+          fi
+          case "$DATABASE_URL_UNPOOLED" in
+            *-pooler.*) echo "::error::DATABASE_URL_UNPOOLED points at the -pooler host; pg_dump needs the direct (unpooled) endpoint"; bad=1 ;;
+          esac
+          [ "$bad" -eq 0 ] || exit 1
+          echo "configured=true" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout
+        if: steps.cfg.outputs.configured == 'true'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        if: steps.cfg.outputs.configured == 'true'
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22'
+
+      - name: Install postgresql-client-18 (PGDG)
+        if: steps.cfg.outputs.configured == 'true'
+        # The Neon project runs Postgres 18 (pg_version 18, server 18.6 on
+        # 20.10.2026). pg_dump refuses to dump a server NEWER than itself, and
+        # the runner image's own client is older. If Neon ever moves to 19,
+        # change the 18s here and in Restore_Drill.yml.
+        #
+        # Installing the package is NOT enough (an earlier project's run #4): PGDG puts
+        # binaries in /usr/lib/postgresql/18/bin while /usr/bin/pg_dump stays
+        # the image's older version. $GITHUB_PATH prepends, so 18 wins in
+        # every later step. The version is echoed so a future break shows
+        # the real version in the log.
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq postgresql-common
+          sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
+          sudo apt-get install -y -qq postgresql-client-18
+          echo "/usr/lib/postgresql/18/bin" >> "$GITHUB_PATH"
+
+      - name: Confirm pg_dump is version 18
+        if: steps.cfg.outputs.configured == 'true'
+        run: pg_dump --version && pg_dump --version | grep -q ' 18\.'
+
+      - name: Dump, compress, encrypt
+        id: dump
+        if: steps.cfg.outputs.configured == 'true'
+        # pipefail is the point: GitHub's default `bash -e` WITHOUT pipefail
+        # would let a failed pg_dump hand gzip an empty/partial stream and the
+        # step would still exit 0. The plaintext never touches disk — it only
+        # exists inside the pipe.
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          ts="$(date -u +%Y-%m-%dT%H-%M-%SZ)"
+          key="${BACKUP_PREFIX}demo_beauty_studio_${ts}.sql.gz.enc"
+          out="$RUNNER_TEMP/backup.sql.gz.enc"
+          pg_dump --format=plain --no-owner --no-privileges --dbname="$DATABASE_URL_UNPOOLED" \
+            | gzip -9 \
+            | node scripts/Backup/Backup_Crypto.mjs encrypt - "$out"
+          {
+            echo "key=$key"
+            echo "file=$out"
+            echo "size=$(stat -c%s "$out")"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Self-check the encrypted file before upload
+        if: steps.cfg.outputs.configured == 'true'
+        # Proves the object we are about to upload decrypts with the stored
+        # key and holds a COMPLETE dump (pg_dump writes the "dump complete"
+        # trailer last; PG 18 follows it with a \unrestrict line, hence -n 20).
+        # The decrypted copy is deleted in the same step.
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          chk="$RUNNER_TEMP/check.sql.gz"
+          trap 'shred -u "$chk" 2>/dev/null || rm -f "$chk"' EXIT
+          node scripts/Backup/Backup_Crypto.mjs decrypt "${{ steps.dump.outputs.file }}" "$chk"
+          gzip -t "$chk"
+          gunzip -c "$chk" | tail -n 20 | grep -q 'PostgreSQL database dump complete'
+          tables=$(gunzip -c "$chk" | grep -c '^COPY ' || true)
+          echo "dump OK: $tables tables"
+          [ "$tables" -gt 0 ] || { echo "::error::dump contains no COPY blocks"; exit 1; }
+
+      # aws CLI v2 is preinstalled on ubuntu-24.04 — no npm dependency needed.
+      # AWS_DEFAULT_REGION is a LITERAL "auto" (R2's only region), not a
+      # secret: an unset secret would arrive as "" and the CLI would fail.
+      # The two *_CHECKSUM_* settings stop newer aws CLI versions from sending
+      # CRC checksums that S3-compatible stores (R2) have rejected.
+      - name: Upload to R2
+        if: steps.cfg.outputs.configured == 'true'
+        shell: bash
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_KEY }}
+          AWS_DEFAULT_REGION: auto
+          AWS_EC2_METADATA_DISABLED: 'true'
+          AWS_REQUEST_CHECKSUM_CALCULATION: WHEN_REQUIRED
+          AWS_RESPONSE_CHECKSUM_VALIDATION: WHEN_REQUIRED
+        run: |
+          set -euo pipefail
+          key="${{ steps.dump.outputs.key }}"
+          aws s3api put-object --endpoint-url "$R2_ENDPOINT" --bucket "$R2_BUCKET" \
+            --key "$key" --body "${{ steps.dump.outputs.file }}" \
+            --content-type application/octet-stream --output text --query ETag > /dev/null
+          remote=$(aws s3api head-object --endpoint-url "$R2_ENDPOINT" --bucket "$R2_BUCKET" \
+            --key "$key" --query ContentLength --output text)
+          [ "$remote" = "${{ steps.dump.outputs.size }}" ] \
+            || { echo "::error::uploaded size $remote != local ${{ steps.dump.outputs.size }}"; exit 1; }
+          echo "uploaded $key ($remote bytes)"
+          echo "### Backup uploaded" >> "$GITHUB_STEP_SUMMARY"
+          echo "- object: \`$key\` ($remote bytes, encrypted)" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Delete backups older than 30 days
+        if: steps.cfg.outputs.configured == 'true'
+        # Runs only after a successful upload, so pruning can never leave the
+        # bucket without a fresh backup. Never touches the object just written.
+        # No pagination needed: ~30 objects against a 1000-key page.
+        shell: bash
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_KEY }}
+          AWS_DEFAULT_REGION: auto
+          AWS_EC2_METADATA_DISABLED: 'true'
+          AWS_REQUEST_CHECKSUM_CALCULATION: WHEN_REQUIRED
+          AWS_RESPONSE_CHECKSUM_VALIDATION: WHEN_REQUIRED
+        run: |
+          set -euo pipefail
+          cutoff="$(date -u -d "$RETENTION_DAYS days ago" +%s)"
+          aws s3api list-objects-v2 --endpoint-url "$R2_ENDPOINT" --bucket "$R2_BUCKET" \
+            --prefix "$BACKUP_PREFIX" --output json > "$RUNNER_TEMP/list.json"
+          jq -r --argjson cutoff "$cutoff" --arg keep "${{ steps.dump.outputs.key }}" '
+            .Contents // [] | .[]
+            | select(.Key != $keep)
+            | select((.LastModified[0:19] + "Z" | fromdateiso8601) < $cutoff)
+            | .Key' "$RUNNER_TEMP/list.json" > "$RUNNER_TEMP/old.txt"
+          n=0
+          while IFS= read -r k; do
+            [ -n "$k" ] || continue
+            aws s3api delete-object --endpoint-url "$R2_ENDPOINT" --bucket "$R2_BUCKET" --key "$k" > /dev/null
+            echo "deleted $k"; n=$((n+1))
+          done < "$RUNNER_TEMP/old.txt"
+          echo "pruned $n object(s) older than $RETENTION_DAYS days"
+
+      - name: Remove local encrypted file
+        if: always()
+        run: rm -f "$RUNNER_TEMP/backup.sql.gz.enc"

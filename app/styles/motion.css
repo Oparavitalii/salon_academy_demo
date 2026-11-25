@@ -1,0 +1,114 @@
+/* motion — Release floor fix 20.10.2026 (Pilot_Run) · aligned to Tokens.css 22.10 (Phase 11 part A).
+   ============================================================
+   Release_Floor F1 at boldness «moderate» (7.0_Ui-Kit §5, 8.0 Motion map): elements rise
+   var(--reveal-y) 32 px in var(--reveal-dur) 0.8 s, stagger var(--reveal-stagger) 90 ms; media fade in
+   from scale var(--reveal-scale) 1.04; the first screen plays H1 → sub → CTA, step var(--load-step)
+   120 ms, var(--load-dur) 0.8 s each, from y 24 px, while the hero media settles 1.06 → 1 in 1.1 s
+   (transform only — the LCP image is never at opacity 0); total ≤ 1.16 s. Values come from tokens.
+   Engine: components/Motion/AutoReveal.tsx writes data-rv="wait" | "in" | "done" (+ --rv-i) on the
+   leaves below the fold; this file is the only place the states look like anything.
+   Every hidden / moving state sits under html.rv-js (set in <head>) AND prefers-reduced-motion:
+   no-preference — JS off or reduced motion = everything static and visible.
+   Loads LAST (globals.css), so equal-specificity rules here win over library.css / tokens.css.
+   ============================================================ */
+
+@media (prefers-reduced-motion: no-preference) {
+  /* AutoReveal reads the Phase 7 reveal tokens (no local override of --reveal-*). Non-colour → :root. */
+  :root {
+    --rv-y: var(--reveal-y);
+    --rv-dur: var(--reveal-dur);
+    --rv-step: var(--reveal-stagger);
+  }
+
+  /* ---- AutoReveal: element entrances ------------------------------------------------------ */
+  html.rv-js:root [data-rv="wait"],
+  html.rv-js:root [data-rv="in"] {
+    transition:
+      opacity var(--rv-dur) var(--ease-out),
+      transform var(--rv-dur) var(--ease-out),
+      clip-path var(--rv-dur) var(--ease-expo);
+    transition-delay: calc(var(--rv-i, 0) * var(--rv-step));
+  }
+  html.rv-js:root [data-rv="wait"] {
+    opacity: 0;
+    transform: translate3d(0, var(--rv-y), 0);
+  }
+  html.rv-js:root [data-rv="in"] {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* media (7.0 §5 `.reveal_media`): fade in from scale var(--reveal-scale) 1.04 → 1, no travel. */
+  html.rv-js:root [data-rv-media][data-rv="wait"],
+  html.rv-js:root [data-rv-media][data-rv="in"] {
+    transition:
+      opacity var(--rv-dur) var(--ease-out),
+      transform var(--rv-dur) var(--ease-out);
+    transition-delay: calc(var(--rv-i, 0) * var(--rv-step));
+  }
+  html.rv-js:root [data-rv-media][data-rv="wait"] {
+    opacity: 0;
+    transform: scale(var(--reveal-scale));
+  }
+  html.rv-js:root [data-rv-media][data-rv="in"] {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* "done" carries no motion of its own — hover transforms are free again. A .reveal leaf still
+     needs to stay visible even if its old host has not flipped is_in yet. */
+  html.rv-js:root .reveal[data-rv="done"] {
+    opacity: 1;
+    transform: none;
+  }
+  /* a .reveal wrapper whose leaves AutoReveal animates — the wrapper itself stays put */
+  html.rv-js:root .reveal[data-rv-host] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  /* ---- First screen: load sequence on the hero (first <section> of <main>) ----------------
+     h1 0 → sub-line 1 step → CTA 2 steps (step = --load-step 120 ms, each --load-dur 0.8 s → ends 1.04 s);
+     hero media settles 1.06 → 1 in 1.1 s from 0 ms. Text rises 24 px + fades; media is transform-only. */
+  @keyframes rv-rise {
+    from { opacity: 0; transform: translate3d(0, 24px, 0); }
+    to   { opacity: 1; transform: none; }
+  }
+  @keyframes rv-settle {
+    from { transform: scale(1.06); }
+    to   { transform: none; }
+  }
+
+  html.rv-js main > section:first-of-type :is(h1, .eyebrow) {
+    animation: rv-rise var(--load-dur) var(--ease-out) both;
+  }
+  html.rv-js main > section:first-of-type :is(h1 ~ p, .lede):not(.eyebrow) {
+    animation: rv-rise var(--load-dur) var(--ease-out) var(--load-step) both;
+  }
+  html.rv-js main > section:first-of-type :is(.row, .choice_door, [class*="actions"], .hero_badge),
+  html.rv-js main > section:first-of-type .btn:not(.row .btn, [class*="actions"] .btn) {
+    animation: rv-rise var(--load-dur) var(--ease-out) calc(var(--load-step) * 2) both;
+  }
+  html.rv-js main > section:first-of-type :is(img, video, .bg-image__media) {
+    animation: rv-settle 1.1s var(--ease-out) both;
+  }
+
+  /* ---- Hover lift for clickable cards / photos ----------------------------------------------
+     library.css has border/glow (.hv-card-border) and zoom (.hv-zoom) but no lift since
+     .hv-btn-lift was retired. `translate` (not `transform`) composes with every transform rule. */
+  main :is(a.hv-card-border, a.hv-zoom, .hv-card-border:has(> a), a[class*="card"]) {
+    transition:
+      translate var(--hv-base, .3s) var(--hv-ease, ease),
+      border-color var(--hv-base, .3s) var(--hv-ease, ease),
+      box-shadow var(--hv-base, .3s) var(--hv-ease, ease);
+  }
+  main :is(a.hv-card-border, a.hv-zoom, .hv-card-border:has(> a), a[class*="card"]):is(:hover, :focus-visible) {
+    translate: 0 -6px;
+  }
+}
+
+/* print: always the finished page */
+@media print {
+  [data-rv] { opacity: 1 !important; transform: none !important; -webkit-mask: none !important; mask: none !important; }
+}

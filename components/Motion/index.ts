@@ -1,0 +1,1 @@
+export { AutoReveal } from './AutoReveal';

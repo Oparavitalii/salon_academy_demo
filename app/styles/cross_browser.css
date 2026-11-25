@@ -1,0 +1,61 @@
+/* Cross-browser / cross-platform floor (06.11.2026) — kl skill Web_Qa/Web_Cross_Browser, Mode B.
+   Cross_Matrix on prod v61 (Chromium + WebKit + Firefox × 320–1920, --stress): the only plain FAIL was
+   the home salon tabs at 320 px; the stress pass (root font 200 % + a 40-letter word in every heading and
+   button) pushed pages 1700 px wide through buttons and grid columns that cannot shrink below a word.
+   Defensive_Layout rules 2, 5, 6: zero minimum + `overflow-wrap: anywhere` on text, buttons wrap.
+   Loaded last so it beats component rules; it only lets things wrap — nothing changes at normal sizes. */
+
+/* buttons and links styled as buttons: a long label wraps instead of widening the page (rule 6) */
+.btn {
+  min-width: 0;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+
+/* text containers: a word longer than the line breaks, so a grid / flex column never grows past the
+   screen (rule 5 — `break-word` keeps the min-content, `anywhere` lowers it). Phones and small tablets;
+   on desktop the lines are wide enough and headings keep whole words. */
+@media (max-width: 767px) {
+  main :is(h1, h2, h3, h4, h5, p, li, dt, dd, blockquote, figcaption, summary, label, a, button),
+  main .display,
+  .course_hero_text .display,
+  .about_short_text .display {
+    overflow-wrap: anywhere;
+  }
+  main :is(li, dd, p) { min-width: 0; }
+  /* course page lists and program days sit in flex / grid rows */
+  .check_list > li, .program_day, .sx-pin__step { min-width: 0; }
+}
+
+/* home «Послуги преміальної якості» tabs: three columns of 1fr cannot hold «реконструкція» at 320 px
+   (Cross_Matrix C2/C3 in all three engines) — zero minimum, and one tab per row below 480 px */
+.sx-autotabs__list { grid-auto-columns: minmax(0, 1fr); }
+.sx-autotabs__tab { min-width: 0; overflow-wrap: anywhere; }
+@media (max-width: 479px) {
+  .sx-autotabs__list { grid-auto-flow: row; grid-auto-columns: auto; gap: 12px; }
+}
+
+/* Photos in fixed-ratio frames (Cross_Matrix C4b — the 23.10 iPhone incident pattern: WebKit lets an
+   in-flow `width: 100%` image pass its natural width up into grid / flex sizing and the page zooms out).
+   Rule 3: the frame is the containing block, the photo fills it absolutely. Frames that are already
+   `position: absolute` (the second, overlapping photos) keep their position. Rects before / after:
+   Pilot_Run/Evidence/Frames_Before.json = Frames_After.json. */
+:is(.svc_card_media, .about_short_big, .salon_tab_img, .catalog_media, .course_hero_img_1, .skills_figure, .inclusions_figure, .author_img_1, .price_figure, .final_figure) {
+  position: relative;
+}
+:is(.svc_card_media, .about_short_big, .salon_tab_img, .catalog_media, .founder_second, .course_hero_img, .skills_figure, .inclusions_figure, .author_img, .price_figure, .final_figure) > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.catalog_media > .catalog_badge { z-index: 1; }
+
+/* Touch targets (Cross_Matrix C6b, rule 22): on a touch screen every button is ≥ 44 px tall — the
+   /salon price tabs were 40, the founder story «Коротко / Повністю» switch 38. */
+@media (pointer: coarse) {
+  .tab, .founder_tldr button { min-height: 44px; }
+}

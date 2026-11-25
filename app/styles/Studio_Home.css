@@ -1,0 +1,231 @@
+/* Oksana's design recommendations 16.11.2026 (Правки.pdf, B-119) — Studio_Home.
+   Home blocks, the reviews (shared with /salon), the footer and the pink rule under every section head.
+   Loaded after decor.css / home_blocks.css / pages.css / fx_kit.css, so equal-or-higher selectors win;
+   the old sheets are untouched. Notes verbatim: docs/1_Intake/1_Site_Assets/Telegram/Oksana_Design_2026_11_16. */
+
+/* ---------- M-01 · M-04 — the pink rule runs the whole length of its heading (site-wide) ----------
+   «Рожеве підкреслення краще зробити на всю довжину заголовку» / «або під всім заголовком».
+   The heading box shrinks to its text (`fit-content` — exact for a one-line head); the rule is taken
+   out of flow under it, so it never widens the heading. A wrapped head fills its column, so
+   components/Decorations/Head_Rule.ts measures the longest line and where it starts
+   (--head-rule-w / --head-rule-x); without JS the rule spans the heading box. Same 3 px solid
+   #f898d0 and the same 16 px gap as decor.css. */
+main :is(.sec_head, .sec_head_row, .svc_carousel_head) h2 {
+  position: relative;
+  width: fit-content;
+  max-width: 100%;
+  padding-bottom: calc(var(--space-4) + 3px);
+}
+main :is(.sec_head, .sec_head_row, .svc_carousel_head) h2::after {
+  position: absolute;
+  bottom: 0;
+  left: var(--head-rule-x, 0px);
+  width: var(--head-rule-w, 100%);
+  max-width: 100%;
+  margin: 0;
+}
+
+/* ---------- M-02 · M-03 — «ПРО НАС» with the vertical video (AboutVideo) ----------
+   M-02 «надто далеко літери … розмір тексту має бути як і в інших заголовках»: the title takes the
+   section-head type of the skin (skin_insta.css §4 `.display_lg`: serif 400, fs-3xl × 1.12, 0.015em,
+   line-height 1.04; 22 px under 360 px) instead of 300 / up to 6.5 rem / 0.12em. */
+.about_video .about_video_title {
+  font-family: var(--font-secondary);
+  font-weight: 400;
+  font-size: calc(var(--fs-3xl) * 1.12);
+  line-height: 1.04;
+  letter-spacing: 0.015em;
+}
+@media (max-width: 359px) {
+  .about_video .about_video_title {
+    font-size: 22px;
+  }
+}
+/* M-03 «Відео для десктопної версії краще зробити більше, мінімум на пів екрану»: from 1024 px the
+   video column is half the screen (50vw, at most 720 px — never less than half the block) and fills
+   it; the 9:16 clip is cropped to the frame around the people (40 % from the top). 768–1023 keeps the
+   9:16 frame. The play button stays in the middle of the video. */
+@media (min-width: 1024px) {
+  .about_video .about_video_stage {
+    grid-template-columns: minmax(0, 1fr) min(50vw, 720px);
+  }
+  .about_video .about_video_media {
+    width: 100%;
+    height: clamp(480px, 84vh, 800px);
+    aspect-ratio: auto;
+    object-fit: cover;
+    object-position: 50% 40%;
+  }
+  .about_video .about_video_toggle {
+    top: 50%;
+    bottom: auto;
+    left: auto;
+    right: calc(min(50vw, 720px) / 2);
+    transform: translate(50%, -50%);
+  }
+}
+
+/* ---------- M-05 — «Послуги преміальної якості…» tabs: «фото обрізаються неправильно» ----------
+   Every photo of the block is a 4:5 portrait. The tab frame was 4:3 on desktop (60 % of the height:
+   heads and lengths cut) and 1:1 on phones: now a 6:7 portrait held at the top on every width — the
+   whole head and the lengths stay, only a strip of the bottom goes (the «„MASZ TAKIE» caption burnt
+   into Narosh_12). Desktop: photo 5 / text 6. The before / after pair: 4:5 on every width (was 4:3
+   from 768 px — the «before» crown was cut). */
+.salon_teaser .salon_tab_img {
+  aspect-ratio: 6 / 7;
+}
+.salon_teaser .salon_tab_img > img {
+  object-position: 50% 0%;
+}
+@media (min-width: 768px) {
+  .salon_teaser .salon_tab_card {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  }
+}
+.salon_teaser .ba_figure img {
+  aspect-ratio: 4 / 5;
+  object-position: 50% 0%;
+}
+/* a two-line and a three-line caption (phone): both photos and captions start on one line */
+.salon_teaser .ba_figure {
+  align-content: start;
+}
+
+/* ---------- M-06 · M-21 (and /salon M-09) — reviews: the rating and the button ----------
+   The rating + «Стати клієнткою» come after the slider in the DOM (Testimonials.tsx), so while the
+   block is one column they sit under the review card (M-21 «під карткою відгуку»). From 1200 px they
+   are the left column again, bottom-aligned with the card (M-06 «вирівнювання по нижньому краю»): the
+   card's bottom = the slider's bottom minus its nav row (44 px arrows, components.css `.arrow`) and
+   the slider gap (pages.css `.review_slider`). */
+@media (min-width: 1200px) {
+  .reviews_grid > .review_slider {
+    grid-column: 2;
+    grid-row: 2;
+  }
+  .reviews_grid > .reviews_head {
+    grid-column: 1;
+    grid-row: 2;
+    align-self: end;
+    margin-bottom: calc(44px + var(--space-4));
+  }
+}
+
+/* ---------- M-07 — footer: the columns start on one line ----------
+   «Навігаційні стовпці мають різні відступи, краще вирівняти по верхньому (де адреса студії)».
+   With a mouse from 768 px every footer link is a 44 px row with its text centred (layout.css D-21),
+   so a one-line link sat ~11 px lower than the two-line address. Now each item's text sits at the top
+   of its row and the rest of the 44 px is below it (calc(44px − 1lh)): every column starts at the
+   address line, the 44 px targets and the 44 px rhythm stay. Phones / touch already start at the top
+   (`a.hv-link` padding + negative margin, layout.css / mobile_guard.css) — untouched. */
+@media (min-width: 768px) and (pointer: fine) {
+  .footer .footer_col:not(.footer_col_brand) :is(a, .cookie_settings_link) {
+    padding-bottom: calc(44px - 1lh);
+  }
+  .footer .footer_col .footer_h {
+    margin-bottom: var(--space-4);
+  }
+}
+
+/* ---------- M-20 — phone: «Наші роботи» is a plain photo slider, the button under the photos ----------
+   From 768 px nothing changes: `.works_strip` is the photo row inside the track the scroll drives
+   (FxKit `.wx-hscroll`). Below 768 px the block is not pinned: FxKit still runs, but the strip is the
+   track's own scroller, so the track never outgrows the screen (its shift is 0) and the height FxKit
+   writes inline is reset. Head on top, one swipe row to the screen edges (snap, next photo peeks),
+   «Уся галерея» under the photos (`order` on the head's link; the head box dissolves). */
+.works_strip {
+  display: flex;
+  flex: none;
+  gap: var(--wx-gap, 28px);
+  align-items: center;
+}
+.works_strip:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 4px;
+}
+@media (max-width: 767px) {
+  .works_scroll.wx-hscroll {
+    height: auto !important;
+  }
+  .works_scroll .wx-hscroll__stage,
+  .works_scroll.wx-hscroll.is-live .wx-hscroll__stage {
+    position: static;
+    display: block;
+    place-items: normal;
+    height: auto;
+    overflow: visible;
+  }
+  .works_scroll .wx-hscroll__track,
+  .works_scroll.wx-hscroll.is-live .wx-hscroll__track {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    /* the live rules (`place-items: center` on the stage, `justify-self: start` here) shrink a block to
+       its content in Chromium's block layout — the track fills the screen */
+    justify-self: stretch;
+    width: auto;
+    min-width: 0;
+    padding: var(--space-10) 0;
+    transform: none;
+    will-change: auto;
+  }
+  .works_scroll .wx-hscroll__head {
+    display: contents;
+  }
+  .works_scroll .wx-hscroll__head > * {
+    margin: 0 var(--gutter);
+  }
+  .works_scroll .wx-hscroll__head > * + * {
+    margin-top: var(--space-4);
+  }
+  .works_scroll .wx-hscroll__head > .btn {
+    order: 1;
+    align-self: flex-start;
+    margin-top: var(--space-6);
+  }
+  .works_scroll .works_strip {
+    margin-top: var(--space-6);
+    padding: 0 var(--gutter) var(--space-2);
+    gap: var(--space-3);
+    align-items: start;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--gutter);
+    scrollbar-width: none;
+    touch-action: pan-x pan-y;
+  }
+  .works_scroll .works_strip::-webkit-scrollbar {
+    display: none;
+  }
+  .works_scroll .wx-hscroll__item {
+    width: min(78vw, 360px);
+    scroll-snap-align: start;
+  }
+}
+
+/* ---------- M-22 — phone: «Професійне навчання…» without the photo ----------
+   «Фото в мобільній версії в цьому блоці краще прибрати»: the inset photo under the head goes below
+   768 px (lazy, so a phone does not load it); from 768 px it stays beside the head. */
+@media (max-width: 767px) {
+  .academy_teaser .academy_inset {
+    display: none;
+  }
+}
+
+/* B-117 · the «Догляд» card plays Dana's 6 s loop (IMG_1370.MOV); 3:4 file in the 4:5 card — the crown and the ends stay in. */
+.svc_card_media .svc_card_video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 45%;
+}
+@media (prefers-reduced-motion: reduce) {
+  .svc_card_media:has(> .svc_card_video) {
+    background: url('/video/Care_Result_Poster.webp') 50% 45% / cover no-repeat;
+  }
+  .svc_card_media .svc_card_video {
+    visibility: hidden;
+  }
+}

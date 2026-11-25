@@ -1,0 +1,83 @@
+/* ============================================================
+   Studio Demo — library subset (Phase 7 · Ui-Kit, dark re-run 19.10.2026)
+   Lifted VERBATIM from docs/7_Ui-Kit/Styleguide.html <style> lines 37–108 (snapshot 19.10.2026,
+   indentation only): Web_Hover_Effects .hv-* (nine classes, .hv-btn-lift → .hv-btn-glow) ·
+   Web_Backgrounds .bg-linear / .bg-leak (authored) / .bg-grain (retuned .04) / .bg-image ·
+   Web_Animation .reveal / .is_in with the hidden state gated behind html.rv-js.
+   Retired (7.0 §6, B-60): .bg-aurora · .bg-radial-spot · .bg-mesh--light · .bg-grain--light · .hv-btn-lift.
+   Loads BEFORE tokens.css so the brand hooks (--hv-* / --bg-*) win. Do not edit here —
+   re-paste from the Styleguide and update its ledger.
+   ============================================================ */
+
+/* Web_Hover_Effects/library.css — 1.1 */
+.hv-link { color: inherit; transition: color var(--hv-fast) var(--hv-ease); }
+.hv-link:hover, .hv-link:focus-visible { color: var(--hv-accent); }
+/* 1.2 */
+.hv-underline { position: relative; }
+.hv-underline::after { content: ""; position: absolute; left: 0; bottom: -2px; width: 100%; height: 1px;
+  background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform var(--hv-fast) var(--hv-ease); }
+.hv-underline:hover::after, .hv-underline:focus-visible::after { transform: scaleX(1); }
+/* 1.9 */
+.hv-letterspace { letter-spacing: 0; color: var(--hv-ink);
+  transition: letter-spacing var(--hv-fast) var(--hv-ease), color var(--hv-fast) var(--hv-ease); }
+.hv-letterspace:hover, .hv-letterspace:focus-visible { letter-spacing: 0.04em; color: var(--hv-accent); }
+/* 2.3 colored glow */
+.hv-btn-glow { transition: transform var(--hv-fast) var(--hv-ease), box-shadow var(--hv-fast) var(--hv-ease); }
+.hv-btn-glow:hover, .hv-btn-glow:focus-visible { transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(var(--hv-accent-2-rgb), 0.45), 0 0 0 6px rgba(var(--hv-accent-2-rgb), 0.18); }
+/* 2.2 */
+.hv-btn-invert { background: transparent; color: var(--hv-ink); border: 1px solid var(--hv-ink);
+  transition: background var(--hv-fast) var(--hv-ease), color var(--hv-fast) var(--hv-ease); }
+.hv-btn-invert:hover, .hv-btn-invert:focus-visible { background: var(--hv-ink); color: var(--hv-paper); }
+/* 2.4 */
+.hv-arrow { display: inline-block; transition: transform var(--hv-fast) var(--hv-ease); }
+.hv-arrow-host:hover .hv-arrow, .hv-arrow-host:focus-visible .hv-arrow { transform: translate(2px, -2px); }
+/* 2.5 */
+.hv-magnetic { transition: transform var(--hv-base) var(--hv-ease); }
+.hv-magnetic:hover, .hv-magnetic:focus-visible { transform: scale(1.05); }
+/* 3.2 */
+.hv-card-border { border: 1px solid transparent;
+  transition: border-color var(--hv-base) var(--hv-ease), box-shadow var(--hv-base) var(--hv-ease); }
+.hv-card-border:hover, .hv-card-border:focus-within { border-color: var(--hv-accent-2); box-shadow: 0 8px 32px rgba(var(--hv-accent-2-rgb), 0.18); }
+/* 4.1 */
+.hv-zoom { overflow: hidden; }
+.hv-zoom img { display: block; transition: transform var(--hv-zoom) var(--hv-ease-soft); }
+.hv-zoom:hover img, .hv-zoom:focus-within img { transform: scale(1.04); }
+@media (prefers-reduced-motion: reduce) {
+  [class*="hv-"], [class*="hv-"]::before, [class*="hv-"]::after { transition-duration: 1ms !important; }
+  .hv-zoom img, .hv-underline:hover::after, .hv-underline:focus-visible::after,
+  .hv-btn-glow:hover, .hv-btn-glow:focus-visible, .hv-arrow-host:hover .hv-arrow, .hv-arrow-host:focus-visible .hv-arrow,
+  .hv-magnetic:hover, .hv-magnetic:focus-visible { transform: none !important; }
+}
+
+/* Web_Backgrounds/library.css — 1 · flat & gradient (footer) */
+.bg-linear { background: linear-gradient(135deg, var(--bg-ink) 0%, var(--bg-ink-2) 100%); }
+/* AUTHORED — the ONE light leak (home first screen + final CTA only). Static: no motion, nothing on load. */
+.bg-leak { position: relative; isolation: isolate; overflow: hidden; background-color: var(--bg-ink); }
+.bg-leak > * { position: relative; z-index: 1; }
+.bg-leak::before { content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background: linear-gradient(var(--bg-leak-angle),
+    rgb(var(--bg-accent) / var(--bg-leak-peak)) 0%,
+    rgb(var(--bg-accent-2) / var(--bg-leak-tail)) 14%,
+    rgb(var(--bg-accent-2) / 0) 34%); }
+/* 4 · texture — RETUNED opacity */
+.bg-grain { position: relative; isolation: isolate; }
+.bg-grain > * { position: relative; z-index: 1; }
+.bg-grain::after { content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: var(--bg-grain-alpha); mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+/* 6 · layered image */
+.bg-image { position: relative; isolation: isolate; overflow: hidden; background: var(--bg-ink); }
+.bg-image__media { position: absolute; inset: 0; z-index: 0; background-size: cover; background-position: center; background-repeat: no-repeat; }
+.bg-image__scrim { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+.bg-image__scrim--side { background: linear-gradient(80deg, rgb(var(--ix-paper-rgb) / 0.86) 0%, rgb(var(--ix-paper-rgb) / 0.70) 55%, rgb(var(--ix-paper-rgb) / 0.25) 100%); } /* RETUNED */
+.bg-image__content { position: relative; z-index: 2; }
+@media (max-width: 768px) { .bg-image--mobile-soft .bg-image__media { filter: blur(30px); transform: scale(1.03); } }
+
+/* Web_Animation — CSS-only engine (reference/css-only-alternative.md), class renamed is-in → is_in.
+   RETUNED 19.10: the hidden start state is gated behind html.rv-js (set by the inline script in <head>),
+   so with JS off every .reveal is visible. The library rule is unguarded. */
+html.rv-js .reveal { opacity: 0; transform: translateY(var(--reveal-y, 14px));
+  transition: opacity var(--reveal-dur, .55s) var(--ease-out), transform var(--reveal-dur, .55s) var(--ease-out);
+  transition-delay: calc(var(--i, 0) * var(--reveal-stagger, 80ms)); }
+html.rv-js .is_in .reveal, html.rv-js .reveal.is_in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { html.rv-js .reveal { opacity: 1; transform: none; transition: none; } }
